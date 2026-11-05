@@ -1,0 +1,46 @@
+import { Avatar, Box, List, Text } from 'grommet';
+
+const UserRow = ({ user }) => (
+  <Box direction="row" align="center" gap="small" fill="horizontal">
+    <Avatar size="small" background="background-contrast">
+      <Text size="xsmall" weight={500}>
+        {user.initials}
+      </Text>
+    </Avatar>
+    <Box flex>
+      <Text weight={500} truncate>
+        {user.name}
+      </Text>
+      <Text size="small" color="text-weak" truncate>
+        {user.role}
+      </Text>
+    </Box>
+    <Text size="small" color="text-weak" flex={false}>
+      {user.created}
+    </Text>
+  </Box>
+);
+
+// C · List body — 2-line rows, selected row carried by background fill
+export const UserList = ({ users, selectedId, onSelect }) => (
+  <List
+    data={users}
+    pad="none"
+    border={false}
+    itemKey="id"
+    onClickItem={({ item }) => onSelect(item.id)}
+  >
+    {(user) => {
+      const selected = user.id === selectedId;
+      return (
+        <Box
+          pad={{ horizontal: 'medium', vertical: 'small' }}
+          background={selected ? 'background-contrast' : undefined}
+          aria-selected={selected}
+        >
+          <UserRow user={user} />
+        </Box>
+      );
+    }}
+  </List>
+);
