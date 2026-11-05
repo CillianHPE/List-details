@@ -58,9 +58,6 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
       gap="small"
     >
       <Box gap="xsmall">
-        <Text size="small" color="text-weak">
-          Users / {user.id}
-        </Text>
         <Box direction="row" align="center" gap="small" wrap>
           {editing ? (
             <Box direction="row" align="center" gap="xsmall">
