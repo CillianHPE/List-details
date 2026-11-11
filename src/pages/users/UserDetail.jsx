@@ -142,9 +142,20 @@ const Properties = ({ user }) => (
 
 const Groups = ({ user }) =>
   user.groups.length ? (
-    <List data={user.groups} pad={{ vertical: 'small' }} border="bottom">
-      {(group) => (
-        <Box direction="row" align="center" justify="between" gap="small">
+    <List data={user.groups} pad="none">
+      {(group, index) => (
+        <Box
+          direction="row"
+          align="center"
+          justify="between"
+          gap="small"
+          pad={{ vertical: 'small' }}
+          border={
+            index < user.groups.length - 1
+              ? { side: 'bottom', color: 'border-weak' }
+              : false
+          }
+        >
           <Box>
             <Text weight={500}>{group.name}</Text>
             <Text size="small" color="text-weak">
