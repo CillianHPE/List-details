@@ -13,7 +13,7 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 | A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), primary **Invite user** |
 | B · List toolbar | `UsersPage` | Full‑width search, `ToggleGroup` quick filters (All / Active / Invited), item count |
 | C · List body | `UserList` | 2‑line rows (avatar, name, role, date top‑right); selected row = contrast fill |
-| D · Detail header | `UserDetail` | Name (h2) + inline rename, `…` overflow menu (Reset password / Suspend / Remove), **Edit**, sub‑tabs |
+| D · Detail header | `UserDetail` | Name (h2) + inline rename, **Actions** `Menu` grouped per DS guidance (Edit name / Change role / Reset password / Resend invite · Suspend · Remove user last), sub‑tabs |
 | E · Detail body | `UserDetail` | Grommet `Tabs` own the panels (tab ↔ tabpanel wired by Grommet); each panel carries a visually hidden h3. One section per tab: Details (`NameValueList`, row pairs that stack when the pane is narrower than 480px) / Roles & groups (`List` + row menu) / Activity (`List`) |
 
 Below the `medium` breakpoint (1080px) the two columns collapse into a drill‑in (list → detail; `PageHeader.parent` holds the back link).

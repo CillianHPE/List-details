@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
 } from 'grommet';
-import { Checkmark, Close, Edit, More } from '@hpe-design/icons-grommet';
+import { Checkmark, Close, More } from '@hpe-design/icons-grommet';
 
 const statusColor = {
   Active: 'status-ok',
@@ -76,29 +76,31 @@ const DetailHeader = ({ user, name, onRename }) => {
           )}
           <Box flex />
           {!editing && (
-            <Box direction="row" gap="xsmall" align="center">
-              <Menu
-                icon={<More />}
-                a11yTitle="More actions"
-                dropProps={{ align: { top: 'bottom', right: 'right' } }}
-                items={[
-                  { label: 'Reset password' },
+            <Menu
+              label="Actions"
+              dropProps={{ align: { top: 'bottom', right: 'right' } }}
+              items={[
+                [
                   {
-                    label: user.status === 'Suspended' ? 'Reactivate' : 'Suspend',
+                    label: 'Edit name',
+                    onClick: () => {
+                      setDraft(name);
+                      setEditing(true);
+                    },
                   },
-                  { label: 'Remove user' },
-                ]}
-              />
-              <Button
-                label="Edit"
-                icon={<Edit />}
-                secondary
-                onClick={() => {
-                  setDraft(name);
-                  setEditing(true);
-                }}
-              />
-            </Box>
+                  { label: 'Change role' },
+                  { label: 'Reset password' },
+                  { label: 'Resend invite' },
+                ],
+                [
+                  {
+                    label:
+                      user.status === 'Suspended' ? 'Reactivate' : 'Suspend',
+                  },
+                ],
+                [{ label: 'Remove user' }],
+              ]}
+            />
           )}
         </Box>
       </Box>
