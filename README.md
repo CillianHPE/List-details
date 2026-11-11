@@ -3,6 +3,16 @@ Design to Code: turning HPE Figma designs into working prototypes built on the H
 
 ## Prototypes
 
+Versions are addressed by URL hash and switchable from the floating **Version** pill (bottom-right):
+
+| Hash | What | Shell |
+| --- | --- | --- |
+| `#/default` | Users list–detail page | Default HPE app shell (`src/shell/DefaultShell.jsx`, mirrors `hpe-design-system/sandbox/grommet-app`) |
+| `#/v3` | Same page | App Shell V3.1 (`src/shell/V3Shell.jsx`, Figma *Landmark Surface examples → 3250:15494*): white canvas, 60px bordered header with workspace switcher, 12px wrapper, rounded grey 256px nav pane |
+| `#/anatomy` | Lo-fi region map of the pattern (`src/pages/anatomy`) | Dashed wireframe blocks per region with landmark/ARIA role, plus a legend of what each region owns, its controls and behaviour; toggles between both shell layouts |
+
+Pages read the active shell via `ShellContext` so containment can adapt (the list–detail pane gains a `border-weak` border on the white V3 canvas).
+
 ### Users · list–detail page (`src/pages/users`)
 
 A list–detail (master–detail) page built with Grommet + `grommet-theme-hpe`, following the zoning model from the

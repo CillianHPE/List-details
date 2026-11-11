@@ -16,6 +16,7 @@ import { LinkPrev, Search } from '@hpe-design/icons-grommet';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
+import { useShell } from '../../shell/ShellContext';
 
 const QUICK_FILTERS = [
   { label: 'All', value: 'all', test: () => true },
@@ -24,9 +25,19 @@ const QUICK_FILTERS = [
 ];
 
 // Contained surface, as hpe-design-system/sandbox/grommet-app ContentPane
-const ContentPane = (props) => (
-  <Box background="background-front" pad="medium" round="small" {...props} />
-);
+// On the white V3 canvas the pane needs a border to read as a container.
+const ContentPane = (props) => {
+  const shell = useShell();
+  return (
+    <Box
+      background="background-front"
+      pad="medium"
+      round="small"
+      border={shell === 'v3' ? { color: 'border-weak' } : undefined}
+      {...props}
+    />
+  );
+};
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
 // On small screens the two columns become a drill-in (list → detail).
