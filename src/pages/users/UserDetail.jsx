@@ -70,7 +70,7 @@ const DetailHeader = ({ user, name, onRename }) => {
               />
             </Box>
           ) : (
-            <Heading level={2} size="small" margin="none">
+            <Heading level={2} margin="none">
               {name}
             </Heading>
           )}
