@@ -3,6 +3,9 @@ import {
   Anchor,
   Box,
   Button,
+  Grid,
+  Page,
+  PageContent,
   PageHeader,
   ResponsiveContext,
   Text,
@@ -19,6 +22,11 @@ const QUICK_FILTERS = [
   { label: 'Active', value: 'active', test: (u) => u.status === 'Active' },
   { label: 'Invited', value: 'invited', test: (u) => u.status === 'Invited' },
 ];
+
+// Contained surface, as hpe-design-system/sandbox/grommet-app ContentPane
+const ContentPane = (props) => (
+  <Box background="background-front" pad="medium" round="small" {...props} />
+);
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
 // On small screens the two columns become a drill-in (list → detail).
@@ -55,92 +63,86 @@ export const UsersPage = () => {
   };
 
   return (
-    <Box
-      as="main"
-      background="background-front"
-      round="small"
-      flex
-      overflow="hidden"
-    >
-      {/* A · Page header — Grommet PageHeader (title / parent / actions slots) */}
-      <PageHeader
-        title="Users"
-        size="small"
-        parent={
-          stacked && showDetail ? (
-            <Anchor
-              icon={<LinkPrev />}
-              label="All users"
-              onClick={() => setShowDetail(false)}
-            />
-          ) : undefined
-        }
-        actions={<Button label="Invite user" primary />}
-        pad={{ horizontal: 'medium', top: 'medium', bottom: 'small' }}
-        flex={false}
-      />
-
-      <Box direction="row" flex overflow="hidden">
-        {/* B + C · List column */}
-        {listVisible && (
-          <Box
-            width={stacked ? undefined : 'medium'}
-            flex={stacked ? true : false}
-            border={stacked ? undefined : { side: 'right', color: 'border-weak' }}
-            overflow="hidden"
-          >
-            <Box
-              pad={{ horizontal: 'medium', vertical: 'small' }}
-              gap="xsmall"
-              flex={false}
-            >
-              <TextInput
-                icon={<Search />}
-                placeholder="Search users"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+    <Page pad={{ bottom: 'xlarge' }}>
+      <PageContent>
+        {/* A · Page header — Grommet PageHeader (title / parent / actions slots) */}
+        <PageHeader
+          title="Users"
+          subtitle="Manage who has access to this workspace."
+          parent={
+            stacked && showDetail ? (
+              <Anchor
+                icon={<LinkPrev />}
+                label="All users"
+                onClick={() => setShowDetail(false)}
               />
-              <Box
-                overflow={{ horizontal: 'auto' }}
-                flex={false}
-                style={{ whiteSpace: 'nowrap' }}
-              >
-                <ToggleGroup
-                  options={QUICK_FILTERS.map(({ label, value }) => ({
-                    label,
-                    value,
-                  }))}
-                  value={quickFilter}
-                  onToggle={({ value }) => value && setQuickFilter(value)}
+            ) : undefined
+          }
+          actions={<Button label="Invite user" primary />}
+        />
+
+        <Grid
+          columns={stacked ? ['auto'] : ['auto', 'flex']}
+          gap="medium"
+          align="start"
+        >
+          {/* B + C · List pane */}
+          {listVisible && (
+            <ContentPane
+              gap="small"
+              width={stacked ? undefined : { min: 'medium', max: 'large' }}
+              style={stacked ? undefined : { position: 'sticky', top: 24 }}
+              height={stacked ? undefined : { max: 'calc(100vh - 48px)' }}
+            >
+              <Box gap="xsmall" flex={false}>
+                <TextInput
+                  icon={<Search />}
+                  placeholder="Search users"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <Box
+                  overflow={{ horizontal: 'auto' }}
+                  flex={false}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  <ToggleGroup
+                    options={QUICK_FILTERS.map(({ label, value }) => ({
+                      label,
+                      value,
+                    }))}
+                    value={quickFilter}
+                    onToggle={({ value }) => value && setQuickFilter(value)}
+                  />
+                </Box>
+                <Text size="small" color="text-weak">
+                  {visible.length} items
+                </Text>
+              </Box>
+              <Box overflow="auto" flex>
+                <UserList
+                  users={visible}
+                  selectedId={selectedId}
+                  onSelect={onSelect}
                 />
               </Box>
-              <Text size="small" color="text-weak">
-                {visible.length} items
-              </Text>
-            </Box>
-            <Box overflow="auto" flex>
-              <UserList
-                users={visible}
-                selectedId={selectedId}
-                onSelect={onSelect}
-              />
-            </Box>
-          </Box>
-        )}
+            </ContentPane>
+          )}
 
-        {/* D + E + F · Detail column */}
-        {detailVisible && (
-          <Box flex overflow="hidden">
-            {selected ? (
-              <UserDetail key={selected.id} user={selected} />
-            ) : (
-              <Box flex align="center" justify="center">
-                <Text color="text-weak">Select a user to see details</Text>
-              </Box>
-            )}
-          </Box>
-        )}
-      </Box>
-    </Box>
+          {/* D + E · Detail pane */}
+          {detailVisible && (
+            <ContentPane>
+              {selected ? (
+                <UserDetail key={selected.id} user={selected} />
+              ) : (
+                <Box pad="large" align="center" justify="center">
+                  <Text color="text-weak">Select a user to see details</Text>
+                </Box>
+              )}
+            </ContentPane>
+          )}
+        </Grid>
+      </PageContent>
+    </Page>
   );
 };

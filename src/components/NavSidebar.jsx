@@ -19,13 +19,14 @@ const items = [
 
 // Collapsed, icon-only side nav (AppShell "Navigation - Collapsed").
 // Uses Grommet Sidebar + Nav like hpe-design-system/sandbox/grommet-app NavSidebar.
-export const NavSidebar = () => (
+export const NavSidebar = (props) => (
   <Sidebar
     background="background-front"
-    round="small"
-    pad="xsmall"
+    pad={{ vertical: 'small', horizontal: 'xsmall' }}
     flex={false}
     width="xxsmall"
+    style={{ position: 'sticky', top: 0 }}
+    {...props}
   >
     <Nav gap="xxsmall" align="center">
       {items.map(({ icon: Icon, label, active }) => (

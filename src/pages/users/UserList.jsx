@@ -35,9 +35,10 @@ export const UserList = ({ users, selectedId, onSelect }) => (
       const last = index === users.length - 1;
       return (
         <Box
-          pad={{ horizontal: 'medium', vertical: 'small' }}
+          pad={{ horizontal: 'small', vertical: 'small' }}
           border={last ? undefined : { side: 'bottom', color: 'border-weak' }}
           background={selected ? 'background-contrast' : undefined}
+          round="xsmall"
           aria-selected={selected}
         >
           <UserRow user={user} />

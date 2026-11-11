@@ -45,7 +45,6 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
 
   return (
     <Box
-      pad={{ horizontal: 'medium', top: 'small' }}
       flex={false}
       gap="small"
     >
@@ -232,7 +231,7 @@ const Activity = ({ user }) => (
 
 // E · Detail body — properties → related entities → activity
 const DetailBody = ({ user, tab }) => (
-  <Box pad="medium" gap="large" overflow="auto" flex>
+  <Box pad={{ top: 'medium' }} gap="large">
     {tab === 0 && (
       <>
         <Section title="Details" contained>
@@ -269,7 +268,7 @@ export const UserDetail = ({ user }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useState(0);
   return (
-    <Box flex overflow="hidden">
+    <Box>
       <DetailHeader
         user={user}
         name={name}

@@ -25,7 +25,8 @@ compatible versions) as `hpe-design-system/sandbox/grommet-app`. The app shell m
 
 - `GlobalHeader` ← `sandbox/grommet-app/src/components/GlobalHeader` (`Page kind="full"`, logo, global search, Help/Catalog/Notification/User)
 - `NavSidebar` ← `sandbox/grommet-app/src/components/NavSidebar` (Grommet `Sidebar` + `Nav`, collapsed icon‑only)
-- Page header ← Grommet `PageHeader` as used in `sandbox/grommet-app/src/pages/layouts/kinds/Collection`
+- Page anatomy ← `GlobalHeader` → `Box direction="row"` (`NavSidebar` + `Page`) → `PageContent` → `PageHeader`, as in `sandbox/grommet-app/src/pages/layouts/kinds/NavigationalSidebar`
+- List and detail panes ← `ContentPane` (`background-front`, `pad="medium"`, rounded) laid out in a `Grid`, as in `.../kinds/Collection`; the list pane is sticky and scrolls internally while the page scrolls
 
 ```sh
 npm install
