@@ -88,15 +88,20 @@ export const UsersPage = () => {
             {listVisible && (
               <Box
                 width={stacked ? undefined : { min: 'medium', max: 'large' }}
-                border={
-                  stacked ? undefined : { side: 'right', color: 'border-weak' }
-                }
+                pad={stacked ? undefined : { vertical: 'medium' }}
               >
+                {/* Divider lives on the sticky inner box so it stops short of
+                    the container edges rather than spanning its full height */}
                 <Box
-                  pad="medium"
+                  pad={stacked ? 'medium' : { horizontal: 'medium' }}
                   gap="small"
-                  style={stacked ? undefined : { position: 'sticky', top: 0 }}
-                  height={stacked ? undefined : { max: '100vh' }}
+                  border={
+                    stacked
+                      ? undefined
+                      : { side: 'right', color: 'border-weak' }
+                  }
+                  style={stacked ? undefined : { position: 'sticky', top: 24 }}
+                  height={stacked ? undefined : { max: 'calc(100vh - 48px)' }}
                 >
                   <Box gap="xsmall" flex={false}>
                     <TextInput

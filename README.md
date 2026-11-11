@@ -26,7 +26,7 @@ compatible versions) as `hpe-design-system/sandbox/grommet-app`. The app shell m
 - `GlobalHeader` ← `sandbox/grommet-app/src/components/GlobalHeader` (`Page kind="full"`, logo, global search, Help/Catalog/Notification/User)
 - `NavSidebar` ← `sandbox/grommet-app/src/components/NavSidebar` + `CollapsibleMenu` (titled Grommet `Sidebar` with collapse toggle, expandable text items; collapses to a rail)
 - Page anatomy ← `GlobalHeader` → `Box direction="row"` (`NavSidebar` + `Page`) → `PageContent` → `PageHeader`, as in `sandbox/grommet-app/src/pages/layouts/kinds/NavigationalSidebar`
-- List + detail ← a single `ContentPane` (`background-front`, rounded) wrapping a `Grid`; the two columns are split by a `border-weak` divider, each padding itself `medium`. The list column is sticky and scrolls internally while the page scrolls
+- List + detail ← a single `ContentPane` (`background-front`, rounded) wrapping a `Grid`; the two columns are split by a `border-weak` divider inset from the container edges (it runs the height of the sticky list box, not the full pane), each padding itself `medium`. The list column is sticky and scrolls internally while the page scrolls
 
 ```sh
 npm install
