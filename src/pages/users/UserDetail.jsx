@@ -78,15 +78,6 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
           <Box flex />
           {!editing && (
             <Box direction="row" gap="xsmall" align="center">
-              <Button
-                label="Edit"
-                icon={<Edit />}
-                secondary
-                onClick={() => {
-                  setDraft(name);
-                  setEditing(true);
-                }}
-              />
               <Menu
                 icon={<More />}
                 a11yTitle="More actions"
@@ -98,6 +89,15 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
                   },
                   { label: 'Remove user' },
                 ]}
+              />
+              <Button
+                label="Edit"
+                icon={<Edit />}
+                secondary
+                onClick={() => {
+                  setDraft(name);
+                  setEditing(true);
+                }}
               />
             </Box>
           )}
