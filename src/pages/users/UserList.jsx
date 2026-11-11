@@ -1,7 +1,7 @@
 import { Avatar, Box, List, Text } from 'grommet';
 
 const UserRow = ({ user }) => (
-  <Box direction="row" align="center" gap="small" fill="horizontal">
+  <Box direction="row" align="start" gap="small" fill="horizontal">
     <Avatar size="small" background="background-contrast">
       <Text size="xsmall" weight={500}>
         {user.initials}
@@ -15,7 +15,7 @@ const UserRow = ({ user }) => (
         {user.role}
       </Text>
     </Box>
-    <Text size="small" color="text-weak" flex={false}>
+    <Text size="xsmall" color="text-weak" flex={false}>
       {user.created}
     </Text>
   </Box>

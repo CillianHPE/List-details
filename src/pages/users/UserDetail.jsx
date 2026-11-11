@@ -197,6 +197,10 @@ const Activity = ({ user }) => (
   <List data={user.activity} pad="none">
     {(a, index) => (
       <Box
+        direction="row"
+        align="start"
+        justify="between"
+        gap="small"
         pad={{ vertical: 'small' }}
         border={
           index < user.activity.length - 1
@@ -205,7 +209,7 @@ const Activity = ({ user }) => (
         }
       >
         <Text>{a.what}</Text>
-        <Text size="small" color="text-weak">
+        <Text size="xsmall" color="text-weak" flex={false}>
           {a.when}
         </Text>
       </Box>
