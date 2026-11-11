@@ -17,7 +17,6 @@ import {
   Close,
   Edit,
   Key,
-  Mail,
   Trash,
 } from '@hpe-design/icons-grommet';
 
@@ -77,23 +76,22 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
               />
             </Box>
           ) : (
-            <>
-              <Heading level={2} size="small" margin="none">
-                {name}
-              </Heading>
-              <Button
-                icon={<Edit />}
-                a11yTitle="Rename user"
-                onClick={() => {
-                  setDraft(name);
-                  setEditing(true);
-                }}
-              />
-            </>
+            <Heading level={2} size="small" margin="none">
+              {name}
+            </Heading>
           )}
-          <StatusTag status={user.status} />
           <Box flex />
-          <Button label="Send message" icon={<Mail />} secondary />
+          {!editing && (
+            <Button
+              label="Edit"
+              icon={<Edit />}
+              secondary
+              onClick={() => {
+                setDraft(name);
+                setEditing(true);
+              }}
+            />
+          )}
         </Box>
       </Box>
       <Tabs activeIndex={tab} onActive={setTab} justify="start">
