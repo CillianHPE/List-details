@@ -38,7 +38,6 @@ export const UserList = ({ users, selectedId, onSelect }) => (
           pad={{ horizontal: 'small', vertical: 'small' }}
           border={last ? undefined : { side: 'bottom', color: 'border-weak' }}
           background={selected ? 'background-contrast' : undefined}
-          round="xsmall"
           aria-selected={selected}
         >
           <UserRow user={user} />
