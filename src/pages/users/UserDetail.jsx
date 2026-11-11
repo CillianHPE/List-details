@@ -105,8 +105,15 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
   );
 };
 
-const Section = ({ title, action, children }) => (
-  <Box gap="small" flex={false}>
+const Section = ({ title, action, contained, children }) => (
+  <Box
+    gap="small"
+    flex={false}
+    pad={contained ? { horizontal: 'medium', vertical: 'small' } : undefined}
+    border={contained ? { color: 'border-weak' } : undefined}
+    round={contained ? 'small' : undefined}
+    background={contained ? 'background-front' : undefined}
+  >
     {(title || action) && (
       <Box direction="row" align="center" justify="between">
         <Heading level={3} size="xsmall" margin="none">
@@ -228,10 +235,11 @@ const DetailBody = ({ user, tab }) => (
         <Section
           title="Roles & groups"
           action={<Button label="Assign" size="small" />}
+          contained
         >
           <Groups user={user} />
         </Section>
-        <Section title="Recent activity">
+        <Section title="Recent activity" contained>
           <Activity user={user} />
         </Section>
       </>
@@ -240,12 +248,13 @@ const DetailBody = ({ user, tab }) => (
       <Section
         title="Roles & groups"
         action={<Button label="Assign" size="small" />}
+        contained
       >
         <Groups user={user} />
       </Section>
     )}
     {tab === 2 && (
-      <Section title="Activity">
+      <Section title="Activity" contained>
         <Activity user={user} />
       </Section>
     )}
