@@ -17,12 +17,6 @@ const QUICK_FILTERS = [
   { label: 'All', value: 'all', test: () => true },
   { label: 'Active', value: 'active', test: (u) => u.status === 'Active' },
   { label: 'Invited', value: 'invited', test: (u) => u.status === 'Invited' },
-  {
-    label: 'Suspended',
-    value: 'suspended',
-    test: (u) => u.status === 'Suspended',
-  },
-  { label: 'MFA off', value: 'nomfa', test: (u) => u.mfa !== 'Enabled' },
 ];
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
