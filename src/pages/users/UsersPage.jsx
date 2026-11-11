@@ -128,7 +128,7 @@ export const UsersPage = () => {
                       {visible.length} items
                     </Text>
                   </Box>
-                  <Box overflow="auto" flex>
+                  <Box overflow="auto" flex style={{ scrollbarColor: 'auto' }}>
                     <UserList
                       users={visible}
                       selectedId={selectedId}
