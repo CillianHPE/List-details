@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -7,6 +7,7 @@ import {
   Menu,
   NameValueList,
   NameValuePair,
+  ResponsiveContext,
   Tab,
   Tabs,
   Tag,
@@ -131,8 +132,14 @@ const Section = ({ title, action, contained, children }) => (
   </Box>
 );
 
-const Properties = ({ user }) => (
-  <NameValueList nameProps={{ width: 'small' }}>
+// Stack name over value unless there's room for the two-column pair layout
+const Properties = ({ user }) => {
+  const size = useContext(ResponsiveContext);
+  return (
+  <NameValueList
+    pairProps={{ direction: size === 'xlarge' ? 'row' : 'column' }}
+    nameProps={{ width: 'small' }}
+  >
     <NameValuePair name="Email">
       <Text>{user.email}</Text>
     </NameValuePair>
@@ -154,7 +161,8 @@ const Properties = ({ user }) => (
       <Text>{user.lastActive}</Text>
     </NameValuePair>
   </NameValueList>
-);
+  );
+};
 
 const Groups = ({ user }) =>
   user.groups.length ? (
