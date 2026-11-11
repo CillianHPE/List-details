@@ -109,10 +109,9 @@ const Section = ({ title, action, contained, children }) => (
   <Box
     gap="small"
     flex={false}
-    pad={contained ? { horizontal: 'medium', vertical: 'small' } : undefined}
-    border={contained ? { color: 'border-weak' } : undefined}
-    round={contained ? 'small' : undefined}
-    background={contained ? 'background-front' : undefined}
+    pad={contained ? 'medium' : undefined}
+    round={contained ? 'medium' : undefined}
+    background={contained ? 'background-contrast' : undefined}
   >
     {(title || action) && (
       <Box direction="row" align="center" justify="between">
