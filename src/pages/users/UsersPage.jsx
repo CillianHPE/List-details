@@ -3,16 +3,27 @@ import {
   Box,
   Button,
   Heading,
-  Menu,
   ResponsiveContext,
   Text,
   TextInput,
-  Toolbar,
+  ToggleGroup,
 } from 'grommet';
-import { Filter, LinkPrev, Search } from '@hpe-design/icons-grommet';
+import { LinkPrev, Search } from '@hpe-design/icons-grommet';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
+
+const QUICK_FILTERS = [
+  { label: 'All', value: 'all', test: () => true },
+  { label: 'Active', value: 'active', test: (u) => u.status === 'Active' },
+  { label: 'Invited', value: 'invited', test: (u) => u.status === 'Invited' },
+  {
+    label: 'Suspended',
+    value: 'suspended',
+    test: (u) => u.status === 'Suspended',
+  },
+  { label: 'MFA off', value: 'nomfa', test: (u) => u.mfa !== 'Enabled' },
+];
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
 // On small screens the two columns become a drill-in (list → detail).
@@ -20,19 +31,24 @@ export const UsersPage = () => {
   const size = useContext(ResponsiveContext);
   const stacked = ['xsmall', 'small', 'medium'].includes(size);
   const [query, setQuery] = useState('');
+  const [quickFilter, setQuickFilter] = useState('all');
   const [selectedId, setSelectedId] = useState(users[0].id);
   const [showDetail, setShowDetail] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter(
-      (u) =>
+    return users.filter((u) => {
+      const matchesFilter = QUICK_FILTERS.find(
+        (f) => f.value === quickFilter,
+      ).test(u);
+      const matchesQuery =
+        !q ||
         u.name.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
-        u.role.toLowerCase().includes(q),
-    );
-  }, [query]);
+        u.role.toLowerCase().includes(q);
+      return matchesFilter && matchesQuery;
+    });
+  }, [query, quickFilter]);
 
   const selected = users.find((u) => u.id === selectedId) ?? null;
   const listVisible = !stacked || !showDetail;
@@ -89,22 +105,26 @@ export const UsersPage = () => {
               gap="xsmall"
               flex={false}
             >
-              <Toolbar>
-                <Box flex>
-                  <TextInput
-                    icon={<Search />}
-                    placeholder="Search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </Box>
-                <Button icon={<Filter />} kind="toolbar" a11yTitle="Filter" />
-                <Menu
-                  label="Action"
-                  kind="toolbar"
-                  items={[{ label: 'Select all' }, { label: 'Export selection' }]}
+              <TextInput
+                icon={<Search />}
+                placeholder="Search users"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <Box
+                overflow={{ horizontal: 'auto' }}
+                flex={false}
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                <ToggleGroup
+                  options={QUICK_FILTERS.map(({ label, value }) => ({
+                    label,
+                    value,
+                  }))}
+                  value={quickFilter}
+                  onToggle={({ value }) => value && setQuickFilter(value)}
                 />
-              </Toolbar>
+              </Box>
               <Text size="small" color="text-weak">
                 {visible.length} items
               </Text>
