@@ -194,13 +194,23 @@ const Groups = ({ user }) =>
   );
 
 const Activity = ({ user }) => (
-  <NameValueList nameProps={{ width: 'small' }}>
-    {user.activity.map((a) => (
-      <NameValuePair key={a.when + a.what} name={a.when}>
+  <List data={user.activity} pad="none">
+    {(a, index) => (
+      <Box
+        pad={{ vertical: 'small' }}
+        border={
+          index < user.activity.length - 1
+            ? { side: 'bottom', color: 'border-weak' }
+            : false
+        }
+      >
         <Text>{a.what}</Text>
-      </NameValuePair>
-    ))}
-  </NameValueList>
+        <Text size="small" color="text-weak">
+          {a.when}
+        </Text>
+      </Box>
+    )}
+  </List>
 );
 
 // E · Detail body — properties → related entities → activity
