@@ -15,9 +15,6 @@ const UserRow = ({ user }) => (
         {user.role}
       </Text>
     </Box>
-    <Text size="xsmall" color="text-weak" flex={false}>
-      {user.created}
-    </Text>
   </Box>
 );
 
