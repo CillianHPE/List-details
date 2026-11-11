@@ -94,7 +94,7 @@ export const UsersPage = () => {
                     the container edges rather than spanning its full height */}
                 <Box
                   pad={stacked ? 'medium' : { horizontal: 'medium' }}
-                  gap="small"
+                  gap="xsmall"
                   border={
                     stacked
                       ? undefined
