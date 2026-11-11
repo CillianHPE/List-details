@@ -228,17 +228,16 @@ const DetailBody = ({ user, tab }) => (
   <Box pad="medium" gap="large" overflow="auto" flex>
     {tab === 0 && (
       <>
-        <Section>
+        <Section title="Details" contained>
           <Properties user={user} />
         </Section>
         <Section
           title="Roles & groups"
           action={<Button label="Assign" size="small" />}
-          contained
         >
           <Groups user={user} />
         </Section>
-        <Section title="Recent activity" contained>
+        <Section title="Recent activity">
           <Activity user={user} />
         </Section>
       </>
@@ -247,13 +246,12 @@ const DetailBody = ({ user, tab }) => (
       <Section
         title="Roles & groups"
         action={<Button label="Assign" size="small" />}
-        contained
       >
         <Groups user={user} />
       </Section>
     )}
     {tab === 2 && (
-      <Section title="Activity" contained>
+      <Section title="Activity">
         <Activity user={user} />
       </Section>
     )}
