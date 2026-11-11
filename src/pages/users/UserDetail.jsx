@@ -107,12 +107,14 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
 
 const Section = ({ title, action, children }) => (
   <Box gap="small" flex={false}>
-    <Box direction="row" align="center" justify="between">
-      <Heading level={3} size="xsmall" margin="none">
-        {title}
-      </Heading>
-      {action}
-    </Box>
+    {(title || action) && (
+      <Box direction="row" align="center" justify="between">
+        <Heading level={3} size="xsmall" margin="none">
+          {title}
+        </Heading>
+        {action}
+      </Box>
+    )}
     {children}
   </Box>
 );
@@ -192,16 +194,13 @@ const Groups = ({ user }) =>
   );
 
 const Activity = ({ user }) => (
-  <Box gap="small">
+  <NameValueList nameProps={{ width: 'small' }}>
     {user.activity.map((a) => (
-      <Box key={a.when + a.what} direction="row" gap="small">
-        <Text size="small" color="text-weak" style={{ minWidth: 140 }}>
-          {a.when}
-        </Text>
-        <Text size="small">{a.what}</Text>
-      </Box>
+      <NameValuePair key={a.when + a.what} name={a.when}>
+        <Text>{a.what}</Text>
+      </NameValuePair>
     ))}
-  </Box>
+  </NameValueList>
 );
 
 // E · Detail body — properties → related entities → activity
@@ -209,7 +208,7 @@ const DetailBody = ({ user, tab }) => (
   <Box pad="medium" gap="large" overflow="auto" flex>
     {tab === 0 && (
       <>
-        <Section title="Profile">
+        <Section>
           <Properties user={user} />
         </Section>
         <Section
