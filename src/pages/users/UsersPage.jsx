@@ -18,7 +18,7 @@ import { UserDetail } from './UserDetail';
 // On small screens the two columns become a drill-in (list → detail).
 export const UsersPage = () => {
   const size = useContext(ResponsiveContext);
-  const stacked = size === 'xsmall' || size === 'small';
+  const stacked = ['xsmall', 'small', 'medium'].includes(size);
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState(users[0].id);
   const [showDetail, setShowDetail] = useState(false);

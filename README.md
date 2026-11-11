@@ -17,7 +17,7 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 | E · Detail body | `UserDetail` | Properties (`NameValueList`) → related entities (`DataTable` + section CTA) → activity |
 | F · Sticky footer | `UserDetail` | Destructive leftmost (Remove user), item actions, last‑active timestamp |
 
-Below the `small` breakpoint the two columns collapse into a drill‑in (list → detail with a Back button).
+Below the `medium` breakpoint (1080px) the two columns collapse into a drill‑in (list → detail with a Back button).
 
 ```sh
 npm install
