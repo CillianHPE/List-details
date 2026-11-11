@@ -53,7 +53,6 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
   return (
     <Box
       pad={{ horizontal: 'medium', top: 'small' }}
-      border={{ side: 'bottom', color: 'border-weak' }}
       flex={false}
       gap="small"
     >

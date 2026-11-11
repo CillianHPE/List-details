@@ -30,11 +30,13 @@ export const UserList = ({ users, selectedId, onSelect }) => (
     itemKey="id"
     onClickItem={({ item }) => onSelect(item.id)}
   >
-    {(user) => {
+    {(user, index) => {
       const selected = user.id === selectedId;
+      const last = index === users.length - 1;
       return (
         <Box
           pad={{ horizontal: 'medium', vertical: 'small' }}
+          border={last ? undefined : { side: 'bottom', color: 'border-weak' }}
           background={selected ? 'background-contrast' : undefined}
           aria-selected={selected}
         >
