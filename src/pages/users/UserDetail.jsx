@@ -161,13 +161,11 @@ const Groups = ({ user }) =>
           <Box>
             <Text weight={500}>{group.name}</Text>
             <Text size="small" color="text-weak">
-              {group.type}
+              {group.type} · {group.members}{' '}
+              {group.members === 1 ? 'member' : 'members'}
             </Text>
           </Box>
           <Box direction="row" align="center" gap="small">
-            <Text color="text-weak">
-              {group.members} {group.members === 1 ? 'member' : 'members'}
-            </Text>
             <Menu
               icon={<More />}
               a11yTitle={`Actions for ${group.name}`}
@@ -216,7 +214,7 @@ const DetailBody = ({ user, tab }) => (
         </Section>
         <Section
           title="Roles & groups"
-          action={<Button label="Assign group" size="small" />}
+          action={<Button label="Assign" size="small" />}
         >
           <Groups user={user} />
         </Section>
@@ -228,7 +226,7 @@ const DetailBody = ({ user, tab }) => (
     {tab === 1 && (
       <Section
         title="Roles & groups"
-        action={<Button label="Assign group" size="small" />}
+        action={<Button label="Assign" size="small" />}
       >
         <Groups user={user} />
       </Section>
