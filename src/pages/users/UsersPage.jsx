@@ -81,67 +81,73 @@ export const UsersPage = () => {
           actions={<Button label="Invite user" primary />}
         />
 
-        <Grid
-          columns={stacked ? ['auto'] : ['auto', 'flex']}
-          gap="medium"
-          align="start"
-        >
-          {/* B + C · List pane */}
-          {listVisible && (
-            <ContentPane
-              gap="small"
-              width={stacked ? undefined : { min: 'medium', max: 'large' }}
-              style={stacked ? undefined : { position: 'sticky', top: 24 }}
-              height={stacked ? undefined : { max: 'calc(100vh - 48px)' }}
-            >
-              <Box gap="xsmall" flex={false}>
-                <TextInput
-                  icon={<Search />}
-                  placeholder="Search users"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
+        {/* One contained surface holding both columns, split by a divider */}
+        <ContentPane pad="none" overflow="hidden">
+          <Grid columns={stacked ? ['auto'] : ['auto', 'flex']} align="start">
+            {/* B + C · List pane */}
+            {listVisible && (
+              <Box
+                width={stacked ? undefined : { min: 'medium', max: 'large' }}
+                border={
+                  stacked ? undefined : { side: 'right', color: 'border-weak' }
+                }
+              >
                 <Box
-                  overflow={{ horizontal: 'auto' }}
-                  flex={false}
-                  style={{ whiteSpace: 'nowrap' }}
+                  pad="medium"
+                  gap="small"
+                  style={stacked ? undefined : { position: 'sticky', top: 0 }}
+                  height={stacked ? undefined : { max: '100vh' }}
                 >
-                  <ToggleGroup
-                    options={QUICK_FILTERS.map(({ label, value }) => ({
-                      label,
-                      value,
-                    }))}
-                    value={quickFilter}
-                    onToggle={({ value }) => value && setQuickFilter(value)}
-                  />
+                  <Box gap="xsmall" flex={false}>
+                    <TextInput
+                      icon={<Search />}
+                      placeholder="Search users"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Box
+                      overflow={{ horizontal: 'auto' }}
+                      flex={false}
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      <ToggleGroup
+                        options={QUICK_FILTERS.map(({ label, value }) => ({
+                          label,
+                          value,
+                        }))}
+                        value={quickFilter}
+                        onToggle={({ value }) => value && setQuickFilter(value)}
+                      />
+                    </Box>
+                    <Text size="small" color="text-weak">
+                      {visible.length} items
+                    </Text>
+                  </Box>
+                  <Box overflow="auto" flex>
+                    <UserList
+                      users={visible}
+                      selectedId={selectedId}
+                      onSelect={onSelect}
+                    />
+                  </Box>
                 </Box>
-                <Text size="small" color="text-weak">
-                  {visible.length} items
-                </Text>
               </Box>
-              <Box overflow="auto" flex>
-                <UserList
-                  users={visible}
-                  selectedId={selectedId}
-                  onSelect={onSelect}
-                />
-              </Box>
-            </ContentPane>
-          )}
+            )}
 
-          {/* D + E · Detail pane */}
-          {detailVisible && (
-            <ContentPane>
-              {selected ? (
-                <UserDetail key={selected.id} user={selected} />
-              ) : (
-                <Box pad="large" align="center" justify="center">
-                  <Text color="text-weak">Select a user to see details</Text>
-                </Box>
-              )}
-            </ContentPane>
-          )}
-        </Grid>
+            {/* D + E · Detail pane */}
+            {detailVisible && (
+              <Box pad="medium">
+                {selected ? (
+                  <UserDetail key={selected.id} user={selected} />
+                ) : (
+                  <Box pad="large" align="center" justify="center">
+                    <Text color="text-weak">Select a user to see details</Text>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Grid>
+        </ContentPane>
       </PageContent>
     </Page>
   );
