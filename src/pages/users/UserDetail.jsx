@@ -257,7 +257,7 @@ const Activity = ({ user }) => (
 const DetailBody = ({ user, tab }) => (
   <Box pad={{ top: 'medium' }} gap="large">
     {tab === 0 && (
-      <Section title="Details" contained>
+      <Section>
         <Properties user={user} />
       </Section>
     )}
