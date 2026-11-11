@@ -2,8 +2,8 @@ import { useState } from 'react';
 import {
   Box,
   Button,
-  DataTable,
   Heading,
+  List,
   NameValueList,
   NameValuePair,
   Tab,
@@ -142,14 +142,21 @@ const Properties = ({ user }) => (
 
 const Groups = ({ user }) =>
   user.groups.length ? (
-    <DataTable
-      columns={[
-        { property: 'name', header: 'Name', primary: true },
-        { property: 'type', header: 'Type' },
-        { property: 'members', header: 'Members', align: 'end' },
-      ]}
-      data={user.groups}
-    />
+    <List data={user.groups} pad={{ vertical: 'small' }} border="bottom">
+      {(group) => (
+        <Box direction="row" align="center" justify="between" gap="small">
+          <Box>
+            <Text weight={500}>{group.name}</Text>
+            <Text size="small" color="text-weak">
+              {group.type}
+            </Text>
+          </Box>
+          <Text color="text-weak">
+            {group.members} {group.members === 1 ? 'member' : 'members'}
+          </Text>
+        </Box>
+      )}
+    </List>
   ) : (
     <Box
       pad="medium"
