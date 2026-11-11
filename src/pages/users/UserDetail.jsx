@@ -4,6 +4,7 @@ import {
   Button,
   Heading,
   List,
+  Menu,
   NameValueList,
   NameValuePair,
   Tab,
@@ -17,6 +18,7 @@ import {
   Close,
   Edit,
   Key,
+  More,
   Trash,
 } from '@hpe-design/icons-grommet';
 
@@ -162,9 +164,21 @@ const Groups = ({ user }) =>
               {group.type}
             </Text>
           </Box>
-          <Text color="text-weak">
-            {group.members} {group.members === 1 ? 'member' : 'members'}
-          </Text>
+          <Box direction="row" align="center" gap="small">
+            <Text color="text-weak">
+              {group.members} {group.members === 1 ? 'member' : 'members'}
+            </Text>
+            <Menu
+              icon={<More />}
+              a11yTitle={`Actions for ${group.name}`}
+              dropProps={{ align: { top: 'bottom', right: 'right' } }}
+              items={[
+                { label: 'View group', onClick: () => {} },
+                { label: 'Change role', onClick: () => {} },
+                { label: 'Remove from group', onClick: () => {} },
+              ]}
+            />
+          </Box>
         </Box>
       )}
     </List>
