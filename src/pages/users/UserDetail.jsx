@@ -13,14 +13,7 @@ import {
   Text,
   TextInput,
 } from 'grommet';
-import {
-  Checkmark,
-  Close,
-  Edit,
-  Key,
-  More,
-  Trash,
-} from '@hpe-design/icons-grommet';
+import { Checkmark, Close, Edit, More } from '@hpe-design/icons-grommet';
 
 const statusColor = {
   Active: 'status-ok',
@@ -84,15 +77,29 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
           )}
           <Box flex />
           {!editing && (
-            <Button
-              label="Edit"
-              icon={<Edit />}
-              secondary
-              onClick={() => {
-                setDraft(name);
-                setEditing(true);
-              }}
-            />
+            <Box direction="row" gap="xsmall" align="center">
+              <Button
+                label="Edit"
+                icon={<Edit />}
+                secondary
+                onClick={() => {
+                  setDraft(name);
+                  setEditing(true);
+                }}
+              />
+              <Menu
+                icon={<More />}
+                a11yTitle="More actions"
+                dropProps={{ align: { top: 'bottom', right: 'right' } }}
+                items={[
+                  { label: 'Reset password' },
+                  {
+                    label: user.status === 'Suspended' ? 'Reactivate' : 'Suspend',
+                  },
+                  { label: 'Remove user' },
+                ]}
+              />
+            </Box>
           )}
         </Box>
       </Box>
@@ -258,32 +265,6 @@ const DetailBody = ({ user, tab }) => (
   </Box>
 );
 
-// F · Sticky footer — destructive leftmost, item-level actions, updated-at right
-const DetailFooter = ({ user }) => (
-  <Box
-    direction="row"
-    align="center"
-    justify="between"
-    gap="small"
-    wrap
-    pad={{ horizontal: 'medium', vertical: 'small' }}
-    border={{ side: 'top', color: 'border-weak' }}
-    flex={false}
-  >
-    <Box direction="row" gap="xsmall" wrap>
-      <Button label="Remove user" icon={<Trash />} kind="toolbar" />
-      <Button label="Reset password" icon={<Key />} kind="toolbar" />
-      <Button
-        label={user.status === 'Suspended' ? 'Reactivate' : 'Suspend'}
-        kind="toolbar"
-      />
-    </Box>
-    <Text size="small" color="text-weak" style={{ whiteSpace: 'nowrap' }}>
-      Last active {user.lastActive.toLowerCase()}
-    </Text>
-  </Box>
-);
-
 export const UserDetail = ({ user }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useState(0);
@@ -297,7 +278,6 @@ export const UserDetail = ({ user }) => {
         setTab={setTab}
       />
       <DetailBody user={user} tab={tab} />
-      <DetailFooter user={user} />
     </Box>
   );
 };
