@@ -72,18 +72,7 @@ export const UsersPage = () => {
             Users
           </Heading>
         </Box>
-        <Box direction="row" gap="small">
-          <Menu
-            label="Actions"
-            kind="toolbar"
-            items={[
-              { label: 'Export users (CSV)' },
-              { label: 'Bulk import' },
-              { label: 'Manage invitations' },
-            ]}
-          />
-          <Button label="Invite user" primary />
-        </Box>
+        <Button label="Invite user" primary />
       </Box>
 
       <Box direction="row" flex overflow="hidden">
