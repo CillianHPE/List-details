@@ -34,7 +34,7 @@ const StatusTag = ({ status }) => (
 );
 
 // D · Detail header — identity, inline rename, status, sub-tabs
-const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
+const DetailHeader = ({ user, name, onRename }) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
 
@@ -102,28 +102,48 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
           )}
         </Box>
       </Box>
-      <Tabs activeIndex={tab} onActive={setTab} justify="start">
-        <Tab title="Details" />
-        <Tab title="Roles & groups" />
-        <Tab title="Activity" />
-      </Tabs>
     </Box>
   );
 };
 
-const Section = ({ title, action, contained, children }) => (
+// Keeps a heading in the document outline without rendering it visibly
+const visuallyHidden = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  margin: -1,
+  padding: 0,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+};
+
+const Section = ({ title, hideTitle, action, contained, children }) => (
   <Box
     gap="small"
     flex={false}
+    margin={{ top: 'medium' }}
     pad={contained ? 'medium' : undefined}
     round={contained ? 'medium' : undefined}
     background={contained ? 'background-contrast' : undefined}
   >
-    {(title || action) && (
-      <Box direction="row" align="center" justify="between">
-        <Heading level={3} size="xsmall" margin="none">
-          {title}
-        </Heading>
+    {hideTitle && (
+      <Heading level={3} margin="none" style={visuallyHidden}>
+        {title}
+      </Heading>
+    )}
+    {((title && !hideTitle) || action) && (
+      <Box
+        direction="row"
+        align="center"
+        justify={hideTitle ? 'end' : 'between'}
+      >
+        {!hideTitle && (
+          <Heading level={3} size="xsmall" margin="none">
+            {title}
+          </Heading>
+        )}
         {action}
       </Box>
     )}
@@ -253,28 +273,36 @@ const Activity = ({ user }) => (
   </List>
 );
 
-// E · Detail body — one section per tab
-const DetailBody = ({ user, tab }) => (
-  <Box pad={{ top: 'medium' }} gap="large">
-    {tab === 0 && (
-      <Section>
+// E · Detail body — Tabs own their panels so each tabpanel is labelled by its
+// tab; a visually hidden h3 keeps every panel in the heading outline.
+const DetailBody = ({ user, tab, setTab }) => (
+  <Tabs
+    activeIndex={tab}
+    onActive={setTab}
+    justify="start"
+    flex={false}
+    margin={{ top: 'small' }}
+  >
+    <Tab title="Details">
+      <Section title="Details" hideTitle>
         <Properties user={user} />
       </Section>
-    )}
-    {tab === 1 && (
+    </Tab>
+    <Tab title="Roles & groups">
       <Section
         title="Roles & groups"
+        hideTitle
         action={<Button label="Assign" size="small" />}
       >
         <Groups user={user} />
       </Section>
-    )}
-    {tab === 2 && (
-      <Section title="Activity">
+    </Tab>
+    <Tab title="Activity">
+      <Section title="Activity" hideTitle>
         <Activity user={user} />
       </Section>
-    )}
-  </Box>
+    </Tab>
+  </Tabs>
 );
 
 export const UserDetail = ({ user }) => {
@@ -282,14 +310,8 @@ export const UserDetail = ({ user }) => {
   const [tab, setTab] = useState(0);
   return (
     <Box>
-      <DetailHeader
-        user={user}
-        name={name}
-        onRename={setName}
-        tab={tab}
-        setTab={setTab}
-      />
-      <DetailBody user={user} tab={tab} />
+      <DetailHeader user={user} name={name} onRename={setName} />
+      <DetailBody user={user} tab={tab} setTab={setTab} />
     </Box>
   );
 };
