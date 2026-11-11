@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -7,7 +7,6 @@ import {
   Menu,
   NameValueList,
   NameValuePair,
-  ResponsiveContext,
   Tab,
   Tabs,
   Tag,
@@ -104,7 +103,7 @@ const DetailHeader = ({ user, name, onRename, tab, setTab }) => {
         </Box>
       </Box>
       <Tabs activeIndex={tab} onActive={setTab} justify="start">
-        <Tab title="Overview" />
+        <Tab title="Details" />
         <Tab title="Roles & groups" />
         <Tab title="Activity" />
       </Tabs>
@@ -132,35 +131,52 @@ const Section = ({ title, action, contained, children }) => (
   </Box>
 );
 
-// Stack name over value unless there's room for the two-column pair layout
+// Horizontal name/value pairs; stack vertically once the container is too
+// narrow to hold the name column plus a reasonable value column.
+const PAIR_ROW_MIN_WIDTH = 480;
+
 const Properties = ({ user }) => {
-  const size = useContext(ResponsiveContext);
+  const ref = useRef(null);
+  const [direction, setDirection] = useState('row');
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const observer = new ResizeObserver(([entry]) =>
+      setDirection(
+        entry.contentRect.width < PAIR_ROW_MIN_WIDTH ? 'column' : 'row',
+      ),
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   return (
-  <NameValueList
-    pairProps={{ direction: size === 'xlarge' ? 'row' : 'column' }}
-    nameProps={{ width: 'small' }}
-  >
-    <NameValuePair name="Email">
-      <Text>{user.email}</Text>
-    </NameValuePair>
-    <NameValuePair name="Role">
-      <Box align="start">
-        <Tag value={user.role} size="small" />
-      </Box>
-    </NameValuePair>
-    <NameValuePair name="Status">
-      <StatusTag status={user.status} />
-    </NameValuePair>
-    <NameValuePair name="Multi-factor auth">
-      <Text>{user.mfa}</Text>
-    </NameValuePair>
-    <NameValuePair name="Created">
-      <Text>{user.created}</Text>
-    </NameValuePair>
-    <NameValuePair name="Last active">
-      <Text>{user.lastActive}</Text>
-    </NameValuePair>
-  </NameValueList>
+    <Box ref={ref}>
+      <NameValueList
+        pairProps={{ direction }}
+        nameProps={{ width: 'small' }}
+      >
+        <NameValuePair name="Email">
+          <Text>{user.email}</Text>
+        </NameValuePair>
+        <NameValuePair name="Role">
+          <Box align="start">
+            <Tag value={user.role} size="small" />
+          </Box>
+        </NameValuePair>
+        <NameValuePair name="Status">
+          <StatusTag status={user.status} />
+        </NameValuePair>
+        <NameValuePair name="Multi-factor auth">
+          <Text>{user.mfa}</Text>
+        </NameValuePair>
+        <NameValuePair name="Created">
+          <Text>{user.created}</Text>
+        </NameValuePair>
+        <NameValuePair name="Last active">
+          <Text>{user.lastActive}</Text>
+        </NameValuePair>
+      </NameValueList>
+    </Box>
   );
 };
 
@@ -237,24 +253,13 @@ const Activity = ({ user }) => (
   </List>
 );
 
-// E · Detail body — properties → related entities → activity
+// E · Detail body — one section per tab
 const DetailBody = ({ user, tab }) => (
   <Box pad={{ top: 'medium' }} gap="large">
     {tab === 0 && (
-      <>
-        <Section title="Details" contained>
-          <Properties user={user} />
-        </Section>
-        <Section
-          title="Roles & groups"
-          action={<Button label="Assign" size="small" />}
-        >
-          <Groups user={user} />
-        </Section>
-        <Section title="Recent activity">
-          <Activity user={user} />
-        </Section>
-      </>
+      <Section title="Details" contained>
+        <Properties user={user} />
+      </Section>
     )}
     {tab === 1 && (
       <Section
