@@ -13,7 +13,6 @@ import {
   TextInput,
 } from 'grommet';
 import {
-  Add,
   Checkmark,
   Close,
   Edit,
@@ -187,7 +186,7 @@ const DetailBody = ({ user, tab }) => (
         </Section>
         <Section
           title="Roles & groups"
-          action={<Button label="Assign group" icon={<Add />} size="small" />}
+          action={<Button label="Assign group" size="small" />}
         >
           <Groups user={user} />
         </Section>
@@ -199,7 +198,7 @@ const DetailBody = ({ user, tab }) => (
     {tab === 1 && (
       <Section
         title="Roles & groups"
-        action={<Button label="Assign group" icon={<Add />} size="small" />}
+        action={<Button label="Assign group" size="small" />}
       >
         <Groups user={user} />
       </Section>

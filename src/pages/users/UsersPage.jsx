@@ -9,7 +9,7 @@ import {
   TextInput,
   Toolbar,
 } from 'grommet';
-import { Add, Filter, LinkPrev, Search } from '@hpe-design/icons-grommet';
+import { Filter, LinkPrev, Search } from '@hpe-design/icons-grommet';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
@@ -82,12 +82,7 @@ export const UsersPage = () => {
               { label: 'Manage invitations' },
             ]}
           />
-          <Button
-            label={stacked ? undefined : 'Invite user'}
-            a11yTitle="Invite user"
-            icon={<Add />}
-            primary
-          />
+          <Button label="Invite user" primary />
         </Box>
       </Box>
 
