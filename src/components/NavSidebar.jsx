@@ -1,4 +1,4 @@
-import { Box, Button, Nav } from 'grommet';
+import { Button, Nav, Sidebar } from 'grommet';
 import {
   Home,
   Group,
@@ -17,10 +17,10 @@ const items = [
   { icon: Catalog, label: 'Audit log' },
 ];
 
-// Collapsed, icon-only side nav (AppShell "Navigation - Collapsed")
+// Collapsed, icon-only side nav (AppShell "Navigation - Collapsed").
+// Uses Grommet Sidebar + Nav like hpe-design-system/sandbox/grommet-app NavSidebar.
 export const NavSidebar = () => (
-  <Box
-    as="aside"
+  <Sidebar
     background="background-front"
     round="small"
     pad="xsmall"
@@ -38,5 +38,5 @@ export const NavSidebar = () => (
         />
       ))}
     </Nav>
-  </Box>
+  </Sidebar>
 );

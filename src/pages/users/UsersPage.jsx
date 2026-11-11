@@ -1,8 +1,9 @@
 import { useContext, useMemo, useState } from 'react';
 import {
+  Anchor,
   Box,
   Button,
-  Heading,
+  PageHeader,
   ResponsiveContext,
   Text,
   TextInput,
@@ -61,29 +62,23 @@ export const UsersPage = () => {
       flex
       overflow="hidden"
     >
-      {/* A · Page header — collection-level actions */}
-      <Box
-        direction="row"
-        align="center"
-        justify="between"
-        pad={{ horizontal: 'medium', top: 'medium', bottom: 'small' }}
-        gap="small"
-        flex={false}
-      >
-        <Box direction="row" align="center" gap="xsmall">
-          {stacked && showDetail && (
-            <Button
+      {/* A · Page header — Grommet PageHeader (title / parent / actions slots) */}
+      <PageHeader
+        title="Users"
+        size="small"
+        parent={
+          stacked && showDetail ? (
+            <Anchor
               icon={<LinkPrev />}
-              a11yTitle="Back to users"
+              label="All users"
               onClick={() => setShowDetail(false)}
             />
-          )}
-          <Heading level={1} size="small" margin="none">
-            Users
-          </Heading>
-        </Box>
-        <Button label="Invite user" primary />
-      </Box>
+          ) : undefined
+        }
+        actions={<Button label="Invite user" primary />}
+        pad={{ horizontal: 'medium', top: 'medium', bottom: 'small' }}
+        flex={false}
+      />
 
       <Box direction="row" flex overflow="hidden">
         {/* B + C · List column */}
