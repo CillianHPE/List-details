@@ -341,7 +341,7 @@ const BREAKPOINTS = {
     'A',
     'Comfortable',
     '≥ 1000px surface width',
-    'Two columns. Fixed list 256–384px (size.small–size.medium); the detail zone takes the remaining width. Measured on the surface, not the viewport (see Shell configuration below).',
+    'Two columns, proportional 40 / 60 (list min 256px, size.small). Measured on the surface, not the viewport (see Shell configuration below).',
     'Navigation pane expanded',
     'Everything has room: labelled actions, a single row of tabs, name | value pairs side by side.',
   ),
@@ -349,12 +349,12 @@ const BREAKPOINTS = {
     'B',
     'Compact',
     '760 – 999px surface width',
-    'Two columns. The list is held at its 256px (size.small) minimum so the detail zone keeps most of the width.',
+    'Two columns, still 40 / 60: list 304–400px, detail 456–600px. The 256px (size.small) floor never binds above 640px.',
     'Navigation pane collapsed to icons',
     'Chrome gives way first: secondary actions fold into overflow, tabs scroll, the detail header may wrap.',
     {
       questions:
-        '192px (size.xsmall) was tried and truncated two-line rows; 256px (size.small) is the smallest that fits avatar + two lines. Should Compact drop to a proportional list instead?',
+        'Proportional keeps the detail under 600px for the whole Compact range. Should Compact pin the list to its 256px (size.small) floor instead, giving the detail up to 720px?',
     },
   ),
   narrow: region(
@@ -395,11 +395,11 @@ const RESPONSIVE = {
     'two columns → stacked',
     'The arrangement of the two zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns [auto, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
+    'Grid columns minmax(256px, 2fr) 3fr from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
     {
       at: {
-        wide: 'Grid [auto, flex]; list 256–384px (size.small–size.medium).',
-        medium: 'Grid [auto, flex]; list pinned to 256px (size.small).',
+        wide: 'Grid minmax(256px, 2fr) 3fr; list 40% (400–576px at 1000–1440).',
+        medium: 'Same grid; list 40% (304–400px), detail 60% (456–600px).',
         narrow: 'Single column; list screen, then detail screen on selection.',
       },
     },
@@ -574,14 +574,8 @@ const ResponsiveFrame = ({ bp }) => {
             >
               <Zone
                 name="List"
-                width={
-                  narrow
-                    ? '100%'
-                    : medium
-                      ? '256px (size.small)'
-                      : '256–384px (size.small–size.medium)'
-                }
-                style={{ width: narrow ? '100%' : medium ? '36%' : '42%' }}
+                width={narrow ? '100%' : '40% · min 256px (size.small)'}
+                style={{ width: narrow ? '100%' : '40%' }}
                 flex={false}
               >
                 <ListGhost rows={narrow ? 7 : 5} />
@@ -719,14 +713,11 @@ const shellLayout = (width, nav, context) => {
   const main = width - gutter * 2 - navTakes - ctxTakes;
   const available = main - pad * 2;
   const tier = tierFor(available);
+  // Proportional zones: list 40% of the surface, floored at listMin.
   const list =
-    tier === 'comfortable'
-      ? Math.round(
-          Math.min(SURFACE.listMax, Math.max(SURFACE.listMin, available / 3)),
-        )
-      : tier === 'compact'
-        ? SURFACE.listMin
-        : available;
+    tier === 'drillIn'
+      ? available
+      : Math.round(Math.max(SURFACE.listMin, available * SURFACE.listShare));
   const detail = tier === 'drillIn' ? 0 : available - list - SURFACE.gap;
   const conflict =
     nav === 'expanded' && context && !overlay && width < SHELL.coexistFrom;
@@ -750,12 +741,12 @@ const TIERS = {
   comfortable: {
     label: 'Comfortable · two columns',
     color: 'brand',
-    rule: `≥ ${SURFACE.comfortableMin}px available. List clamps ${SURFACE.listMin}–${SURFACE.listMax}px (size.xsmall–size.medium), detail takes the rest; name–value pairs stay side by side.`,
+    rule: `≥ ${SURFACE.comfortableMin}px available. List ${SURFACE.listShare * 100}% (min ${SURFACE.listMin}px, size.small), detail ${(1 - SURFACE.listShare) * 100}%; name–value pairs stay side by side.`,
   },
   compact: {
     label: 'Compact · two columns',
     color: 'status-warning',
-    rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. List pinned to ${SURFACE.listMin}px (size.xsmall); detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
+    rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. Still ${SURFACE.listShare * 100} / ${(1 - SURFACE.listShare) * 100}; detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
   },
   drillIn: {
     label: 'Drill-in · one column',

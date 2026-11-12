@@ -5,13 +5,21 @@ import { useEffect, useRef, useState } from 'react';
 // cannot drift apart.
 
 export const SURFACE = {
-  listMin: 256, // size.small
-  listMax: 384, // size.medium
+  listMin: 256, // size.small — floor so avatar + two lines of text fit
+  listMax: 384, // size.medium — ceiling used by the Fixed / Resizable variants
+  listShare: 0.4, // Proportional variant: list 40%, detail 60%
   gap: 24, // edgeSize.medium
   detailMin: 480, // name–value pairs stack under this
 };
 SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 760
 SURFACE.comfortableMin = 1000;
+
+// Proportional zones for Grommet Grid: list minmax(256px, 2fr) · detail 3fr.
+// The floor keeps rows legible when 40% of a Compact surface would be too thin.
+export const PROPORTIONAL_COLUMNS = [
+  [`${SURFACE.listMin}px`, `${SURFACE.listShare * 10}fr`],
+  `${(1 - SURFACE.listShare) * 10}fr`,
+];
 
 // The surface responds to its own width, not the viewport's, because the app
 // shell's navigation and context panes take width first.

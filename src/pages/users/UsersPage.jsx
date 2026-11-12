@@ -14,7 +14,7 @@ import {
   ToggleGroup,
 } from 'grommet';
 import { Add, LinkPrev, More, Search } from '@hpe-design/icons-grommet';
-import { useSurfaceTier } from '../../pattern/listDetail';
+import { PROPORTIONAL_COLUMNS, useSurfaceTier } from '../../pattern/listDetail';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
@@ -148,20 +148,18 @@ export const UsersPage = () => {
           overflow={bare ? undefined : 'hidden'}
           round={bare ? false : 'xlarge'}
         >
-          <Grid columns={stacked ? ['auto'] : ['auto', 'flex']} align="start">
+          {/* Proportional zones (Anatomy › Zones): list 40% / detail 60%,
+              list floored at 256px (size.small). */}
+          <Grid
+            columns={stacked ? ['auto'] : PROPORTIONAL_COLUMNS}
+            align="start"
+          >
             {/* B + C · List pane */}
             {listVisible && (
               <Box
-                width={
-                  stacked
-                    ? undefined
-                    : tier === 'compact'
-                      ? 'small'
-                      : { min: 'small', max: 'medium' }
-                }
                 pad={stacked || bare ? undefined : { vertical: 'medium' }}
                 // Grid items default to min-width:auto, which would let the
-                // toolbar's intrinsic width push the column past its token.
+                // toolbar's intrinsic width override the fr share.
                 style={stacked ? undefined : { minWidth: 0 }}
               >
                 {/* Divider lives on the sticky inner box so it stops short of
