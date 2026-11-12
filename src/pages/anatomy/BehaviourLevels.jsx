@@ -689,7 +689,8 @@ const SHELL = {
   header: 60,
   gutter: 12, // outer page gutter ≥1024
   gutterSmall: 6, // outer page gutter ≤768
-  nav: 256,
+  nav: 256, // expanded
+  navRail: 48, // collapsed to an icon rail — measured in the Shell v3 prototype
   context: 425,
   gap: 12, // between panes
   mainPad: 24, // Main horizontal padding each side ≥1024
@@ -710,11 +711,15 @@ SURFACE.comfortableMin = 1000;
 
 const BROWSER_WIDTHS = [1920, 1536, 1366, 1024, 768, 414];
 
+const NAV_WIDTH = { expanded: SHELL.nav, collapsed: SHELL.navRail, hidden: 0 };
+
+// nav: 'expanded' | 'collapsed' | 'hidden'
 const shellLayout = (width, nav, context) => {
   const overlay = width < SHELL.overlayBelow;
   const gutter = overlay ? SHELL.gutterSmall : SHELL.gutter;
   const pad = overlay ? SHELL.mainPadSmall : SHELL.mainPad;
-  const navTakes = nav && !overlay ? SHELL.nav + SHELL.gap : 0;
+  const navPx = NAV_WIDTH[nav] || 0;
+  const navTakes = navPx && !overlay ? navPx + SHELL.gap : 0;
   const ctxTakes = context && !overlay ? SHELL.context + SHELL.gap : 0;
   const main = width - gutter * 2 - navTakes - ctxTakes;
   const available = main - pad * 2;
@@ -733,9 +738,11 @@ const shellLayout = (width, nav, context) => {
         ? SURFACE.listMin
         : available;
   const detail = tier === 'drillIn' ? 0 : available - list - SURFACE.gap;
-  const conflict = nav && context && !overlay && width < SHELL.coexistFrom;
+  const conflict =
+    nav === 'expanded' && context && !overlay && width < SHELL.coexistFrom;
   return {
     overlay,
+    navPx,
     gutter,
     pad,
     navTakes,
@@ -804,8 +811,8 @@ const ShellBar = ({ width, nav, context, layout: l }) => {
           position: 'absolute',
           top: 0,
           bottom: 0,
-          [label === 'Nav' ? 'left' : 'right']: 0,
-          width: `${(Math.min(label === 'Nav' ? SHELL.nav : SHELL.context, width * 0.8) / width) * 100}%`,
+          [label === 'Context' ? 'right' : 'left']: 0,
+          width: `${(Math.min(label === 'Context' ? SHELL.context : SHELL.nav, width * 0.8) / width) * 100}%`,
           background: 'rgba(255,255,255,0.85)',
         }}
         border={{ color: 'border', style: 'dashed' }}
@@ -829,7 +836,11 @@ const ShellBar = ({ width, nav, context, layout: l }) => {
         overflow="hidden"
       >
         <Seg px={l.gutter} total={width} />
-        <Pane px={l.navTakes} label="Nav" on={nav} />
+        <Pane
+          px={l.navTakes}
+          label={nav === 'collapsed' ? 'Rail' : 'Nav'}
+          on={nav !== 'hidden'}
+        />
         <Seg px={l.main} total={width}>
           <Box direction="row" align="stretch" height="64px">
             <Seg px={l.pad} total={l.main} />
@@ -892,9 +903,8 @@ const Num = ({ label, value, note }) => (
 
 const ShellConfigExplorer = () => {
   const [width, setWidth] = useState(1366);
-  const [panes, setPanes] = useState(['nav']);
-  const nav = panes.includes('nav');
-  const context = panes.includes('context');
+  const [nav, setNav] = useState('expanded');
+  const [context, setContext] = useState(false);
   const l = shellLayout(width, nav, context);
   const tier = TIERS[l.tier];
   return (
@@ -912,16 +922,29 @@ const ShellConfigExplorer = () => {
         </Box>
         <Box gap="xsmall">
           <Text size="small" weight={500} color="text-weak">
-            Panes open
+            Navigation
           </Text>
           <ToggleGroup
-            multiple
             options={[
-              { label: `Nav ${SHELL.nav}px`, value: 'nav' },
-              { label: `Context pane ${SHELL.context}px`, value: 'context' },
+              { label: `Expanded ${SHELL.nav}px`, value: 'expanded' },
+              { label: `Collapsed ${SHELL.navRail}px`, value: 'collapsed' },
+              { label: 'Hidden', value: 'hidden' },
             ]}
-            value={panes}
-            onToggle={({ value }) => setPanes(value)}
+            value={nav}
+            onToggle={({ value }) => value && setNav(value)}
+          />
+        </Box>
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Context pane
+          </Text>
+          <ToggleGroup
+            options={[
+              { label: `Open ${SHELL.context}px`, value: true },
+              { label: 'Closed', value: false },
+            ]}
+            value={context}
+            onToggle={({ value }) => value !== undefined && setContext(value)}
           />
         </Box>
       </Box>
@@ -935,7 +958,7 @@ const ShellConfigExplorer = () => {
           note={
             l.overlay
               ? `${width} − 2×${l.gutter} gutter (panes overlay)`
-              : `${width} − 2×${l.gutter} gutter${nav ? ` − ${SHELL.nav}+${SHELL.gap} nav` : ''}${context ? ` − ${SHELL.context}+${SHELL.gap} context` : ''}`
+              : `${width} − 2×${l.gutter} gutter${l.navPx ? ` − ${l.navPx}+${SHELL.gap} nav` : ''}${context ? ` − ${SHELL.context}+${SHELL.gap} context` : ''}`
           }
         />
         <Num
@@ -965,19 +988,23 @@ const ShellConfigExplorer = () => {
           gap="xxsmall"
         >
           <Text size="small" weight={500}>
-            Shell rule · nav and context pane are mutually exclusive under{' '}
-            {SHELL.coexistFrom}px
+            Shell rule · expanded nav and context pane are mutually exclusive
+            under {SHELL.coexistFrom}px
           </Text>
           <Text size="small">
             With both open only {l.available}px is left. Opening the context
-            pane should collapse the navigation (and vice versa); the pane the
-            user just opened wins. From {SHELL.coexistFrom}px both can stay open
-            and the surface still gets ≥{' '}
-            {shellLayout(SHELL.coexistFrom, true, true).available}px.
+            pane should collapse the navigation to its {SHELL.navRail}px rail,
+            leaving {shellLayout(width, 'collapsed', true).available}px (
+            {TIERS[shellLayout(width, 'collapsed', true).tier].label
+              .split(' ·')[0]
+              .toLowerCase()}
+            ); expanding the nav again closes the context pane. From{' '}
+            {SHELL.coexistFrom}px both can stay open and the surface still gets
+            ≥ {shellLayout(SHELL.coexistFrom, 'expanded', true).available}px.
           </Text>
         </Box>
       )}
-      {l.overlay && (nav || context) && (
+      {l.overlay && (nav !== 'hidden' || context) && (
         <Text size="small" color="text-weak">
           Under {SHELL.overlayBelow}px the panes float over the page, so they
           take no width from the surface — the Figma set shows no inline panes
@@ -991,9 +1018,10 @@ const ShellConfigExplorer = () => {
 // Every width × pane combination at a glance
 const ShellMatrix = () => {
   const combos = [
-    ['Nav open', true, false],
-    ['Context open', false, true],
-    ['Both open', true, true],
+    ['Nav expanded', 'expanded', false],
+    ['Nav collapsed', 'collapsed', false],
+    ['Rail + context', 'collapsed', true],
+    ['Nav + context', 'expanded', true],
   ];
   const cell = { padding: '6px 16px 6px 0', textAlign: 'left' };
   return (
@@ -1061,16 +1089,17 @@ export const ResponsiveLevel = () => (
       </Text>
       <Text size="small" color="text-weak">
         The breakpoints above assume the surface owns the viewport. In the V3.1
-        shell the navigation ({SHELL.nav}px) and the context pane (
-        {SHELL.context}px) take width first, so the surface should respond to
-        its own container width, not the browser's. Toggle panes to see what is
-        left and which tier the surface lands in.
+        shell the navigation ({SHELL.nav}px expanded, {SHELL.navRail}px
+        collapsed to a rail) and the context pane ({SHELL.context}px) take width
+        first, so the surface should respond to its own container width, not the
+        browser's. Toggle panes to see what is left and which tier the surface
+        lands in.
       </Text>
       <ShellConfigExplorer />
       <Box gap="xsmall" margin={{ top: 'small' }}>
         <Text size="small" weight={500} color="text-weak">
-          All configurations · px available to the surface (✕ = both panes open
-          under {SHELL.coexistFrom}px, disallowed)
+          All configurations · px available to the surface (✕ = expanded nav
+          with context pane under {SHELL.coexistFrom}px, disallowed)
         </Text>
         <ShellMatrix />
       </Box>
