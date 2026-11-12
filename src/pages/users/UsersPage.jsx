@@ -15,7 +15,7 @@ import {
 } from 'grommet';
 import { Add, LinkPrev, More, Search } from '@hpe-design/icons-grommet';
 import { listWidthFor, useSurfaceTier } from '../../pattern/listDetail';
-import { users } from '../../data/users';
+import { users as allUsers } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
 import {
@@ -48,7 +48,9 @@ const ContentPane = forwardRef((props, ref) => (
 //   comfortable ≥ 1000px  list clamps size.small–size.medium
 //   compact     760–999px list pinned to size.small
 //   drill-in    < 760px   one column, list → detail
-export const UsersPage = () => {
+// `users` lets a route render a sparse variant (e.g. three users) to study
+// how the list zone behaves with little data.
+export const UsersPage = ({ users = allUsers }) => {
   const { ref: surfaceRef, width: surfaceWidth, tier } = useSurfaceTier();
   const stacked = tier === 'drillIn';
   // V3.1 shell: content sits directly on the white canvas, so the list–detail

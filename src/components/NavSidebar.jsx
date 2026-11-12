@@ -17,6 +17,11 @@ export const navItems = {
     href: '#/default',
   },
   'Shell v3': { key: 'proto-v3', label: 'Shell v3', href: '#/v3' },
+  'Shell v3 · few users': {
+    key: 'proto-v3-few',
+    label: 'Shell v3 · few users',
+    href: '#/v3-few',
+  },
 };
 
 // Items with an href navigate the prototype; others only update selection.

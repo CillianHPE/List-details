@@ -5,12 +5,15 @@ import { DefaultShell } from './shell/DefaultShell';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
+import { users } from './data/users';
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/default  → Users in the default HPE shell
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
+//   #/v3-few   → same, with only three users (sparse-data variant)
 //   #/anatomy  → lo-fi region/role map of the pattern
-const VERSIONS = ['anatomy', 'default', 'v3'];
+const VERSIONS = ['anatomy', 'default', 'v3', 'v3-few'];
+const fewUsers = users.slice(0, 3);
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
   return VERSIONS.includes(v) ? v : 'default';
@@ -38,6 +41,11 @@ const App = () => {
       {version === 'v3' && (
         <V3Shell>
           <UsersPage />
+        </V3Shell>
+      )}
+      {version === 'v3-few' && (
+        <V3Shell>
+          <UsersPage users={fewUsers} />
         </V3Shell>
       )}
       {version === 'anatomy' &&
