@@ -1,4 +1,40 @@
-import { Box, Heading, Paragraph, Text } from 'grommet';
+import { createContext, useContext } from 'react';
+import { Anchor, Box, Heading, Paragraph, Text } from 'grommet';
+
+// Lets legend entries jump to another group/tab (e.g. Behaviour → Scroll).
+export const AnatomyNav = createContext(() => {});
+
+export const BEHAVIOUR_TABS = [
+  'Scroll & height',
+  'Responsive',
+  'States',
+  'Data & performance',
+  'Actions & ownership',
+];
+
+// Cross-reference from a Structure legend entry to a Behaviour tab
+export const see = (...tabs) => ({
+  see: tabs.map((t) => ({ group: 'behaviour', tab: t })),
+});
+
+const SeeAlso = ({ links }) => {
+  const go = useContext(AnatomyNav);
+  return (
+    <Text size="small" color="text-weak">
+      See Behaviour →{' '}
+      {links.map((l, i) => (
+        <Text key={l.tab} size="small">
+          {i > 0 && ' · '}
+          <Anchor
+            size="small"
+            label={BEHAVIOUR_TABS[l.tab]}
+            onClick={() => go(l.group, l.tab)}
+          />
+        </Text>
+      ))}
+    </Text>
+  );
+};
 
 // Shared lo-fi wireframe primitives for the anatomy page.
 
@@ -133,7 +169,7 @@ export const GhostRows = ({ count = 5, selected = 0 }) =>
     </Box>
   ));
 
-export const Legend = ({ regions }) => (
+export const Legend = ({ regions, labels }) => (
   <Box as="dl" margin="none">
     {Object.values(regions).map((r, i, arr) => (
       <Box
@@ -148,7 +184,7 @@ export const Legend = ({ regions }) => (
           <Badge region={r} />
         </Box>
         <Box as="dd" margin={{ left: '32px' }}>
-          <RegionDetails region={r} />
+          <RegionDetails region={r} labels={labels} />
         </Box>
       </Box>
     ))}
@@ -188,6 +224,7 @@ export const RegionDetails = ({ region: r, labels = {} }) => {
           {r.questions}
         </Text>
       )}
+      {r.see && <SeeAlso links={r.see} />}
     </Box>
   );
 };
@@ -198,6 +235,7 @@ export const Level = ({
   control,
   wireframe,
   regions,
+  labels,
   children,
 }) => (
   <Box gap="medium" pad={{ top: 'medium' }}>
@@ -215,7 +253,7 @@ export const Level = ({
     {children ?? (
       <>
         {wireframe}
-        <Legend regions={regions} />
+        <Legend regions={regions} labels={labels} />
       </>
     )}
   </Box>
