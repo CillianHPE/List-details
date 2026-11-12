@@ -680,12 +680,401 @@ const ResponsiveExplorer = () => {
   );
 };
 
+// ---------------------------------------------------------------------------
+// Shell configuration — how much of the browser the list–detail surface
+// actually receives once the V3.1 shell's panes are accounted for.
+// Measurements taken from the "App shell configurations" section in Figma.
+
+const SHELL = {
+  header: 60,
+  gutter: 12, // outer page gutter ≥1024
+  gutterSmall: 6, // outer page gutter ≤768
+  nav: 256,
+  context: 425,
+  gap: 12, // between panes
+  mainPad: 24, // Main horizontal padding each side ≥1024
+  mainPadSmall: 12, // ≤768
+  overlayBelow: 1024, // panes float over the page at or under this width
+  coexistFrom: 1536, // nav + context may be open together from here
+};
+
+// What the surface needs to stay two-column
+const SURFACE = {
+  listMin: 192, // size.medium
+  listMax: 384, // size.large
+  gap: 24, // edgeSize.medium
+  detailMin: 480, // pairs stack under this
+};
+SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 696
+SURFACE.comfortableMin = 1000;
+
+const BROWSER_WIDTHS = [1920, 1536, 1366, 1024, 768, 414];
+
+const shellLayout = (width, nav, context) => {
+  const overlay = width < SHELL.overlayBelow;
+  const gutter = overlay ? SHELL.gutterSmall : SHELL.gutter;
+  const pad = overlay ? SHELL.mainPadSmall : SHELL.mainPad;
+  const navTakes = nav && !overlay ? SHELL.nav + SHELL.gap : 0;
+  const ctxTakes = context && !overlay ? SHELL.context + SHELL.gap : 0;
+  const main = width - gutter * 2 - navTakes - ctxTakes;
+  const available = main - pad * 2;
+  const tier =
+    available >= SURFACE.comfortableMin
+      ? 'comfortable'
+      : available >= SURFACE.twoColumnMin
+        ? 'compact'
+        : 'drillIn';
+  const list =
+    tier === 'comfortable'
+      ? Math.round(
+          Math.min(SURFACE.listMax, Math.max(SURFACE.listMin, available / 3)),
+        )
+      : tier === 'compact'
+        ? SURFACE.listMin
+        : available;
+  const detail = tier === 'drillIn' ? 0 : available - list - SURFACE.gap;
+  const conflict = nav && context && !overlay && width < SHELL.coexistFrom;
+  return {
+    overlay,
+    gutter,
+    pad,
+    navTakes,
+    ctxTakes,
+    main,
+    available,
+    tier,
+    list,
+    detail,
+    conflict,
+  };
+};
+
+const TIERS = {
+  comfortable: {
+    label: 'Comfortable · two columns',
+    color: 'brand',
+    rule: `≥ ${SURFACE.comfortableMin}px available. List clamps ${SURFACE.listMin}–${SURFACE.listMax}px (size.medium–size.large), detail takes the rest; name–value pairs stay side by side.`,
+  },
+  compact: {
+    label: 'Compact · two columns',
+    color: 'status-warning',
+    rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. List pinned to ${SURFACE.listMin}px (size.medium); detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
+  },
+  drillIn: {
+    label: 'Drill-in · one column',
+    color: 'status-critical',
+    rule: `< ${SURFACE.twoColumnMin}px available (${SURFACE.listMin} list + ${SURFACE.gap} gap + ${SURFACE.detailMin} detail). One zone at a time: list first, detail on selection with Back.`,
+  },
+};
+
+// Proportional bar: every segment's width is its real px share of the browser
+const Seg = ({ px, total, label, children, ...rest }) => (
+  <Box
+    style={{ width: `${(px / total) * 100}%` }}
+    flex={false}
+    justify="center"
+    overflow="hidden"
+    {...rest}
+  >
+    {label && (
+      <Text size="xsmall" textAlign="center" truncate>
+        {label}
+      </Text>
+    )}
+    {children}
+  </Box>
+);
+
+const ShellBar = ({ width, nav, context, layout: l }) => {
+  const tierColor = TIERS[l.tier].color;
+  const Pane = ({ px, label, on }) =>
+    px > 0 ? (
+      <Seg
+        px={px - SHELL.gap}
+        total={width}
+        label={label}
+        background="background-contrast"
+        round="xsmall"
+        height="64px"
+        margin={{ horizontal: `${(SHELL.gap / 2 / width) * 100}%` }}
+      />
+    ) : on && l.overlay ? (
+      <Box
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          [label === 'Nav' ? 'left' : 'right']: 0,
+          width: `${(Math.min(label === 'Nav' ? SHELL.nav : SHELL.context, width * 0.8) / width) * 100}%`,
+          background: 'rgba(255,255,255,0.85)',
+        }}
+        border={{ color: 'border', style: 'dashed' }}
+        round="xsmall"
+        justify="center"
+      >
+        <Text size="xsmall" textAlign="center">
+          {label} (overlay)
+        </Text>
+      </Box>
+    ) : null;
+  return (
+    <Box gap="xsmall">
+      <Box
+        direction="row"
+        align="center"
+        border={{ color: 'border' }}
+        round="xsmall"
+        pad={{ vertical: 'xsmall' }}
+        style={{ position: 'relative' }}
+        overflow="hidden"
+      >
+        <Seg px={l.gutter} total={width} />
+        <Pane px={l.navTakes} label="Nav" on={nav} />
+        <Seg px={l.main} total={width}>
+          <Box direction="row" align="stretch" height="64px">
+            <Seg px={l.pad} total={l.main} />
+            {l.tier === 'drillIn' ? (
+              <Seg
+                px={l.available}
+                total={l.main}
+                border={{ color: tierColor, size: 'small' }}
+                round="xsmall"
+                label={`List or Detail · ${l.available}px`}
+              />
+            ) : (
+              <>
+                <Seg
+                  px={l.list}
+                  total={l.main}
+                  border={{ color: tierColor, size: 'small' }}
+                  round="xsmall"
+                  label={`List ${l.list}`}
+                />
+                <Seg px={SURFACE.gap} total={l.main} />
+                <Seg
+                  px={l.detail}
+                  total={l.main}
+                  border={{ color: tierColor, size: 'small' }}
+                  round="xsmall"
+                  label={`Detail ${l.detail}`}
+                />
+              </>
+            )}
+            <Seg px={l.pad} total={l.main} />
+          </Box>
+        </Seg>
+        <Pane px={l.ctxTakes} label="Context" on={context} />
+        <Seg px={l.gutter} total={width} />
+      </Box>
+      <Box direction="row" justify="between">
+        <Mono color="text-weak">0</Mono>
+        <Mono color="text-weak">{width}px browser</Mono>
+      </Box>
+    </Box>
+  );
+};
+
+const Num = ({ label, value, note }) => (
+  <Box>
+    <Text size="xsmall" color="text-weak">
+      {label}
+    </Text>
+    <Box direction="row" gap="xsmall" align="baseline">
+      <Mono color="text">{value}</Mono>
+      {note && (
+        <Text size="xsmall" color="text-weak">
+          {note}
+        </Text>
+      )}
+    </Box>
+  </Box>
+);
+
+const ShellConfigExplorer = () => {
+  const [width, setWidth] = useState(1366);
+  const [panes, setPanes] = useState(['nav']);
+  const nav = panes.includes('nav');
+  const context = panes.includes('context');
+  const l = shellLayout(width, nav, context);
+  const tier = TIERS[l.tier];
+  return (
+    <Box gap="medium">
+      <Box direction="row" gap="large" wrap align="center">
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Browser width
+          </Text>
+          <ToggleGroup
+            options={BROWSER_WIDTHS.map((w) => ({ label: `${w}`, value: w }))}
+            value={width}
+            onToggle={({ value }) => value && setWidth(value)}
+          />
+        </Box>
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Panes open
+          </Text>
+          <ToggleGroup
+            multiple
+            options={[
+              { label: `Nav ${SHELL.nav}px`, value: 'nav' },
+              { label: `Context pane ${SHELL.context}px`, value: 'context' },
+            ]}
+            value={panes}
+            onToggle={({ value }) => setPanes(value)}
+          />
+        </Box>
+      </Box>
+
+      <ShellBar width={width} nav={nav} context={context} layout={l} />
+
+      <Box direction="row" gap="large" wrap>
+        <Num
+          label="Main pane"
+          value={`${l.main}px`}
+          note={
+            l.overlay
+              ? `${width} − 2×${l.gutter} gutter (panes overlay)`
+              : `${width} − 2×${l.gutter} gutter${nav ? ` − ${SHELL.nav}+${SHELL.gap} nav` : ''}${context ? ` − ${SHELL.context}+${SHELL.gap} context` : ''}`
+          }
+        />
+        <Num
+          label="Available to surface"
+          value={`${l.available}px`}
+          note={`Main − 2×${l.pad} padding`}
+        />
+        <Num
+          label="Needed for two columns"
+          value={`${SURFACE.twoColumnMin}px`}
+          note={`${SURFACE.listMin} + ${SURFACE.gap} + ${SURFACE.detailMin}`}
+        />
+      </Box>
+
+      <Box gap="xsmall">
+        <Box direction="row" gap="xsmall" align="center">
+          <Tag color={tier.color}>{tier.label}</Tag>
+        </Box>
+        <Text size="small">{tier.rule}</Text>
+      </Box>
+
+      {l.conflict && (
+        <Box
+          background={{ color: 'status-critical', opacity: 'weak' }}
+          pad="small"
+          round="xsmall"
+          gap="xxsmall"
+        >
+          <Text size="small" weight={500}>
+            Shell rule · nav and context pane are mutually exclusive under{' '}
+            {SHELL.coexistFrom}px
+          </Text>
+          <Text size="small">
+            With both open only {l.available}px is left. Opening the context
+            pane should collapse the navigation (and vice versa); the pane the
+            user just opened wins. From {SHELL.coexistFrom}px both can stay open
+            and the surface still gets ≥{' '}
+            {shellLayout(SHELL.coexistFrom, true, true).available}px.
+          </Text>
+        </Box>
+      )}
+      {l.overlay && (nav || context) && (
+        <Text size="small" color="text-weak">
+          Under {SHELL.overlayBelow}px the panes float over the page, so they
+          take no width from the surface — the Figma set shows no inline panes
+          at 768 or 414.
+        </Text>
+      )}
+    </Box>
+  );
+};
+
+// Every width × pane combination at a glance
+const ShellMatrix = () => {
+  const combos = [
+    ['Nav open', true, false],
+    ['Context open', false, true],
+    ['Both open', true, true],
+  ];
+  const cell = { padding: '6px 16px 6px 0', textAlign: 'left' };
+  return (
+    <table style={{ borderCollapse: 'collapse' }}>
+      <thead>
+        <tr>
+          <th style={cell}>
+            <Text size="xsmall" color="text-weak" weight={400}>
+              Browser
+            </Text>
+          </th>
+          {combos.map(([name]) => (
+            <th key={name} style={cell}>
+              <Text size="xsmall" color="text-weak" weight={400}>
+                {name}
+              </Text>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {BROWSER_WIDTHS.map((w) => (
+          <tr key={w}>
+            <td style={cell}>
+              <Mono color="text">{w}</Mono>
+            </td>
+            {combos.map(([name, nav, context]) => {
+              const l = shellLayout(w, nav, context);
+              return (
+                <td key={name} style={cell}>
+                  <Box direction="row" gap="xsmall" align="center">
+                    <Box
+                      width="8px"
+                      height="8px"
+                      round="full"
+                      background={TIERS[l.tier].color}
+                      flex={false}
+                    />
+                    <Mono color="text">{l.available}</Mono>
+                    {l.conflict && (
+                      <Text size="xsmall" color="status-critical">
+                        ✕
+                      </Text>
+                    )}
+                  </Box>
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
 export const ResponsiveLevel = () => (
   <Level
     title="Responsive behaviour"
     intro="Pick a width to see how the shell, the surface and the detail zone re-flow. The summary states the rule for that width; the list below gives each region's rule at that width."
   >
     <ResponsiveExplorer />
+    <Box gap="small" margin={{ top: 'large' }}>
+      <Text size="large" weight={500}>
+        Shell configuration
+      </Text>
+      <Text size="small" color="text-weak">
+        The breakpoints above assume the surface owns the viewport. In the V3.1
+        shell the navigation ({SHELL.nav}px) and the context pane (
+        {SHELL.context}px) take width first, so the surface should respond to
+        its own container width, not the browser's. Toggle panes to see what is
+        left and which tier the surface lands in.
+      </Text>
+      <ShellConfigExplorer />
+      <Box gap="xsmall" margin={{ top: 'small' }}>
+        <Text size="small" weight={500} color="text-weak">
+          All configurations · px available to the surface (✕ = both panes open
+          under {SHELL.coexistFrom}px, disallowed)
+        </Text>
+        <ShellMatrix />
+      </Box>
+    </Box>
   </Level>
 );
 
