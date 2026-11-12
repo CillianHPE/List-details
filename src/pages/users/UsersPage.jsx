@@ -25,25 +25,18 @@ const QUICK_FILTERS = [
 ];
 
 // Contained surface, as hpe-design-system/sandbox/grommet-app ContentPane
-// On the white V3 canvas the pane needs a border to read as a container.
-const ContentPane = (props) => {
-  const shell = useShell();
-  return (
-    <Box
-      background="background-front"
-      pad="medium"
-      round="small"
-      border={shell === 'v3' ? { color: 'border-weak' } : undefined}
-      {...props}
-    />
-  );
-};
+const ContentPane = (props) => (
+  <Box background="background-front" pad="medium" round="small" {...props} />
+);
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
 // On small screens the two columns become a drill-in (list → detail).
 export const UsersPage = () => {
   const size = useContext(ResponsiveContext);
   const stacked = ['xsmall', 'small', 'medium'].includes(size);
+  // V3.1 shell: content sits directly on the white canvas, so the list–detail
+  // surface drops its own container chrome (border, outer padding).
+  const bare = useShell() === 'v3';
   const [query, setQuery] = useState('');
   const [quickFilter, setQuickFilter] = useState('all');
   const [selectedId, setSelectedId] = useState(users[0].id);
@@ -99,12 +92,20 @@ export const UsersPage = () => {
             {listVisible && (
               <Box
                 width={stacked ? undefined : { min: 'medium', max: 'large' }}
-                pad={stacked ? undefined : { vertical: 'medium' }}
+                pad={stacked || bare ? undefined : { vertical: 'medium' }}
               >
                 {/* Divider lives on the sticky inner box so it stops short of
                     the container edges rather than spanning its full height */}
                 <Box
-                  pad={stacked ? 'medium' : { horizontal: 'medium' }}
+                  pad={
+                    bare
+                      ? stacked
+                        ? { vertical: 'medium' }
+                        : { right: 'medium' }
+                      : stacked
+                        ? 'medium'
+                        : { horizontal: 'medium' }
+                  }
                   gap="xsmall"
                   border={
                     stacked
@@ -152,7 +153,11 @@ export const UsersPage = () => {
 
             {/* D + E · Detail pane */}
             {detailVisible && (
-              <Box pad="medium">
+              <Box
+                pad={
+                  bare ? (stacked ? undefined : { left: 'medium' }) : 'medium'
+                }
+              >
                 {selected ? (
                   <UserDetail key={selected.id} user={selected} />
                 ) : (
