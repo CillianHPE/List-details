@@ -2,16 +2,29 @@ import { useState } from 'react';
 import {
   Box,
   CheckBox,
-  Heading,
   Page,
   PageContent,
   PageHeader,
-  Paragraph,
   Tab,
   Tabs,
-  Text,
   ToggleGroup,
 } from 'grommet';
+import {
+  region,
+  Block,
+  Focus,
+  Ghost,
+  Dim,
+  GhostRows,
+  Level,
+} from './primitives';
+import {
+  ScrollLevel,
+  ResponsiveLevel,
+  StatesLevel,
+  DataLevel,
+  ActionsLevel,
+} from './BehaviourLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -20,16 +33,6 @@ import {
 //   Detail · inside the detail zone (header + tabs + body)
 // Each level has a wireframe and a legend of its regions (role / owns /
 // controls / behaviour).
-
-const region = (id, name, role, owns, controls, behaviour, extra = {}) => ({
-  id,
-  name,
-  role,
-  owns,
-  controls,
-  behaviour,
-  ...extra,
-});
 
 const PAGE = {
   header: region(
@@ -183,117 +186,6 @@ const DETAIL = {
     'Fills the remaining height and scrolls with the page. Section-level actions sit at the top of the area.',
   ),
 };
-
-const Badge = ({ region: r, size = 'medium' }) => (
-  <Box direction="row" gap="xsmall" align="center" wrap>
-    <Box
-      background="text-strong"
-      round="full"
-      width={{ min: '24px' }}
-      height="24px"
-      pad={{ horizontal: '4xsmall' }}
-      align="center"
-      justify="center"
-      flex={false}
-    >
-      <Text size="xsmall" weight={700} color="#ffffff">
-        {r.id}
-      </Text>
-    </Box>
-    <Text weight={500} size={size}>
-      {r.name}
-    </Text>
-    <Text size="small" color="text-weak" style={{ fontFamily: 'monospace' }}>
-      {r.role}
-    </Text>
-  </Box>
-);
-
-// Dashed, unfilled wireframe block
-const Block = ({ region: r, children, ...rest }) => (
-  <Box
-    border={{ color: 'border', style: 'dashed', size: 'small' }}
-    round="xsmall"
-    pad="small"
-    gap="small"
-    {...rest}
-  >
-    <Badge region={r} />
-    {children}
-  </Box>
-);
-
-// Solid, emphasised block used for the regions a level is focused on
-const Focus = ({ region: r, label, children, ...rest }) => (
-  <Box
-    border={{ color: 'brand', size: 'small' }}
-    round="xsmall"
-    pad="small"
-    gap="small"
-    background="background-front"
-    {...rest}
-  >
-    <Box direction="row" justify="between" align="start" gap="small" wrap>
-      <Badge region={r} />
-      {label && (
-        <Text
-          size="small"
-          color="brand"
-          weight={500}
-          style={{ fontFamily: 'monospace' }}
-        >
-          {label}
-        </Text>
-      )}
-    </Box>
-    {children}
-  </Box>
-);
-
-const Ghost = ({ width = '100%', height = '12px', ...rest }) => (
-  <Box
-    background="background-contrast"
-    round="xsmall"
-    width={width}
-    height={height}
-    flex={false}
-    {...rest}
-  />
-);
-
-// De-emphasised placeholder for regions outside the current zoom level
-const Dim = ({ label, ...rest }) => (
-  <Box
-    border={{ color: 'border-weak', style: 'dashed' }}
-    round="xsmall"
-    pad="small"
-    align="center"
-    justify="center"
-    {...rest}
-  >
-    <Text size="small" color="text-weak">
-      {label}
-    </Text>
-  </Box>
-);
-
-const GhostRows = ({ count = 5, selected = 0 }) =>
-  Array.from({ length: count }, (_, i) => (
-    <Box
-      key={i}
-      direction="row"
-      gap="small"
-      align="center"
-      pad="xsmall"
-      background={i === selected ? 'background-contrast' : undefined}
-    >
-      <Ghost width="32px" height="32px" round="full" />
-      <Box gap="xxsmall" flex>
-        <Ghost width="70%" />
-        <Ghost width="50%" height="8px" />
-      </Box>
-    </Box>
-  ));
 
 // ---------------------------------------------------------------------------
 // Level 1 · Page — where the surface sits in the shell
@@ -514,67 +406,12 @@ const DetailWireframe = () => (
   </Box>
 );
 
-const Legend = ({ regions }) => (
-  <Box as="dl" margin="none">
-    {Object.values(regions).map((r, i, arr) => (
-      <Box
-        key={r.id}
-        pad={{ vertical: 'medium' }}
-        border={
-          i < arr.length - 1 ? { side: 'bottom', color: 'border-weak' } : false
-        }
-        gap="xsmall"
-      >
-        <Box as="dt">
-          <Badge region={r} />
-        </Box>
-        <Box as="dd" margin={{ left: '32px' }} gap="xxsmall">
-          {r.space && (
-            <Text>
-              <Text weight={500}>Space · </Text>
-              {r.space}
-            </Text>
-          )}
-          <Text>
-            <Text weight={500}>Owns · </Text>
-            {r.owns}
-          </Text>
-          <Text>
-            <Text weight={500}>Controls · </Text>
-            {r.controls}
-          </Text>
-          <Text color="text-weak">
-            <Text weight={500}>Behaviour · </Text>
-            {r.behaviour}
-          </Text>
-        </Box>
-      </Box>
-    ))}
-  </Box>
-);
-
-const Level = ({ title, intro, control, wireframe, regions }) => (
-  <Box gap="medium" pad={{ top: 'medium' }}>
-    <Box direction="row" justify="between" align="start" gap="medium" wrap>
-      <Box gap="xsmall" width={{ max: 'large' }}>
-        <Heading level={2} margin="none">
-          {title}
-        </Heading>
-        <Paragraph margin="none" fill>
-          {intro}
-        </Paragraph>
-      </Box>
-      {control}
-    </Box>
-    {wireframe}
-    <Legend regions={regions} />
-  </Box>
-);
-
 export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
   const [shell, setShell] = useState('default');
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
+  const [group, setGroup] = useState('structure');
+  const [behaviour, setBehaviour] = useState(0);
   return (
     <Page pad={{ bottom: 'xlarge' }}>
       <PageContent gap="medium">
@@ -592,60 +429,89 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
             )
           }
         />
-        <Tabs activeIndex={level} onActive={setLevel} justify="start">
-          <Tab title="Page">
-            <Level
-              title="Where the surface sits"
-              intro="Shell regions (1–3) are shared by every page. The page header carries the one collection-level action; the list–detail surface fills the rest of Main."
-              control={
-                <ToggleGroup
-                  options={[
-                    { label: 'Default shell', value: 'default' },
-                    { label: 'Shell v3', value: 'v3' },
-                  ]}
-                  value={shell}
-                  onToggle={({ value }) => value && setShell(value)}
-                />
-              }
-              wireframe={<PageWireframe variant={shell} />}
-              regions={PAGE}
-            />
-          </Tab>
-          <Tab title="Zones">
-            <Level
-              title="List zone and detail zone"
-              intro="Two zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
-              control={
-                <ToggleGroup
-                  options={ZONE_VARIANTS.map(({ label, value }) => ({
-                    label,
-                    value,
-                  }))}
-                  value={zone}
-                  onToggle={({ value }) => value && setZone(value)}
-                />
-              }
-              wireframe={<ZonesWireframe variant={zone} />}
-              regions={ZONES}
-            />
-          </Tab>
-          <Tab title="List zone">
-            <Level
-              title="Inside the list zone"
-              intro="A sticky toolbar narrows the collection; the body below scrolls on its own and holds exactly one selection."
-              wireframe={<ListWireframe />}
-              regions={LIST}
-            />
-          </Tab>
-          <Tab title="Detail zone">
-            <Level
-              title="Inside the detail zone"
-              intro="The header mirrors the page header — heading on the left, record actions on the right. Tabs appear only when the record has several facets. Below is a single content area that takes whatever fits: pairs, a list, a table."
-              wireframe={<DetailWireframe />}
-              regions={DETAIL}
-            />
-          </Tab>
-        </Tabs>
+        <ToggleGroup
+          options={[
+            { label: 'Structure', value: 'structure' },
+            { label: 'Behaviour', value: 'behaviour' },
+          ]}
+          value={group}
+          onToggle={({ value }) => value && setGroup(value)}
+        />
+        {group === 'behaviour' && (
+          <Tabs activeIndex={behaviour} onActive={setBehaviour} justify="start">
+            <Tab title="Scroll & height">
+              <ScrollLevel />
+            </Tab>
+            <Tab title="Responsive">
+              <ResponsiveLevel />
+            </Tab>
+            <Tab title="States">
+              <StatesLevel />
+            </Tab>
+            <Tab title="Data & performance">
+              <DataLevel />
+            </Tab>
+            <Tab title="Actions & ownership">
+              <ActionsLevel />
+            </Tab>
+          </Tabs>
+        )}
+        {group === 'structure' && (
+          <Tabs activeIndex={level} onActive={setLevel} justify="start">
+            <Tab title="Page">
+              <Level
+                title="Where the surface sits"
+                intro="Shell regions (1–3) are shared by every page. The page header carries the one collection-level action; the list–detail surface fills the rest of Main."
+                control={
+                  <ToggleGroup
+                    options={[
+                      { label: 'Default shell', value: 'default' },
+                      { label: 'Shell v3', value: 'v3' },
+                    ]}
+                    value={shell}
+                    onToggle={({ value }) => value && setShell(value)}
+                  />
+                }
+                wireframe={<PageWireframe variant={shell} />}
+                regions={PAGE}
+              />
+            </Tab>
+            <Tab title="Zones">
+              <Level
+                title="List zone and detail zone"
+                intro="Two zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
+                control={
+                  <ToggleGroup
+                    options={ZONE_VARIANTS.map(({ label, value }) => ({
+                      label,
+                      value,
+                    }))}
+                    value={zone}
+                    onToggle={({ value }) => value && setZone(value)}
+                  />
+                }
+                wireframe={<ZonesWireframe variant={zone} />}
+                regions={ZONES}
+              />
+            </Tab>
+            <Tab title="List zone">
+              <Level
+                title="Inside the list zone"
+                intro="A sticky toolbar narrows the collection; the body below scrolls on its own and holds exactly one selection."
+                wireframe={<ListWireframe />}
+                regions={LIST}
+              />
+            </Tab>
+            <Tab title="Detail zone">
+              <Level
+                title="Inside the detail zone"
+                intro="The header mirrors the page header — heading on the left, record actions on the right. Tabs appear only when the record has several facets. Below is a single content area that takes whatever fits: pairs, a list, a table."
+                wireframe={<DetailWireframe />}
+                regions={DETAIL}
+              />
+            </Tab>
+          </Tabs>
+        )}
       </PageContent>
     </Page>
   );
