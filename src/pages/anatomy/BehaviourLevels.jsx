@@ -10,7 +10,7 @@ import {
   Level,
   RegionDetails,
 } from './primitives';
-import { SURFACE, tierFor } from '../../pattern/listDetail';
+import { SURFACE, listWidthFor, tierFor } from '../../pattern/listDetail';
 
 // Behaviour levels: the questions developers ask once the regions are named.
 //   Scroll      · who owns overflow, what sticks, where height comes from
@@ -395,10 +395,10 @@ const RESPONSIVE = {
     'two columns → stacked',
     'The arrangement of the two zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns minmax(256px, 2fr) 3fr from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
+    'Grid columns [40% in px, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
     {
       at: {
-        wide: 'Grid minmax(256px, 2fr) 3fr; list 40% (400–576px at 1000–1440).',
+        wide: 'Grid [40% in px, flex]; list 40% (400–576px at 1000–1440).',
         medium: 'Same grid; list 40% (304–400px), detail 60% (456–600px).',
         narrow: 'Single column; list screen, then detail screen on selection.',
       },
@@ -713,11 +713,7 @@ const shellLayout = (width, nav, context) => {
   const main = width - gutter * 2 - navTakes - ctxTakes;
   const available = main - pad * 2;
   const tier = tierFor(available);
-  // Proportional zones: list 40% of the surface, floored at listMin.
-  const list =
-    tier === 'drillIn'
-      ? available
-      : Math.round(Math.max(SURFACE.listMin, available * SURFACE.listShare));
+  const list = tier === 'drillIn' ? available : listWidthFor(available);
   const detail = tier === 'drillIn' ? 0 : available - list - SURFACE.gap;
   const conflict =
     nav === 'expanded' && context && !overlay && width < SHELL.coexistFrom;

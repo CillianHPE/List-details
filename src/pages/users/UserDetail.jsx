@@ -16,12 +16,16 @@ import {
 import {
   Checkmark,
   Close,
+  Group,
   More,
+  Organization,
+  ShieldCheck,
   StatusCritical,
   StatusGood,
   StatusInfo,
   Trash,
 } from '@hpe-design/icons-grommet';
+import { EmptyState } from '../../components/EmptyState';
 
 // HPE DS status indicator template: semantic icon + visible label.
 // https://design-system.hpe.design/templates/status-indicator
@@ -277,12 +281,6 @@ const ListRow = ({ index, count, children }) => (
   </Box>
 );
 
-const EmptyState = ({ children }) => (
-  <Box pad="large" align="center">
-    <Text color="text-weak">{children}</Text>
-  </Box>
-);
-
 const RoleAssignments = ({ user }) => {
   const rows = user.roleAssignments;
   return rows.length ? (
@@ -315,7 +313,13 @@ const RoleAssignments = ({ user }) => {
       )}
     </List>
   ) : (
-    <EmptyState>No role assignments</EmptyState>
+    <EmptyState
+      level={4}
+      icon={<ShieldCheck />}
+      title="No role assignments"
+      description="Roles granted to this user, directly or through a group, will be listed here."
+      actions={<Button label="Assign roles" primary />}
+    />
   );
 };
 
@@ -340,7 +344,13 @@ const Groups = ({ user }) =>
       )}
     </List>
   ) : (
-    <EmptyState>No user group membership</EmptyState>
+    <EmptyState
+      level={4}
+      icon={<Group />}
+      title="Not a member of any user groups"
+      description="Groups this user belongs to will be listed here."
+      actions={<Button label="Add to user groups" primary />}
+    />
   );
 
 const OrgWorkspaces = ({ user }) =>
@@ -358,22 +368,25 @@ const OrgWorkspaces = ({ user }) =>
       )}
     </List>
   ) : (
-    <EmptyState>No organization workspace membership</EmptyState>
+    <EmptyState
+      level={4}
+      icon={<Organization />}
+      title="No organization workspace membership"
+      description="Workspaces in the organization that this user can access will be listed here."
+    />
   );
 
 // E · Detail body — Tabs own their panels so each tabpanel is labelled by its
 // tab; a visually hidden h3 keeps every panel in the heading outline.
 // Tabs never wrap: Grommet's Tabs detects overflow and swaps to a scrolling
 // tablist with previous/next arrows (Anatomy › Responsive › Detail tabs).
-// alignControls="start" lets the tablist shrink to its content; a full-width
-// tablist on a fractional column (e.g. 1062.74px) trips Grommet's
-// scrollWidth > offsetWidth rounding and shows arrows with nothing clipped.
+// Grommet's overflow check (scrollWidth > offsetWidth) misfires on fractional
+// widths, so the page keeps the grid columns in whole px (see listDetail.js).
 const DetailBody = ({ user, tab, setTab }) => (
   <Tabs
     activeIndex={tab}
     onActive={setTab}
     justify="start"
-    alignControls="start"
     flex={false}
     margin={{ top: 'small' }}
   >
@@ -386,7 +399,11 @@ const DetailBody = ({ user, tab, setTab }) => (
       <Section
         title="Role assignments"
         hideTitle
-        action={<Button label="Assign roles" secondary />}
+        action={
+          user.roleAssignments.length > 0 && (
+            <Button label="Assign roles" secondary />
+          )
+        }
       >
         <RoleAssignments user={user} />
       </Section>
@@ -395,7 +412,11 @@ const DetailBody = ({ user, tab, setTab }) => (
       <Section
         title="User group membership"
         hideTitle
-        action={<Button label="Add to user groups" secondary />}
+        action={
+          user.groups.length > 0 && (
+            <Button label="Add to user groups" secondary />
+          )
+        }
       >
         <Groups user={user} />
       </Section>

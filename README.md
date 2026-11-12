@@ -28,7 +28,7 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 
 The surface follows the Anatomy **Responsive** tiers, measured on its own width (a `ResizeObserver`, not the viewport — the shell's nav/context panes take width first). Rules live once in `src/pattern/listDetail.js` and are read by both the prototype and the Anatomy page:
 
-- **Comfortable** ≥ 1000px — zones are **proportional 40 / 60** (`Grid minmax(256px, 2fr) 3fr`, the Anatomy *Proportional* variant); all page‑header actions labelled.
+- **Comfortable** ≥ 1000px — zones are **proportional 40 / 60** (`Grid [40% in px, flex]`, the Anatomy *Proportional* variant); all page‑header actions labelled.
 - **Compact** 760–999px — same 40 / 60 split (list floored at 256px, `size.small`); the Divider toggle folds into an overflow `Menu`, **Add users** keeps its label.
 - **Drill‑in** < 760px — one column (list → detail); `PageHeader.parent` holds the **All users** back link; **Add users** becomes an icon button.
 

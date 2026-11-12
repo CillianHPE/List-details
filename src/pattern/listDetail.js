@@ -14,12 +14,12 @@ export const SURFACE = {
 SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 760
 SURFACE.comfortableMin = 1000;
 
-// Proportional zones for Grommet Grid: list minmax(256px, 2fr) · detail 3fr.
-// The floor keeps rows legible when 40% of a Compact surface would be too thin.
-export const PROPORTIONAL_COLUMNS = [
-  [`${SURFACE.listMin}px`, `${SURFACE.listShare * 10}fr`],
-  `${(1 - SURFACE.listShare) * 10}fr`,
-];
+// Proportional zones: list = 40% of the surface, floored at listMin; detail
+// takes the rest. Returned in whole px (not fr units) so both grid columns are
+// integers — Grommet Tabs compares scrollWidth with offsetWidth and a
+// fractional tablist width (e.g. 758.15px) rounds into a false overflow.
+export const listWidthFor = (surfaceWidth) =>
+  Math.round(Math.max(SURFACE.listMin, surfaceWidth * SURFACE.listShare));
 
 // The surface responds to its own width, not the viewport's, because the app
 // shell's navigation and context panes take width first.

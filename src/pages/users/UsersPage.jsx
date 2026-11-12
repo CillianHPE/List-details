@@ -14,7 +14,7 @@ import {
   ToggleGroup,
 } from 'grommet';
 import { Add, LinkPrev, More, Search } from '@hpe-design/icons-grommet';
-import { PROPORTIONAL_COLUMNS, useSurfaceTier } from '../../pattern/listDetail';
+import { listWidthFor, useSurfaceTier } from '../../pattern/listDetail';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
@@ -48,7 +48,7 @@ const ContentPane = forwardRef((props, ref) => (
 //   compact     760–999px list pinned to size.small
 //   drill-in    < 760px   one column, list → detail
 export const UsersPage = () => {
-  const { ref: surfaceRef, tier } = useSurfaceTier();
+  const { ref: surfaceRef, width: surfaceWidth, tier } = useSurfaceTier();
   const stacked = tier === 'drillIn';
   // V3.1 shell: content sits directly on the white canvas, so the list–detail
   // surface drops its own container chrome (border, outer padding).
@@ -149,9 +149,13 @@ export const UsersPage = () => {
           round={bare ? false : 'xlarge'}
         >
           {/* Proportional zones (Anatomy › Zones): list 40% / detail 60%,
-              list floored at 256px (size.small). */}
+              list floored at 256px (size.small), in whole px. */}
           <Grid
-            columns={stacked ? ['auto'] : PROPORTIONAL_COLUMNS}
+            columns={
+              stacked
+                ? ['auto']
+                : [`${listWidthFor(surfaceWidth ?? 1440)}px`, 'flex']
+            }
             align="start"
           >
             {/* B + C · List pane */}

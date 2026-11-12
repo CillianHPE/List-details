@@ -137,7 +137,7 @@ const ZONE_VARIANTS = [
     listWidth: '40%',
     listLabel: '40% · min 256px (size.small)',
     detailLabel: '60%',
-    note: 'Current behaviour (Users prototype). Both zones scale with the surface, keeping a 2:3 ratio — Grid minmax(256px, 2fr) 3fr. Suits lists with richer rows (status, meta) at the cost of a narrower detail column on small surfaces.',
+    note: 'Current behaviour (Users prototype). Both zones scale with the surface, keeping a 2:3 ratio — Grid [40% in px, flex]. Suits lists with richer rows (status, meta) at the cost of a narrower detail column on small surfaces.',
   },
   {
     value: 'resizable',
