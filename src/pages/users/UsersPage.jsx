@@ -93,7 +93,7 @@ export const UsersPage = () => {
                 checked={divider}
                 onChange={(e) => setDivider(e.target.checked)}
               />
-              <Button label="Invite user" primary />
+              <Button label="Add users" secondary />
             </Box>
           }
         />

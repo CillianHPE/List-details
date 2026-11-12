@@ -44,7 +44,7 @@ const REGIONS = {
     name: 'Page header',
     role: 'PageHeader · <h1>',
     owns: 'Page title, subtitle and page-level primary action.',
-    controls: 'Primary button (e.g. Invite user) · back link when drilled in',
+    controls: 'Page action button (e.g. Add users) · back link when drilled in',
     behaviour: 'Scrolls with content. Back link appears only in stacked mode.',
   },
   listToolbar: {

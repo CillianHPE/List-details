@@ -20,7 +20,7 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 
 | Zone | Component | Holds |
 | --- | --- | --- |
-| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), primary **Invite user** |
+| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), secondary **Add users** · Divider toggle (prototype control) |
 | B · List toolbar | `UsersPage` | Full‑width search, `ToggleGroup` quick filters (All / Active / Invited), item count |
 | C · List body | `UserList` | 2‑line rows (avatar, name, role, date top‑right); selected row = contrast fill |
 | D · Detail header | `UserDetail` | Name (h2) + inline rename, **Actions** `Menu` grouped per DS guidance (Edit name / Change role / Reset password / Resend invite · Suspend · Remove user last), sub‑tabs |
