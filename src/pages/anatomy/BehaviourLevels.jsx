@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Grid, Text, ToggleGroup } from 'grommet';
+import { Box, Button, Grid, Text, ToggleGroup } from 'grommet';
 import {
   region,
   Badge,
@@ -8,6 +8,7 @@ import {
   Dim,
   GhostRows,
   Level,
+  RegionDetails,
 } from './primitives';
 
 // Behaviour levels: the questions developers ask once the regions are named.
@@ -638,21 +639,12 @@ const STATES = {
   ),
 };
 
-const StateCard = ({ r, children }) => (
-  <Box gap="xsmall">
-    <Badge region={r} size="small" />
-    <Frame height="190px" direction="row" pad="xsmall" gap="xsmall">
-      {children}
-    </Frame>
-  </Box>
-);
-
 const Hot = ({ children, ...rest }) => (
   <Box
     border={{ color: 'brand', size: 'small' }}
     round="xsmall"
-    pad="xsmall"
-    gap="xsmall"
+    pad="small"
+    gap="small"
     background="background-front"
     {...rest}
   >
@@ -661,64 +653,76 @@ const Hot = ({ children, ...rest }) => (
 );
 
 const Msg = ({ children, action }) => (
-  <Box flex align="center" justify="center" gap="xsmall" pad="xsmall">
-    <Text size="small" textAlign="center">
-      {children}
-    </Text>
+  <Box flex align="center" justify="center" gap="small" pad="small">
+    <Text textAlign="center">{children}</Text>
     {action && <Tag>{action}</Tag>}
   </Box>
 );
 
-const StatesWireframe = () => (
-  <Grid columns={{ count: 'fit', size: 'medium' }} gap="medium">
-    <StateCard r={STATES.loading}>
+const Pair = () => (
+  <Box direction="row" gap="small">
+    <Ghost width="30%" height="10px" />
+    <Ghost width="50%" height="10px" />
+  </Box>
+);
+
+// One large wireframe per state. Highlighted (brand) blocks show where the
+// state renders; dimmed blocks keep working untouched.
+const STATE_FRAMES = {
+  loading: (
+    <>
       <Hot width="40%">
-        <Ghost height="20px" />
-        <GhostRows count={3} selected={-1} />
+        <Ghost height="28px" />
+        <GhostRows count={5} selected={-1} />
       </Hot>
       <Hot flex>
-        <Ghost width="50%" height="16px" />
-        {[0, 1, 2].map((i) => (
-          <Box key={i} direction="row" gap="xsmall">
-            <Ghost width="30%" height="8px" />
-            <Ghost width="50%" height="8px" />
-          </Box>
+        <Ghost width="50%" height="20px" />
+        {[0, 1, 2, 3].map((i) => (
+          <Pair key={i} />
         ))}
       </Hot>
-    </StateCard>
-    <StateCard r={STATES.emptyCollection}>
-      <Hot flex>
-        <Msg action="Add users">No users yet</Msg>
-      </Hot>
-    </StateCard>
-    <StateCard r={STATES.noResults}>
+    </>
+  ),
+  emptyCollection: (
+    <Hot flex>
+      <Msg action="Add users">No users yet</Msg>
+    </Hot>
+  ),
+  noResults: (
+    <>
       <Hot width="40%">
-        <Ghost height="20px" />
+        <Ghost height="28px" />
         <Msg action="Clear filters">No matches</Msg>
       </Hot>
       <Dim label="Detail (unchanged)" flex />
-    </StateCard>
-    <StateCard r={STATES.noSelection}>
+    </>
+  ),
+  noSelection: (
+    <>
       <Dim label="List" width="40%" />
       <Hot flex>
         <Msg>Select a user to see details</Msg>
       </Hot>
-    </StateCard>
-    <StateCard r={STATES.error}>
+    </>
+  ),
+  error: (
+    <>
       <Dim label="List" width="40%" />
       <Hot flex>
         <Msg action="Retry">Couldn't load this user</Msg>
       </Hot>
-    </StateCard>
-    <StateCard r={STATES.readOnly}>
+    </>
+  ),
+  readOnly: (
+    <>
       <Dim label="List" width="40%" />
       <Hot flex>
         <Box direction="row" justify="between" align="center">
-          <Ghost width="40%" height="14px" />
-          <Box direction="row" gap="4xsmall">
+          <Ghost width="40%" height="20px" />
+          <Box direction="row" gap="xsmall" align="center">
             <Ghost
-              width="40px"
-              height="18px"
+              width="64px"
+              height="24px"
               round="full"
               style={{ opacity: 0.4 }}
             />
@@ -727,17 +731,65 @@ const StatesWireframe = () => (
         </Box>
         <Dim label="read-only pairs" flex />
       </Hot>
-    </StateCard>
-  </Grid>
+    </>
+  ),
+};
+
+const StatePicker = ({ value, onChange }) => (
+  <Box as="nav" gap="xxsmall" width={{ min: 'medium' }} flex={false}>
+    {Object.entries(STATES).map(([key, r]) => {
+      const active = key === value;
+      return (
+        <Button key={key} plain onClick={() => onChange(key)} fill="horizontal">
+          <Box
+            pad={{ vertical: 'xsmall', horizontal: 'small' }}
+            round="xsmall"
+            background={active ? 'background-contrast' : undefined}
+            border={{
+              side: 'left',
+              size: 'medium',
+              color: active ? 'brand' : 'transparent',
+            }}
+          >
+            <Badge region={r} size="small" />
+          </Box>
+        </Button>
+      );
+    })}
+  </Box>
 );
+
+const StatesExplorer = () => {
+  const [state, setState] = useState('loading');
+  const r = STATES[state];
+  return (
+    <Grid columns={['auto', 'flex']} gap="large">
+      <StatePicker value={state} onChange={setState} />
+      <Box gap="medium">
+        <Frame height="320px" direction="row" pad="small" gap="small">
+          {STATE_FRAMES[state]}
+        </Frame>
+        <Box gap="xsmall">
+          <Badge region={r} />
+          <Box margin={{ left: '32px' }}>
+            <RegionDetails
+              region={r}
+              labels={{ owns: 'Trigger', controls: 'Control' }}
+            />
+          </Box>
+        </Box>
+      </Box>
+    </Grid>
+  );
+};
 
 export const StatesLevel = () => (
   <Level
     title="States"
-    intro="Each state is scoped to a zone. The highlighted block shows where the state renders and what control it offers; everything else keeps working."
-    wireframe={<StatesWireframe />}
-    regions={STATES}
-  />
+    intro="Pick a state to see where it renders and what control it offers. Each state is scoped to a zone; everything outside the highlighted block keeps working."
+  >
+    <StatesExplorer />
+  </Level>
 );
 
 // ---------------------------------------------------------------------------

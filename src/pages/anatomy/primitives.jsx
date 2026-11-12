@@ -145,38 +145,59 @@ export const Legend = ({ regions }) => (
         <Box as="dt">
           <Badge region={r} />
         </Box>
-        <Box as="dd" margin={{ left: '32px' }} gap="xxsmall">
-          {r.space && (
-            <Text>
-              <Text weight={500}>Space · </Text>
-              {r.space}
-            </Text>
-          )}
-          <Text>
-            <Text weight={500}>Owns · </Text>
-            {r.owns}
-          </Text>
-          <Text>
-            <Text weight={500}>Controls · </Text>
-            {r.controls}
-          </Text>
-          <Text color="text-weak">
-            <Text weight={500}>Behaviour · </Text>
-            {r.behaviour}
-          </Text>
-          {r.questions && (
-            <Text color="brand">
-              <Text weight={500}>Open questions · </Text>
-              {r.questions}
-            </Text>
-          )}
+        <Box as="dd" margin={{ left: '32px' }}>
+          <RegionDetails region={r} />
         </Box>
       </Box>
     ))}
   </Box>
 );
 
-export const Level = ({ title, intro, control, wireframe, regions }) => (
+export const RegionDetails = ({ region: r, labels = {} }) => {
+  const l = {
+    owns: 'Owns',
+    controls: 'Controls',
+    behaviour: 'Behaviour',
+    ...labels,
+  };
+  return (
+    <Box gap="xxsmall">
+      {r.space && (
+        <Text>
+          <Text weight={500}>Space · </Text>
+          {r.space}
+        </Text>
+      )}
+      <Text>
+        <Text weight={500}>{l.owns} · </Text>
+        {r.owns}
+      </Text>
+      <Text>
+        <Text weight={500}>{l.controls} · </Text>
+        {r.controls}
+      </Text>
+      <Text color="text-weak">
+        <Text weight={500}>{l.behaviour} · </Text>
+        {r.behaviour}
+      </Text>
+      {r.questions && (
+        <Text color="brand">
+          <Text weight={500}>Open questions · </Text>
+          {r.questions}
+        </Text>
+      )}
+    </Box>
+  );
+};
+
+export const Level = ({
+  title,
+  intro,
+  control,
+  wireframe,
+  regions,
+  children,
+}) => (
   <Box gap="medium" pad={{ top: 'medium' }}>
     <Box direction="row" justify="between" align="start" gap="medium" wrap>
       <Box gap="xsmall" width={{ max: 'large' }}>
@@ -189,7 +210,11 @@ export const Level = ({ title, intro, control, wireframe, regions }) => (
       </Box>
       {control}
     </Box>
-    {wireframe}
-    <Legend regions={regions} />
+    {children ?? (
+      <>
+        {wireframe}
+        <Legend regions={regions} />
+      </>
+    )}
   </Box>
 );
