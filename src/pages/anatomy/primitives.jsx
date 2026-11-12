@@ -20,7 +20,7 @@ export const region = (
   ...extra,
 });
 
-export const Badge = ({ region: r, size = 'medium' }) => (
+export const Badge = ({ region: r, size = 'medium', showRole = true }) => (
   <Box direction="row" gap="xsmall" align="center" wrap>
     <Box
       background="text-strong"
@@ -39,14 +39,16 @@ export const Badge = ({ region: r, size = 'medium' }) => (
     <Text weight={500} size={size}>
       {r.name}
     </Text>
-    <Text size="small" color="text-weak" style={{ fontFamily: 'monospace' }}>
-      {r.role}
-    </Text>
+    {showRole && (
+      <Text size="small" color="text-weak" style={{ fontFamily: 'monospace' }}>
+        {r.role}
+      </Text>
+    )}
   </Box>
 );
 
 // Dashed, unfilled wireframe block
-export const Block = ({ region: r, children, ...rest }) => (
+export const Block = ({ region: r, showRole, children, ...rest }) => (
   <Box
     border={{ color: 'border', style: 'dashed', size: 'small' }}
     round="xsmall"
@@ -54,13 +56,13 @@ export const Block = ({ region: r, children, ...rest }) => (
     gap="small"
     {...rest}
   >
-    <Badge region={r} />
+    <Badge region={r} showRole={showRole} />
     {children}
   </Box>
 );
 
 // Solid, emphasised block used for the regions a level is focused on
-export const Focus = ({ region: r, label, children, ...rest }) => (
+export const Focus = ({ region: r, label, showRole, children, ...rest }) => (
   <Box
     border={{ color: 'brand', size: 'small' }}
     round="xsmall"
@@ -70,7 +72,7 @@ export const Focus = ({ region: r, label, children, ...rest }) => (
     {...rest}
   >
     <Box direction="row" justify="between" align="start" gap="small" wrap>
-      <Badge region={r} />
+      <Badge region={r} showRole={showRole} />
       {label && (
         <Text
           size="small"

@@ -201,6 +201,7 @@ const PageWireframe = ({ variant }) => {
       overflow="hidden"
     >
       <Block
+        showRole={false}
         region={PAGE.header}
         direction="row"
         align="center"
@@ -228,6 +229,7 @@ const PageWireframe = ({ variant }) => {
         align="stretch"
       >
         <Block
+          showRole={false}
           region={PAGE.nav}
           width="220px"
           flex={false}
@@ -250,8 +252,9 @@ const PageWireframe = ({ variant }) => {
           />
         </Block>
 
-        <Block region={PAGE.main} flex round="none">
+        <Block showRole={false} region={PAGE.main} flex round="none">
           <Block
+            showRole={false}
             region={PAGE.pageHeader}
             direction="row"
             justify="between"
@@ -265,6 +268,7 @@ const PageWireframe = ({ variant }) => {
           </Block>
 
           <Focus
+            showRole={false}
             region={PAGE.surface}
             label="fills remaining width"
             round={v3 ? 'xsmall' : 'xlarge'}
