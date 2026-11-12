@@ -5,6 +5,7 @@ import {
   Page,
   PageContent,
   PageHeader,
+  Paragraph,
   Tab,
   Tabs,
   ToggleGroup,
