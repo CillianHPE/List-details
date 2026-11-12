@@ -408,15 +408,14 @@ const RESPONSIVE = {
     3,
     'Page header actions',
     'buttons → overflow',
-    'Collection-level actions.',
-    'Add users · Divider toggle',
-    'Secondary actions fold into an overflow menu first; the primary keeps its label as long as possible.',
+    'Page-level controls only (act on the surface, not the data). Collection actions live in the list toolbar.',
+    'Divider toggle (prototype control)',
+    'Everything folds into one overflow menu as soon as the surface leaves Comfortable; Back takes the parent slot when drilled in.',
     {
       at: {
-        wide: 'All actions as labelled buttons.',
-        medium:
-          'Primary keeps its label; secondaries fold into an overflow menu.',
-        narrow: 'Primary as an icon button plus overflow menu.',
+        wide: 'Labelled controls.',
+        medium: 'Overflow menu.',
+        narrow: 'Overflow menu beside the Back link.',
       },
     },
   ),
@@ -1423,10 +1422,10 @@ const ACTIONS = {
   collection: region(
     1,
     'Collection actions',
-    'page header · trailing',
-    'Actions that create or affect the whole set: Add users, import, export.',
-    'One primary (secondary styling here) · overflow for the rest',
-    'Always visible regardless of selection. Never acts on the selected record.',
+    'list toolbar · trailing, beside search',
+    'Actions that create or change items in the set the toolbar controls: Add users, import, bulk select.',
+    'One secondary button · overflow for the rest · icon-only below Comfortable',
+    'Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.',
   ),
   record: region(
     2,

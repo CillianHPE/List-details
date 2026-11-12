@@ -41,7 +41,8 @@ const ContentPane = forwardRef((props, ref) => (
   />
 ));
 
-// Zones: A page header · B list toolbar · C list body · D/E/F detail column.
+// Zones: A page header (page-level actions) · B list toolbar (collection
+// actions) · C list body · D/E/F detail column.
 // The surface sizes itself from its own width (not the viewport) because the
 // shell's nav / context panes take width first — see Anatomy › Responsive:
 //   comfortable ≥ 1000px  list clamps size.small–size.medium
@@ -88,38 +89,37 @@ export const UsersPage = () => {
     setQuickFilter('all');
   };
 
-  // Page header actions fold by tier: comfortable shows everything; compact
-  // moves secondaries to an overflow menu; drill-in reduces the primary to an
-  // icon button as well.
+  // Page header carries page-level controls only (things that act on the
+  // surface, not the data). Collection actions live in the list toolbar.
   const dividerItem = {
     label: divider ? 'Hide divider' : 'Show divider',
     onClick: () => setDivider((d) => !d),
   };
   const headerActions =
     tier === 'comfortable' ? (
-      <Box direction="row" align="center" gap="medium">
-        <CheckBox
-          toggle
-          label="Divider"
-          checked={divider}
-          onChange={(e) => setDivider(e.target.checked)}
-        />
-        <Button label="Add users" secondary />
-      </Box>
+      <CheckBox
+        toggle
+        label="Divider"
+        checked={divider}
+        onChange={(e) => setDivider(e.target.checked)}
+      />
     ) : (
-      <Box direction="row" align="center" gap="small">
-        {tier === 'compact' ? (
-          <Button label="Add users" secondary />
-        ) : (
-          <Button icon={<Add />} a11yTitle="Add users" secondary />
-        )}
-        <Menu
-          icon={<More />}
-          a11yTitle="More actions"
-          dropAlign={{ top: 'bottom', right: 'right' }}
-          items={[dividerItem]}
-        />
-      </Box>
+      <Menu
+        icon={<More />}
+        a11yTitle="More actions"
+        dropAlign={{ top: 'bottom', right: 'right' }}
+        items={[dividerItem]}
+      />
+    );
+
+  // Collection action: adds to the set the toolbar controls, so it sits
+  // trailing in the toolbar beside search. Labelled when comfortable,
+  // icon-only when the list column is narrow.
+  const addUsers =
+    tier === 'comfortable' ? (
+      <Button label="Add users" secondary />
+    ) : (
+      <Button icon={<Add />} a11yTitle="Add users" secondary />
     );
 
   return (
@@ -195,12 +195,17 @@ export const UsersPage = () => {
                   }
                 >
                   <Box gap="xsmall" flex={false}>
-                    <TextInput
-                      icon={<Search />}
-                      placeholder="Search users"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                    />
+                    <Box direction="row" gap="small" align="center">
+                      <Box flex>
+                        <TextInput
+                          icon={<Search />}
+                          placeholder="Search users"
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                        />
+                      </Box>
+                      {addUsers}
+                    </Box>
                     <Box
                       overflow={{ horizontal: 'auto' }}
                       flex={false}

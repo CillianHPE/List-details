@@ -20,8 +20,8 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 
 | Zone | Component | Holds |
 | --- | --- | --- |
-| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), secondary **Add users** · Divider toggle (prototype control); actions fold by tier |
-| B · List toolbar | `UsersPage` | Full‑width search, `ToggleGroup` quick filters (All / Active / Invited), item count |
+| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), page‑level controls only (Divider toggle, prototype control); folds to an overflow menu below Comfortable |
+| B · List toolbar | `UsersPage` | Search with trailing secondary **Add users** (collection action; icon‑only below Comfortable), `ToggleGroup` quick filters (All / Active / Invited), item count |
 | C · List body | `UserList` | 2‑line rows (avatar, name, role, date top‑right); selected row = contrast fill |
 | D · Detail header | `UserDetail` | Name (h2) + inline rename, **Actions** `Menu` grouped per DS guidance (Edit name / Change role / Reset password / Resend invite · Suspend · Remove user last), sub‑tabs |
 | E · Detail body | `UserDetail` | Grommet `Tabs` own the panels (tab ↔ tabpanel wired by Grommet); each panel carries a visually hidden h3. Tabs mirror GreenLake user detail: Details (grouped `NameValueList`s — Identity / Account / Membership & activity — separated by weak dividers; row pairs stack when the pane is narrower than 480px) / Role assignments (`List`: role link, service · scope, source, remove) / User group membership (`List`: group link, lifecycle source, remove) / Organization workspace membership (`List` or empty state) |
@@ -29,8 +29,8 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 The surface follows the Anatomy **Responsive** tiers, measured on its own width (a `ResizeObserver`, not the viewport — the shell's nav/context panes take width first). Rules live once in `src/pattern/listDetail.js` and are read by both the prototype and the Anatomy page:
 
 - **Comfortable** ≥ 1000px — zones are **proportional 40 / 60** (`Grid [40% in px, flex]`, the Anatomy *Proportional* variant); all page‑header actions labelled.
-- **Compact** 760–999px — same 40 / 60 split (list floored at 256px, `size.small`); the Divider toggle folds into an overflow `Menu`, **Add users** keeps its label.
-- **Drill‑in** < 760px — one column (list → detail); `PageHeader.parent` holds the **All users** back link; **Add users** becomes an icon button.
+- **Compact** 760–999px — same 40 / 60 split (list floored at 256px, `size.small`); the Divider toggle folds into an overflow `Menu`; **Add users** (in the list toolbar) becomes an icon button.
+- **Drill‑in** < 760px — one column (list → detail); `PageHeader.parent` holds the **All users** back link; **Add users** stays icon‑only in the toolbar.
 
 Detail tabs never wrap (Grommet `Tabs` scrolls them with arrows on overflow), and a filter that matches nothing shows a **No users match** message with **Clear filters** in place of the rows while the detail keeps its last selection.
 

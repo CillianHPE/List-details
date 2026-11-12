@@ -79,8 +79,8 @@ const PAGE = {
     4,
     'Page header',
     'PageHeader · <h1>',
-    'Page title, subtitle and the single collection-level action.',
-    'Page action button (e.g. Add users) · back link when drilled in',
+    'Page title, subtitle and page-level controls (not data actions).',
+    'Back link when drilled in · page settings / help · prototype toggles',
     'Full width of Main, above the surface.',
     see('scroll', 'responsive'),
   ),
@@ -173,9 +173,9 @@ const LIST = {
     1,
     'List toolbar',
     '<search> · search',
-    'Narrowing the collection without leaving the page.',
-    'Search input · quick-filter toggle group · result count',
-    'Sits above the rows. Filters apply instantly and update the count.',
+    'Narrowing and adding to the collection without leaving the page.',
+    'Search input · Add users (collection action, trailing) · quick-filter toggle group · result count',
+    'Sits above the rows. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
     see('scroll', 'data'),
   ),
   rows: region(
@@ -613,7 +613,7 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
               <Tab title="Page">
                 <Level
                   title="Where the surface sits"
-                  intro="Shell regions (1–3) are shared by every page. The page header carries the one collection-level action; the list–detail surface fills the rest of Main."
+                  intro="Shell regions (1–3) are shared by every page. The page header carries page-level controls only; collection actions (Add users) sit in the list toolbar. The list–detail surface fills the rest of Main."
                   control={
                     <ToggleGroup
                       options={[
