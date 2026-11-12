@@ -5,15 +5,15 @@ import { DefaultShell } from './shell/DefaultShell';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
-import { VersionSwitcher, VERSIONS } from './components/VersionSwitcher';
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/default  → Users in the default HPE shell
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
 //   #/anatomy  → lo-fi region/role map of the pattern
+const VERSIONS = ['anatomy', 'default', 'v3'];
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
-  return VERSIONS.some((o) => o.value === v) ? v : 'default';
+  return VERSIONS.includes(v) ? v : 'default';
 };
 
 const App = () => {
@@ -24,10 +24,6 @@ const App = () => {
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
-
-  const go = (v) => {
-    window.location.hash = `/${v}`;
-  };
 
   return (
     <Grommet
@@ -52,7 +48,6 @@ const App = () => {
           <UsersPage />
         </DefaultShell>
       )}
-      <VersionSwitcher value={version} onChange={go} />
     </Grommet>
   );
 };
