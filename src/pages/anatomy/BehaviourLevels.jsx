@@ -370,7 +370,8 @@ const BREAKPOINTS = {
   ),
 };
 
-// Each region's rule at every breakpoint; `role` summarises the arc.
+// Each region's rule at every breakpoint; `role` summarises the arc. Listed
+// below the wireframe as text — the wireframe itself only highlights the zones.
 const RESPONSIVE = {
   nav: region(
     1,
@@ -482,6 +483,68 @@ const Screen = ({ narrow, children, ...rest }) => (
   </Frame>
 );
 
+// A highlighted zone inside the list–detail surface, labelled with the
+// width it is given at the current breakpoint.
+const Zone = ({ name, width, children, ...rest }) => (
+  <Box
+    border={{ color: 'brand', size: 'small' }}
+    round="xsmall"
+    pad="xsmall"
+    gap="xsmall"
+    background="background-front"
+    overflow="hidden"
+    {...rest}
+  >
+    <Box direction="row" justify="between" align="baseline" gap="xsmall">
+      <Text size="small" weight={500}>
+        {name}
+      </Text>
+      <Mono>{width}</Mono>
+    </Box>
+    {children}
+  </Box>
+);
+
+const ListGhost = ({ rows = 5 }) => (
+  <>
+    <Ghost height="14px" />
+    <GhostRows count={rows} />
+  </>
+);
+
+const DetailGhost = ({ stacked, back }) => (
+  <Box gap="xsmall" flex>
+    <Box direction="row" gap="xsmall" align="center">
+      {back && <Tag>← Back</Tag>}
+      <Ghost width="40%" height="10px" />
+      <Box flex />
+      <Ghost width="14px" height="10px" />
+    </Box>
+    <Box direction="row" gap="4xsmall">
+      <Ghost width="20%" height="6px" background="brand" />
+      <Ghost width="25%" height="6px" />
+      <Ghost width="25%" height="6px" />
+    </Box>
+    <Box gap="4xsmall">
+      {[0, 1, 2].map((i) =>
+        stacked ? (
+          <Box key={i} gap="4xsmall">
+            <Ghost width="30%" height="6px" />
+            <Ghost width="70%" height="6px" />
+          </Box>
+        ) : (
+          <Box key={i} direction="row" gap="4xsmall">
+            <Ghost width="30%" height="6px" />
+            <Ghost width="50%" height="6px" />
+          </Box>
+        ),
+      )}
+    </Box>
+  </Box>
+);
+
+// Shell chrome is dimmed context; only the list–detail surface is highlighted
+// so the eye goes to how the two zones share the available width.
 const ResponsiveFrame = ({ bp }) => {
   const narrow = bp === 'narrow';
   const medium = bp === 'medium';
@@ -496,86 +559,38 @@ const ResponsiveFrame = ({ bp }) => {
         </Box>
         <Box direction="row" gap="small" flex>
           {!narrow && (
-            <Mini
-              region={RESPONSIVE.nav}
-              width={medium ? '28px' : '72px'}
-              pad="4xsmall"
-              gap="4xsmall"
-              flex={false}
-            >
-              <Ghost height="8px" />
-              <Ghost height="8px" />
-              <Ghost height="8px" />
-            </Mini>
+            <Dim label="Nav" width={medium ? '28px' : '72px'} flex={false} />
           )}
           <Box flex gap="small">
-            <Mini
-              region={RESPONSIVE.pageHeader}
-              direction="row"
-              justify="between"
-              align="center"
-              pad="4xsmall"
-            >
-              <Ghost width="40%" height="10px" />
-              <Ghost
-                width={narrow || medium ? '20px' : '50px'}
-                height="16px"
-                round="full"
-              />
-            </Mini>
-            <Mini
-              region={RESPONSIVE.surface}
-              flex
+            <Dim label="Page header" pad="xsmall" />
+            <Box
               direction="row"
               gap="xsmall"
-              pad="4xsmall"
+              flex
+              border={{ color: 'border', style: 'dashed' }}
+              round="xsmall"
+              pad="xsmall"
             >
-              <Box
-                width={narrow ? '100%' : medium ? '38%' : '30%'}
-                gap="4xsmall"
+              <Zone
+                name="List"
+                width={
+                  narrow
+                    ? '100%'
+                    : medium
+                      ? '192px (size.medium)'
+                      : '192–384px (size.medium–size.large)'
+                }
+                style={{ width: narrow ? '100%' : medium ? '36%' : '42%' }}
                 flex={false}
               >
-                <Ghost height="14px" />
-                <GhostRows count={narrow ? 6 : 5} />
-              </Box>
+                <ListGhost rows={narrow ? 7 : 5} />
+              </Zone>
               {!narrow && (
-                <Box flex gap="small">
-                  <Mini
-                    region={RESPONSIVE.detailHeader}
-                    direction="row"
-                    justify="between"
-                    pad="4xsmall"
-                  >
-                    <Ghost width="40%" height="10px" />
-                    <Ghost width={medium ? '14px' : '30px'} height="10px" />
-                  </Mini>
-                  <Mini
-                    region={RESPONSIVE.tabs}
-                    direction="row"
-                    gap="4xsmall"
-                    pad="4xsmall"
-                  >
-                    <Ghost width="20%" height="6px" background="brand" />
-                    <Ghost width="25%" height="6px" />
-                    <Ghost width="25%" height="6px" />
-                    {medium && <Ghost width="10%" height="6px" />}
-                  </Mini>
-                  <Mini
-                    region={RESPONSIVE.pairs}
-                    pad="4xsmall"
-                    gap="4xsmall"
-                    flex
-                  >
-                    {[0, 1, 2, 3].map((i) => (
-                      <Box key={i} direction="row" gap="4xsmall">
-                        <Ghost width="30%" height="6px" />
-                        <Ghost width="50%" height="6px" />
-                      </Box>
-                    ))}
-                  </Mini>
-                </Box>
+                <Zone name="Detail" width="flex" flex>
+                  <DetailGhost />
+                </Zone>
               )}
-            </Mini>
+            </Box>
           </Box>
         </Box>
       </Screen>
@@ -585,36 +600,16 @@ const ResponsiveFrame = ({ bp }) => {
             <Ghost width="20px" height="20px" round="full" />
             <Ghost width="60px" height="10px" />
           </Box>
-          <Mini
-            region={RESPONSIVE.detailHeader}
-            direction="row"
-            gap="xsmall"
-            align="center"
-            pad="4xsmall"
+          <Box
+            flex
+            border={{ color: 'border', style: 'dashed' }}
+            round="xsmall"
+            pad="xsmall"
           >
-            <Tag>← Back</Tag>
-            <Ghost width="40%" height="10px" />
-            <Box flex />
-            <Ghost width="14px" height="10px" />
-          </Mini>
-          <Mini
-            region={RESPONSIVE.tabs}
-            direction="row"
-            gap="4xsmall"
-            pad="4xsmall"
-          >
-            <Ghost width="25%" height="6px" background="brand" />
-            <Ghost width="30%" height="6px" />
-            <Ghost width="30%" height="6px" />
-          </Mini>
-          <Mini region={RESPONSIVE.pairs} pad="4xsmall" gap="4xsmall" flex>
-            {[0, 1, 2].map((i) => (
-              <Box key={i} gap="4xsmall">
-                <Ghost width="30%" height="6px" />
-                <Ghost width="70%" height="6px" />
-              </Box>
-            ))}
-          </Mini>
+            <Zone name="Detail" width="100%" flex>
+              <DetailGhost stacked back />
+            </Zone>
+          </Box>
         </Screen>
       )}
     </Box>
@@ -671,7 +666,9 @@ const ResponsiveExplorer = () => {
             {Object.values(RESPONSIVE).map((region) => (
               <Box key={region.id} direction="row" gap="small" align="start">
                 <Box width="200px" flex={false}>
-                  <Badge region={region} size="small" showRole={false} />
+                  <Text size="small" weight={500}>
+                    {region.name}
+                  </Text>
                 </Box>
                 <Text size="small">{region.at[bp]}</Text>
               </Box>
