@@ -9,7 +9,7 @@ Versions are addressed by URL hash and switchable from the floating **Version** 
 | --- | --- | --- |
 | `#/default` | Users list–detail page | Default HPE app shell (`src/shell/DefaultShell.jsx`, mirrors `hpe-design-system/sandbox/grommet-app`) |
 | `#/v3` | Same page | App Shell V3.1 (`src/shell/V3Shell.jsx`, Figma *Landmark Surface examples → 3250:15494*): white canvas, 60px bordered header with workspace switcher, 12px wrapper, rounded grey 256px nav pane |
-| `#/anatomy` | Lo-fi zoom explorer for the pattern (`src/pages/anatomy`) | Four tabbed zoom levels — **Page** (where the surface sits; Default / Shell v3), **Zones** (list vs detail and how width is shared; Fixed list 192–384px / Proportional 40–60 / Resizable with a draggable, keyboard-operable handle clamped to the same range), **List zone** (toolbar, body, row) and **Detail zone** (heading + actions header, optional tabs, generic content area). Each level pairs a dashed wireframe with a legend of role, owns, controls and layout, linking to the Behaviour tab that covers how it acts. A second **Behaviour** group answers the developer questions — **Scroll & height** (sticky global header in every shell; Page scrolls vs Panes scroll), **Responsive** (Wide / Medium / Narrow drill-in, plus a **Shell configuration** explorer: browser width × nav expanded (256px) / collapsed rail (48px) / hidden × context pane open, computing the px left for the surface from the V3.1 shell measurements and the resulting Comfortable / Compact / Drill-in tier, with a nav–context mutual-exclusion rule under 1536px), **States** (loading, empty, no results, no selection, error, read-only), **Actions & ownership** (collection / record / section / row scopes) — each flagging open questions for the team. A **Data & performance** tab (fetch points and caching) exists but is hidden for now via `BEHAVIOUR_TABS` in `primitives.jsx` |
+| `#/anatomy` | Lo-fi zoom explorer for the pattern (`src/pages/anatomy`) | Four tabbed zoom levels — **Page** (where the surface sits; Default / Shell v3), **Zones** (list vs detail and how width is shared; Fixed list 192–384px / Proportional 40–60 / Resizable with a draggable, keyboard-operable handle clamped to the same range), **List zone** (toolbar, body, row) and **Detail zone** (heading + actions header, optional tabs, generic content area). Each level pairs a dashed wireframe with a legend of role, owns, controls and layout, linking to the Behaviour tab that covers how it acts. A second **Behaviour** group answers the developer questions — **Scroll & height** (sticky global header in every shell; Page scrolls vs Panes scroll), **Responsive** (Comfortable / Compact / Drill-in tiers by surface width — the same rules the Users prototype runs on, plus a **Shell configuration** explorer: browser width × nav expanded (256px) / collapsed rail (48px) / hidden × context pane open, computing the px left for the surface from the V3.1 shell measurements and the resulting Comfortable / Compact / Drill-in tier, with a nav–context mutual-exclusion rule under 1536px), **States** (loading, empty, no results, no selection, error, read-only), **Actions & ownership** (collection / record / section / row scopes) — each flagging open questions for the team. A **Data & performance** tab (fetch points and caching) exists but is hidden for now via `BEHAVIOUR_TABS` in `primitives.jsx` |
 
 Pages read the active shell via `ShellContext` so containment can adapt (the list–detail pane gains a `border-weak` border on the white V3 canvas).
 
@@ -20,13 +20,19 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 
 | Zone | Component | Holds |
 | --- | --- | --- |
-| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), secondary **Add users** · Divider toggle (prototype control) |
+| A · Page header | `UsersPage` → Grommet `PageHeader` | Title, `parent` back link (drill‑in only), secondary **Add users** · Divider toggle (prototype control); actions fold by tier |
 | B · List toolbar | `UsersPage` | Full‑width search, `ToggleGroup` quick filters (All / Active / Invited), item count |
 | C · List body | `UserList` | 2‑line rows (avatar, name, role, date top‑right); selected row = contrast fill |
 | D · Detail header | `UserDetail` | Name (h2) + inline rename, **Actions** `Menu` grouped per DS guidance (Edit name / Change role / Reset password / Resend invite · Suspend · Remove user last), sub‑tabs |
 | E · Detail body | `UserDetail` | Grommet `Tabs` own the panels (tab ↔ tabpanel wired by Grommet); each panel carries a visually hidden h3. Tabs mirror GreenLake user detail: Details (grouped `NameValueList`s — Identity / Account / Membership & activity — separated by weak dividers; row pairs stack when the pane is narrower than 480px) / Role assignments (`List`: role link, service · scope, source, remove) / User group membership (`List`: group link, lifecycle source, remove) / Organization workspace membership (`List` or empty state) |
 
-Below the `medium` breakpoint (1080px) the two columns collapse into a drill‑in (list → detail; `PageHeader.parent` holds the back link).
+The surface follows the Anatomy **Responsive** tiers, measured on its own width (a `ResizeObserver`, not the viewport — the shell's nav/context panes take width first). Rules live once in `src/pattern/listDetail.js` and are read by both the prototype and the Anatomy page:
+
+- **Comfortable** ≥ 1000px — list clamps 192–384px (`size.xsmall`–`size.medium`); all page‑header actions labelled.
+- **Compact** 696–999px — list pinned to 192px (`size.xsmall`); the Divider toggle folds into an overflow `Menu`, **Add users** keeps its label.
+- **Drill‑in** < 696px — one column (list → detail); `PageHeader.parent` holds the **All users** back link; **Add users** becomes an icon button.
+
+Detail tabs never wrap (Grommet `Tabs` scrolls them with arrows on overflow), and a filter that matches nothing shows a **No users match** message with **Clear filters** in place of the rows while the detail keeps its last selection.
 
 #### HPE Design System alignment
 

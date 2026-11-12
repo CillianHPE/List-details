@@ -1,19 +1,20 @@
-import { useContext, useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 import {
   Anchor,
   Box,
   Button,
   CheckBox,
   Grid,
+  Menu,
   Page,
   PageContent,
   PageHeader,
-  ResponsiveContext,
   Text,
   TextInput,
   ToggleGroup,
 } from 'grommet';
-import { LinkPrev, Search } from '@hpe-design/icons-grommet';
+import { Add, LinkPrev, More, Search } from '@hpe-design/icons-grommet';
+import { useSurfaceTier } from '../../pattern/listDetail';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
@@ -30,15 +31,25 @@ const QUICK_FILTERS = [
 ];
 
 // Contained surface, as hpe-design-system/sandbox/grommet-app ContentPane
-const ContentPane = (props) => (
-  <Box background="background-front" pad="medium" round="small" {...props} />
-);
+const ContentPane = forwardRef((props, ref) => (
+  <Box
+    ref={ref}
+    background="background-front"
+    pad="medium"
+    round="small"
+    {...props}
+  />
+));
 
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
-// On small screens the two columns become a drill-in (list → detail).
+// The surface sizes itself from its own width (not the viewport) because the
+// shell's nav / context panes take width first — see Anatomy › Responsive:
+//   comfortable ≥ 1000px  list clamps size.xsmall–size.medium
+//   compact     696–999px list pinned to size.xsmall
+//   drill-in    < 696px   one column, list → detail
 export const UsersPage = () => {
-  const size = useContext(ResponsiveContext);
-  const stacked = ['xsmall', 'small', 'medium'].includes(size);
+  const { ref: surfaceRef, tier } = useSurfaceTier();
+  const stacked = tier === 'drillIn';
   // V3.1 shell: content sits directly on the white canvas, so the list–detail
   // surface drops its own container chrome (border, outer padding).
   const bare = useShell() === 'v3';
@@ -72,6 +83,44 @@ export const UsersPage = () => {
     setSelectedId(id);
     setShowDetail(true);
   };
+  const clearFilters = () => {
+    setQuery('');
+    setQuickFilter('all');
+  };
+
+  // Page header actions fold by tier: comfortable shows everything; compact
+  // moves secondaries to an overflow menu; drill-in reduces the primary to an
+  // icon button as well.
+  const dividerItem = {
+    label: divider ? 'Hide divider' : 'Show divider',
+    onClick: () => setDivider((d) => !d),
+  };
+  const headerActions =
+    tier === 'comfortable' ? (
+      <Box direction="row" align="center" gap="medium">
+        <CheckBox
+          toggle
+          label="Divider"
+          checked={divider}
+          onChange={(e) => setDivider(e.target.checked)}
+        />
+        <Button label="Add users" secondary />
+      </Box>
+    ) : (
+      <Box direction="row" align="center" gap="small">
+        {tier === 'compact' ? (
+          <Button label="Add users" secondary />
+        ) : (
+          <Button icon={<Add />} a11yTitle="Add users" secondary />
+        )}
+        <Menu
+          icon={<More />}
+          a11yTitle="More actions"
+          dropAlign={{ top: 'bottom', right: 'right' }}
+          items={[dividerItem]}
+        />
+      </Box>
+    );
 
   return (
     <Page pad={{ bottom: 'xlarge' }}>
@@ -89,21 +138,12 @@ export const UsersPage = () => {
               />
             ) : undefined
           }
-          actions={
-            <Box direction="row" align="center" gap="medium">
-              <CheckBox
-                toggle
-                label="Divider"
-                checked={divider}
-                onChange={(e) => setDivider(e.target.checked)}
-              />
-              <Button label="Add users" secondary />
-            </Box>
-          }
+          actions={headerActions}
         />
 
         {/* One contained surface holding both columns, split by a divider */}
         <ContentPane
+          ref={surfaceRef}
           pad="none"
           overflow={bare ? undefined : 'hidden'}
           round={bare ? false : 'xlarge'}
@@ -112,8 +152,17 @@ export const UsersPage = () => {
             {/* B + C · List pane */}
             {listVisible && (
               <Box
-                width={stacked ? undefined : { min: 'medium', max: 'large' }}
+                width={
+                  stacked
+                    ? undefined
+                    : tier === 'compact'
+                      ? 'xsmall'
+                      : { min: 'xsmall', max: 'medium' }
+                }
                 pad={stacked || bare ? undefined : { vertical: 'medium' }}
+                // Grid items default to min-width:auto, which would let the
+                // toolbar's intrinsic width push the column past its token.
+                style={stacked ? undefined : { minWidth: 0 }}
               >
                 {/* Divider lives on the sticky inner box so it stops short of
                     the container edges rather than spanning its full height */}
@@ -169,11 +218,26 @@ export const UsersPage = () => {
                     </Text>
                   </Box>
                   <Box overflow="auto" flex style={{ scrollbarColor: 'auto' }}>
-                    <UserList
-                      users={visible}
-                      selectedId={selectedId}
-                      onSelect={onSelect}
-                    />
+                    {visible.length ? (
+                      <UserList
+                        users={visible}
+                        selectedId={selectedId}
+                        onSelect={onSelect}
+                      />
+                    ) : (
+                      // No results: message replaces the rows, toolbar stays,
+                      // detail keeps the last selection.
+                      <Box
+                        pad={{ vertical: 'medium' }}
+                        gap="small"
+                        align="start"
+                      >
+                        <Text color="text-weak">
+                          No users match your search.
+                        </Text>
+                        <Button label="Clear filters" onClick={clearFilters} />
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               </Box>

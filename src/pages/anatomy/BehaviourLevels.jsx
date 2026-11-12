@@ -10,6 +10,7 @@ import {
   Level,
   RegionDetails,
 } from './primitives';
+import { SURFACE, tierFor } from '../../pattern/listDetail';
 
 // Behaviour levels: the questions developers ask once the regions are named.
 //   Scroll      · who owns overflow, what sticks, where height comes from
@@ -338,31 +339,31 @@ export const ScrollLevel = () => {
 const BREAKPOINTS = {
   wide: region(
     'A',
-    'Wide',
-    '≥ 1024px',
-    'Two columns. Fixed list 192–384px (size.medium–size.large); the detail zone takes the remaining width.',
+    'Comfortable',
+    '≥ 1000px surface width',
+    'Two columns. Fixed list 192–384px (size.xsmall–size.medium); the detail zone takes the remaining width. Measured on the surface, not the viewport (see Shell configuration below).',
     'Navigation pane expanded',
     'Everything has room: labelled actions, a single row of tabs, name | value pairs side by side.',
   ),
   medium: region(
     'B',
-    'Medium',
-    '768 – 1023px',
-    'Two columns. The list is held at its 192px (size.medium) minimum so the detail zone keeps most of the width.',
+    'Compact',
+    '696 – 999px surface width',
+    'Two columns. The list is held at its 192px (size.xsmall) minimum so the detail zone keeps most of the width.',
     'Navigation pane collapsed to icons',
-    'Chrome gives way first: secondary actions fold into overflow, tabs gain scroll arrows, the detail header may wrap.',
+    'Chrome gives way first: secondary actions fold into overflow, tabs scroll, the detail header may wrap.',
     {
       questions:
-        'Container query on Main or viewport media query? Should Medium drop to a proportional list instead of the 192px (size.medium) minimum?',
+        'Should Compact drop to a proportional list instead of the 192px (size.xsmall) minimum?',
     },
   ),
   narrow: region(
     'C',
-    'Narrow',
-    '< 768px',
+    'Drill-in',
+    '< 696px surface width',
     'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once a row is chosen.',
     'Navigation in a drawer behind the header menu button',
-    'A Back control in the detail header returns to the list; record actions live in an overflow menu; pairs stack.',
+    'A Back link in the page header parent slot ("All users") returns to the list; record actions live in an overflow menu; pairs stack.',
     {
       questions:
         'Does selecting a row push a URL so Back in the browser also returns to the list?',
@@ -393,12 +394,12 @@ const RESPONSIVE = {
     'List–detail surface',
     'two columns → stacked',
     'The arrangement of the two zones.',
-    'Back button (narrow only)',
-    'Grid columns [auto, flex] above 768px. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the detail header.',
+    'Back link in page header (drill-in only)',
+    'Grid columns [auto, flex] from 696px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
     {
       at: {
-        wide: 'Grid [auto, flex]; list 192–384px (size.medium–size.large).',
-        medium: 'Grid [auto, flex]; list pinned to 192px (size.medium).',
+        wide: 'Grid [auto, flex]; list 192–384px (size.xsmall–size.medium).',
+        medium: 'Grid [auto, flex]; list pinned to 192px (size.xsmall).',
         narrow: 'Single column; list screen, then detail screen on selection.',
       },
     },
@@ -431,7 +432,8 @@ const RESPONSIVE = {
         wide: 'One row: leading identity, trailing actions.',
         medium:
           'Trailing wraps beneath leading when the heading would truncate below ~20 characters.',
-        narrow: 'Back leads the row; actions collapse to an overflow menu.',
+        narrow:
+          'Actions collapse to an overflow menu. Back lives in the page header, not here.',
       },
     },
   ),
@@ -441,7 +443,7 @@ const RESPONSIVE = {
     'row → scrollable row',
     'Facet switching.',
     '←/→ scroll arrows',
-    'Tabs never wrap to two lines; the tablist scrolls horizontally with arrows when it overflows.',
+    'Tabs never wrap to two lines; the tablist scrolls horizontally with arrows when it overflows (Grommet Tabs does this natively).',
     {
       questions:
         'Shorten labels at narrow widths (e.g. "Groups") or allow scrolling only?',
@@ -512,10 +514,9 @@ const ListGhost = ({ rows = 5 }) => (
   </>
 );
 
-const DetailGhost = ({ stacked, back }) => (
+const DetailGhost = ({ stacked }) => (
   <Box gap="xsmall" flex>
     <Box direction="row" gap="xsmall" align="center">
-      {back && <Tag>← Back</Tag>}
       <Ghost width="40%" height="10px" />
       <Box flex />
       <Ghost width="14px" height="10px" />
@@ -577,8 +578,8 @@ const ResponsiveFrame = ({ bp }) => {
                   narrow
                     ? '100%'
                     : medium
-                      ? '192px (size.medium)'
-                      : '192–384px (size.medium–size.large)'
+                      ? '192px (size.xsmall)'
+                      : '192–384px (size.xsmall–size.medium)'
                 }
                 style={{ width: narrow ? '100%' : medium ? '36%' : '42%' }}
                 flex={false}
@@ -600,6 +601,7 @@ const ResponsiveFrame = ({ bp }) => {
             <Ghost width="20px" height="20px" round="full" />
             <Ghost width="60px" height="10px" />
           </Box>
+          <Dim label="Page header · ← All users" pad="xsmall" />
           <Box
             flex
             border={{ color: 'border', style: 'dashed' }}
@@ -607,7 +609,7 @@ const ResponsiveFrame = ({ bp }) => {
             pad="xsmall"
           >
             <Zone name="Detail" width="100%" flex>
-              <DetailGhost stacked back />
+              <DetailGhost stacked />
             </Zone>
           </Box>
         </Screen>
@@ -699,15 +701,8 @@ const SHELL = {
   coexistFrom: 1536, // nav + context may be open together from here
 };
 
-// What the surface needs to stay two-column
-const SURFACE = {
-  listMin: 192, // size.medium
-  listMax: 384, // size.large
-  gap: 24, // edgeSize.medium
-  detailMin: 480, // pairs stack under this
-};
-SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 696
-SURFACE.comfortableMin = 1000;
+// What the surface needs to stay two-column — shared with the Users prototype
+// (src/pattern/listDetail.js) so documentation and implementation agree.
 
 const BROWSER_WIDTHS = [1920, 1536, 1366, 1024, 768, 414];
 
@@ -723,12 +718,7 @@ const shellLayout = (width, nav, context) => {
   const ctxTakes = context && !overlay ? SHELL.context + SHELL.gap : 0;
   const main = width - gutter * 2 - navTakes - ctxTakes;
   const available = main - pad * 2;
-  const tier =
-    available >= SURFACE.comfortableMin
-      ? 'comfortable'
-      : available >= SURFACE.twoColumnMin
-        ? 'compact'
-        : 'drillIn';
+  const tier = tierFor(available);
   const list =
     tier === 'comfortable'
       ? Math.round(
@@ -760,12 +750,12 @@ const TIERS = {
   comfortable: {
     label: 'Comfortable · two columns',
     color: 'brand',
-    rule: `≥ ${SURFACE.comfortableMin}px available. List clamps ${SURFACE.listMin}–${SURFACE.listMax}px (size.medium–size.large), detail takes the rest; name–value pairs stay side by side.`,
+    rule: `≥ ${SURFACE.comfortableMin}px available. List clamps ${SURFACE.listMin}–${SURFACE.listMax}px (size.xsmall–size.medium), detail takes the rest; name–value pairs stay side by side.`,
   },
   compact: {
     label: 'Compact · two columns',
     color: 'status-warning',
-    rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. List pinned to ${SURFACE.listMin}px (size.medium); detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
+    rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. List pinned to ${SURFACE.listMin}px (size.xsmall); detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
   },
   drillIn: {
     label: 'Drill-in · one column',

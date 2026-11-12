@@ -360,6 +360,8 @@ const OrgWorkspaces = ({ user }) =>
 
 // E · Detail body — Tabs own their panels so each tabpanel is labelled by its
 // tab; a visually hidden h3 keeps every panel in the heading outline.
+// Tabs never wrap: Grommet's Tabs detects overflow and swaps to a scrolling
+// tablist with previous/next arrows (Anatomy › Responsive › Detail tabs).
 const DetailBody = ({ user, tab, setTab }) => (
   <Tabs
     activeIndex={tab}
