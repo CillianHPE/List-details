@@ -16,7 +16,6 @@ import {
 import {
   Checkmark,
   Close,
-  Edit,
   More,
   StatusCritical,
   StatusGood,
@@ -299,19 +298,19 @@ const RoleAssignments = ({ user }) => {
           </Box>
           {/* Right edge is reserved for actions only; metadata such as the
               assignment source lives in the supplementary text. */}
-          <Box direction="row" align="center" flex={false}>
-            <Button
-              icon={<Trash />}
-              a11yTitle={`Remove role ${r.role}`}
-              disabled={r.source !== 'Direct'}
-              onClick={() => {}}
-            />
-            <Button
-              icon={<Edit />}
-              a11yTitle={`Edit role ${r.role}`}
-              onClick={() => {}}
-            />
-          </Box>
+          <Menu
+            icon={<More />}
+            a11yTitle={`Actions for ${r.role}`}
+            dropProps={{ align: { top: 'bottom', right: 'right' } }}
+            items={[
+              { label: 'Edit', onClick: () => {} },
+              {
+                label: 'Remove',
+                disabled: r.source !== 'Direct',
+                onClick: () => {},
+              },
+            ]}
+          />
         </ListRow>
       )}
     </List>
