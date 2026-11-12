@@ -21,7 +21,11 @@ import {
   Sidebar as SidebarIcon,
   User,
 } from '@hpe-design/icons-grommet';
-import { navItems } from '../components/NavSidebar';
+import {
+  activeNavItem,
+  navItems,
+  selectNavItem,
+} from '../components/NavSidebar';
 import { ShellContext } from './ShellContext';
 
 // App Shell V3.1 (Figma: Landmark Surface examples → 3250:15494).
@@ -144,7 +148,10 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
 
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   const [open, setOpen] = useState(true);
-  const [selected, setSelected] = useState(navItems['Identity & access'][0]);
+  const [selected, setSelected] = useState(() =>
+    activeNavItem(navItems['Identity & access'][0]),
+  );
+  const onSelect = (item) => selectNavItem(item, setSelected);
   return (
     <Box
       as="nav"
@@ -204,7 +211,7 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
                     key={item.key}
                     item={item}
                     selected={selected.key === item.key}
-                    onSelect={setSelected}
+                    onSelect={onSelect}
                   />
                 ))}
               </Box>
@@ -213,7 +220,7 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
                 key={value.key}
                 item={value}
                 selected={selected.key === value.key}
-                onSelect={setSelected}
+                onSelect={onSelect}
               />
             ),
           )}
