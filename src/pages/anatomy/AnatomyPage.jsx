@@ -6,91 +6,176 @@ import {
   PageContent,
   PageHeader,
   Paragraph,
+  Tab,
+  Tabs,
   Text,
   ToggleGroup,
 } from 'grommet';
 
-// Lo-fi anatomy of the list–detail page inside the HPE app shell.
-// Each block is a region; the badge names its landmark / ARIA role and the
-// legend below explains responsibility, controls and behaviour.
+// Lo-fi anatomy of the list–detail page, explored at four zoom levels:
+//   Page   · where the list–detail surface sits inside the app shell
+//   Zones  · the two zones, what they are and the space they can occupy
+//   List   · inside the list zone (toolbar + list body)
+//   Detail · inside the detail zone (header + tabs + body)
+// Each level has a wireframe and a legend of its regions (role / owns /
+// controls / behaviour).
 
-const REGIONS = {
-  header: {
-    id: 1,
-    name: 'Global header',
-    role: '<header> · banner',
-    owns: 'Product identity, workspace switcher, global search, help, notifications, account.',
-    controls: 'Menu toggle · search · icon buttons · account drop',
-    behaviour: 'Persistent across every page. Never scrolls away.',
-  },
-  nav: {
-    id: 2,
-    name: 'Navigation pane',
-    role: '<nav aria-label="Primary"> · navigation',
-    owns: 'Section switching. The current page is marked with aria-current="page".',
-    controls: 'Collapse toggle · grouped nav items',
-    behaviour: 'Sticky. Collapses to icons on narrow viewports or on demand.',
-  },
-  main: {
-    id: 3,
-    name: 'Main',
-    role: '<main> · main',
-    owns: 'Everything page-specific. Exactly one per page.',
-    controls: '—',
-    behaviour: 'Hosts the page header and the list–detail surface.',
-  },
-  pageHeader: {
-    id: 4,
-    name: 'Page header',
-    role: 'PageHeader · <h1>',
-    owns: 'Page title, subtitle and page-level primary action.',
-    controls: 'Page action button (e.g. Add users) · back link when drilled in',
-    behaviour: 'Scrolls with content. Back link appears only in stacked mode.',
-  },
-  listToolbar: {
-    id: 5,
-    name: 'List toolbar',
-    role: '<search> · search',
-    owns: 'Narrowing the collection without leaving the page.',
-    controls: 'Search input · quick-filter toggle group · result count',
-    behaviour: 'Sticky above the list. Filters apply instantly.',
-  },
-  list: {
-    id: 6,
-    name: 'List',
-    role: '<ul role="listbox"> · option rows',
-    owns: 'Selecting one record to inspect.',
-    controls: 'Rows (avatar, name, role) · keyboard ↑↓ · Enter',
-    behaviour:
-      'Scrolls independently. Selected row is highlighted and announced.',
-  },
-  detailHeader: {
-    id: 7,
-    name: 'Detail header',
-    role: '<h2> · menu button',
-    owns: 'Identity of the selected record and its record-level actions.',
-    controls: 'Actions menu (edit, reset MFA, … · destructive last)',
-    behaviour: 'Updates when the selection changes.',
-  },
-  tabs: {
-    id: 8,
-    name: 'Detail tabs',
-    role: 'tablist · tab · tabpanel',
-    owns: 'Switching between facets of the record (Details, Roles & groups, Activity).',
-    controls: 'Tabs · ←/→ keys',
-    behaviour: 'Each panel has a visually hidden <h3> for the outline.',
-  },
-  detailBody: {
-    id: 9,
-    name: 'Detail body',
-    role: 'tabpanel content',
-    owns: 'Read-only facts and contained sub-lists for the record.',
-    controls: 'Name–value pairs · row menus · inline links',
-    behaviour: 'Name–value pairs go horizontal→vertical when space runs out.',
-  },
+const region = (id, name, role, owns, controls, behaviour, extra = {}) => ({
+  id,
+  name,
+  role,
+  owns,
+  controls,
+  behaviour,
+  ...extra,
+});
+
+const PAGE = {
+  header: region(
+    1,
+    'Global header',
+    '<header> · banner',
+    'Product identity, workspace switcher, global search, help, notifications, account.',
+    'Menu toggle · search · icon buttons · account drop',
+    'Persistent across every page. Never scrolls away.',
+  ),
+  nav: region(
+    2,
+    'Navigation pane',
+    '<nav aria-label="Primary"> · navigation',
+    'Section switching. The current page is marked with aria-current="page".',
+    'Collapse toggle · nav items',
+    'Sticky. Collapses to icons on narrow viewports or on demand.',
+  ),
+  main: region(
+    3,
+    'Main',
+    '<main> · main',
+    'Everything page-specific. Exactly one per page.',
+    '—',
+    'Hosts the page header and the list–detail surface.',
+  ),
+  pageHeader: region(
+    4,
+    'Page header',
+    'PageHeader · <h1>',
+    'Page title, subtitle and the single collection-level action.',
+    'Page action button (e.g. Add users) · back link when drilled in',
+    'Scrolls with content. Back link appears only in stacked mode.',
+  ),
+  surface: region(
+    5,
+    'List–detail surface',
+    'Grid · 2 columns',
+    'The pattern itself: a selection surface (list) beside an inspection surface (detail).',
+    'Divider between zones (optional)',
+    'Fills the remaining width of Main. Stacks into a drill-in below the medium breakpoint.',
+  ),
 };
 
-const Badge = ({ region }) => (
+const ZONES = {
+  list: region(
+    1,
+    'List zone',
+    '<section> · selection surface',
+    'Finding and selecting one record from the collection.',
+    'List toolbar · list body',
+    'Fixed-width column. Sticks to the viewport and scrolls its rows independently.',
+    { space: 'min 192px · max 384px (medium → large tokens)' },
+  ),
+  detail: region(
+    2,
+    'Detail zone',
+    '<section> · inspection surface',
+    'Everything about the selected record, and the actions that apply to it.',
+    'Detail header · tabs · body',
+    'Flexible column. Takes whatever width the list zone leaves. Scrolls with the page.',
+    { space: 'flex · remaining width (≈ 732px at 1116px content width)' },
+  ),
+};
+
+const ZONE_VARIANTS = [
+  {
+    value: 'fixed',
+    label: 'Fixed list',
+    listWidth: '34%',
+    listLabel: '192–384px',
+    detailLabel: 'flex',
+    note: 'Current behaviour. The list is clamped to a token range so row content stays legible; the detail zone absorbs all remaining width.',
+  },
+  {
+    value: 'split',
+    label: 'Proportional',
+    listWidth: '40%',
+    listLabel: '40%',
+    detailLabel: '60%',
+    note: 'Alternative. Both zones scale with the page, keeping a constant ratio. Suits lists with richer rows (status, meta) at the cost of a narrower detail column on small screens.',
+  },
+];
+
+const LIST = {
+  toolbar: region(
+    1,
+    'List toolbar',
+    '<search> · search',
+    'Narrowing the collection without leaving the page.',
+    'Search input · quick-filter toggle group · result count',
+    'Sticky above the rows. Filters apply instantly and update the count.',
+  ),
+  rows: region(
+    2,
+    'List body',
+    '<ul role="listbox"> · option rows',
+    'Presenting the collection and holding the current selection.',
+    'Rows (avatar, name, role) · ↑/↓ · Enter',
+    'Scrolls independently of the page. Selected row is highlighted and announced; first row selected by default.',
+  ),
+  row: region(
+    3,
+    'Row',
+    'role="option" · aria-selected',
+    'One record, summarised to what is needed to choose it.',
+    'Click / Enter to select',
+    'Primary text + one line of secondary text. No per-row actions — those live in the detail zone.',
+  ),
+};
+
+const DETAIL = {
+  header: region(
+    1,
+    'Detail header',
+    '<h2> · menu button',
+    'Identity of the selected record and its record-level actions.',
+    'Actions menu (edit, reset, suspend … destructive last)',
+    'Updates when the selection changes. Inline rename replaces the heading with an input.',
+  ),
+  tabs: region(
+    2,
+    'Detail tabs',
+    'tablist · tab · tabpanel',
+    'Switching between facets of the record.',
+    'Details · Role assignments · User group membership · Org workspace membership · ←/→',
+    'Each panel carries a visually hidden <h3> so the outline stays intact.',
+  ),
+  facts: region(
+    3,
+    'Facts',
+    'NameValueList (grouped)',
+    'Read-only attributes of the record, grouped by theme.',
+    'None — read only',
+    'Groups (Identity / Account / Membership) separated by weak dividers. Pairs go horizontal → vertical under 480px.',
+  ),
+  lists: region(
+    4,
+    'Membership lists',
+    'List · row actions',
+    'Related records the user belongs to or has been granted.',
+    'Panel action (Assign / Add) · row remove · inline links to source',
+    'Simple rows instead of tables: title link, one meta line, trailing source and remove control. Empty state when nothing is assigned.',
+  ),
+};
+
+const Badge = ({ region: r, size = 'medium' }) => (
   <Box direction="row" gap="xsmall" align="center" wrap>
     <Box
       background="text-strong"
@@ -102,18 +187,20 @@ const Badge = ({ region }) => (
       flex={false}
     >
       <Text size="xsmall" weight={700} color="#ffffff">
-        {region.id}
+        {r.id}
       </Text>
     </Box>
-    <Text weight={500}>{region.name}</Text>
+    <Text weight={500} size={size}>
+      {r.name}
+    </Text>
     <Text size="small" color="text-weak" style={{ fontFamily: 'monospace' }}>
-      {region.role}
+      {r.role}
     </Text>
   </Box>
 );
 
 // Dashed, unfilled wireframe block
-const Block = ({ region, children, ...rest }) => (
+const Block = ({ region: r, children, ...rest }) => (
   <Box
     border={{ color: 'border', style: 'dashed', size: 'small' }}
     round="xsmall"
@@ -121,7 +208,34 @@ const Block = ({ region, children, ...rest }) => (
     gap="small"
     {...rest}
   >
-    <Badge region={region} />
+    <Badge region={r} />
+    {children}
+  </Box>
+);
+
+// Solid, emphasised block used for the regions a level is focused on
+const Focus = ({ region: r, label, children, ...rest }) => (
+  <Box
+    border={{ color: 'brand', size: 'small' }}
+    round="xsmall"
+    pad="small"
+    gap="small"
+    background="background-front"
+    {...rest}
+  >
+    <Box direction="row" justify="between" align="start" gap="small" wrap>
+      <Badge region={r} />
+      {label && (
+        <Text
+          size="small"
+          color="brand"
+          weight={500}
+          style={{ fontFamily: 'monospace' }}
+        >
+          {label}
+        </Text>
+      )}
+    </Box>
     {children}
   </Box>
 );
@@ -137,7 +251,44 @@ const Ghost = ({ width = '100%', height = '12px', ...rest }) => (
   />
 );
 
-const ShellWireframe = ({ variant }) => {
+// De-emphasised placeholder for regions outside the current zoom level
+const Dim = ({ label, ...rest }) => (
+  <Box
+    border={{ color: 'border-weak', style: 'dashed' }}
+    round="xsmall"
+    pad="small"
+    align="center"
+    justify="center"
+    {...rest}
+  >
+    <Text size="small" color="text-weak">
+      {label}
+    </Text>
+  </Box>
+);
+
+const GhostRows = ({ count = 5, selected = 0 }) =>
+  Array.from({ length: count }, (_, i) => (
+    <Box
+      key={i}
+      direction="row"
+      gap="small"
+      align="center"
+      pad="xsmall"
+      background={i === selected ? 'background-contrast' : undefined}
+    >
+      <Ghost width="32px" height="32px" round="full" />
+      <Box gap="xxsmall" flex>
+        <Ghost width="70%" />
+        <Ghost width="50%" height="8px" />
+      </Box>
+    </Box>
+  ));
+
+// ---------------------------------------------------------------------------
+// Level 1 · Page — where the surface sits in the shell
+
+const PageWireframe = ({ variant }) => {
   const v3 = variant === 'v3';
   return (
     <Box
@@ -147,7 +298,7 @@ const ShellWireframe = ({ variant }) => {
       overflow="hidden"
     >
       <Block
-        region={REGIONS.header}
+        region={PAGE.header}
         direction="row"
         align="center"
         round="none"
@@ -174,14 +325,14 @@ const ShellWireframe = ({ variant }) => {
         align="stretch"
       >
         <Block
-          region={REGIONS.nav}
+          region={PAGE.nav}
           width="220px"
           flex={false}
           background={v3 ? 'background-back' : 'background-front'}
           round={v3 ? 'large' : 'none'}
         >
           <Ghost width="60%" />
-          <Ghost width="80%" height="28px" background="background-contrast" />
+          <Ghost width="80%" height="28px" />
           <Ghost
             width="80%"
             height="28px"
@@ -196,14 +347,9 @@ const ShellWireframe = ({ variant }) => {
           />
         </Block>
 
-        <Block
-          region={REGIONS.main}
-          flex
-          round="none"
-          border={{ color: 'border', style: 'dashed', size: 'small' }}
-        >
+        <Block region={PAGE.main} flex round="none">
           <Block
-            region={REGIONS.pageHeader}
+            region={PAGE.pageHeader}
             direction="row"
             justify="between"
             align="center"
@@ -215,98 +361,210 @@ const ShellWireframe = ({ variant }) => {
             <Ghost width="110px" height="36px" round="full" />
           </Block>
 
-          <Box
-            direction="row"
-            background="background-front"
-            round="xlarge"
-            border={v3 ? { color: 'border-weak' } : undefined}
-            pad="small"
-            gap="small"
+          <Focus
+            region={PAGE.surface}
+            label="fills remaining width"
+            round={v3 ? 'xsmall' : 'xlarge'}
+            height={{ min: '260px' }}
           >
-            <Box width="240px" flex={false} gap="small">
-              <Block region={REGIONS.listToolbar}>
-                <Ghost height="36px" />
-                <Box direction="row" gap="xsmall">
-                  <Ghost width="40px" height="24px" round="full" />
-                  <Ghost width="56px" height="24px" round="full" />
-                  <Ghost width="60px" height="24px" round="full" />
-                </Box>
-              </Block>
-              <Block region={REGIONS.list} flex>
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Box
-                    key={i}
-                    direction="row"
-                    gap="small"
-                    align="center"
-                    pad="xsmall"
-                    background={i === 0 ? 'background-contrast' : undefined}
-                  >
-                    <Ghost width="32px" height="32px" round="full" />
-                    <Box gap="xxsmall" flex>
-                      <Ghost width="70%" />
-                      <Ghost width="50%" height="8px" />
-                    </Box>
-                  </Box>
-                ))}
-              </Block>
+            <Box direction="row" gap="small" flex>
+              <Dim label="List zone" width="34%" flex={false} />
+              <Dim label="Detail zone" flex />
             </Box>
-            <Box border={{ side: 'left', color: 'border-weak' }} />
-            <Box flex gap="small">
-              <Block
-                region={REGIONS.detailHeader}
-                direction="row"
-                justify="between"
-                align="center"
-              >
-                <Ghost width="160px" height="24px" />
-                <Ghost width="90px" height="32px" round="full" />
-              </Block>
-              <Block region={REGIONS.tabs} direction="row" gap="small">
-                <Ghost width="60px" height="20px" background="text-strong" />
-                <Ghost width="100px" height="20px" />
-                <Ghost width="60px" height="20px" />
-              </Block>
-              <Block region={REGIONS.detailBody} flex>
-                {[0, 1, 2, 3].map((i) => (
-                  <Box key={i} direction="row" gap="medium">
-                    <Ghost width="120px" />
-                    <Ghost width="200px" />
-                  </Box>
-                ))}
-              </Block>
-            </Box>
-          </Box>
+          </Focus>
         </Block>
       </Box>
     </Box>
   );
 };
 
-const Legend = () => (
-  <Box as="dl" margin="none" gap="medium">
-    {Object.values(REGIONS).map((region) => (
+// ---------------------------------------------------------------------------
+// Level 2 · Zones — list vs detail, and how much space each can take
+
+const ZonesWireframe = ({ variant }) => {
+  const v = ZONE_VARIANTS.find((o) => o.value === variant);
+  return (
+    <Box gap="small">
       <Box
-        key={region.id}
-        pad={{ bottom: 'medium' }}
-        border={{ side: 'bottom', color: 'border-weak' }}
+        border={{ color: 'border-weak' }}
+        background="background-back"
+        round="small"
+        pad="small"
+        gap="small"
+      >
+        <Dim label="Page header" height="56px" />
+        <Box direction="row" gap="small" height={{ min: '360px' }}>
+          <Focus
+            region={ZONES.list}
+            label={v.listLabel}
+            width={v.listWidth}
+            flex={false}
+          >
+            <Dim label="List toolbar" height="72px" />
+            <Dim label="List body" flex />
+          </Focus>
+          <Box border={{ side: 'left', color: 'border-weak' }} />
+          <Focus region={ZONES.detail} label={v.detailLabel} flex>
+            <Dim label="Detail header" height="48px" />
+            <Dim label="Tabs" height="36px" />
+            <Dim label="Body" flex />
+          </Focus>
+        </Box>
+      </Box>
+      <Paragraph margin="none" fill size="small" color="text-weak">
+        {v.note}
+      </Paragraph>
+    </Box>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Level 3 · List zone
+
+const ListWireframe = () => (
+  <Box
+    border={{ color: 'border-weak' }}
+    background="background-back"
+    round="small"
+    pad="small"
+    direction="row"
+    gap="small"
+    height={{ min: '420px' }}
+  >
+    <Box width="40%" flex={false} gap="small">
+      <Focus region={LIST.toolbar} label="sticky">
+        <Ghost height="36px" background="transparent" border />
+        <Box direction="row" gap="xsmall">
+          <Ghost width="40px" height="24px" round="full" background="brand" />
+          <Ghost width="56px" height="24px" round="full" />
+          <Ghost width="60px" height="24px" round="full" />
+        </Box>
+        <Ghost width="60px" height="8px" />
+      </Focus>
+      <Focus region={LIST.rows} label="scrolls independently" flex>
+        <Focus region={LIST.row} pad="xsmall" background="background-contrast">
+          <GhostRows count={1} selected={0} />
+        </Focus>
+        <GhostRows count={4} selected={-1} />
+      </Focus>
+    </Box>
+    <Box border={{ side: 'left', color: 'border-weak' }} />
+    <Dim label="Detail zone" flex />
+  </Box>
+);
+
+// ---------------------------------------------------------------------------
+// Level 4 · Detail zone
+
+const DetailWireframe = () => (
+  <Box
+    border={{ color: 'border-weak' }}
+    background="background-back"
+    round="small"
+    pad="small"
+    direction="row"
+    gap="small"
+    height={{ min: '480px' }}
+  >
+    <Dim label="List zone" width="30%" flex={false} />
+    <Box border={{ side: 'left', color: 'border-weak' }} />
+    <Box flex gap="small">
+      <Focus region={DETAIL.header} label="updates on selection">
+        <Box direction="row" justify="between" align="center">
+          <Ghost width="160px" height="24px" />
+          <Ghost width="90px" height="32px" round="full" />
+        </Box>
+      </Focus>
+      <Focus region={DETAIL.tabs}>
+        <Box direction="row" gap="small" wrap>
+          <Ghost width="60px" height="20px" background="brand" />
+          <Ghost width="110px" height="20px" />
+          <Ghost width="150px" height="20px" />
+          <Ghost width="190px" height="20px" />
+        </Box>
+      </Focus>
+      <Box direction="row" gap="small" flex>
+        <Focus region={DETAIL.facts} label="Details tab" flex>
+          {['Identity', 'Account', 'Membership'].map((g, gi) => (
+            <Box
+              key={g}
+              gap="xsmall"
+              pad={{ vertical: 'xsmall' }}
+              border={gi < 2 ? { side: 'bottom', color: 'border-weak' } : false}
+            >
+              <Ghost width="80px" height="10px" background="text-weak" />
+              {[0, 1, 2].map((i) => (
+                <Box key={i} direction="row" gap="medium">
+                  <Ghost width="90px" />
+                  <Ghost width="140px" />
+                </Box>
+              ))}
+            </Box>
+          ))}
+        </Focus>
+        <Focus region={DETAIL.lists} label="membership tabs" flex>
+          <Box direction="row" justify="end">
+            <Ghost width="90px" height="28px" round="full" />
+          </Box>
+          {[0, 1, 2].map((i) => (
+            <Box
+              key={i}
+              direction="row"
+              justify="between"
+              align="center"
+              pad={{ vertical: 'xsmall' }}
+              border={i < 2 ? { side: 'bottom', color: 'border-weak' } : false}
+            >
+              <Box gap="xxsmall" flex>
+                <Ghost width="55%" background="brand" />
+                <Ghost width="70%" height="8px" />
+              </Box>
+              <Box direction="row" gap="xsmall" align="center">
+                <Ghost width="40px" height="8px" />
+                <Ghost width="20px" height="20px" />
+              </Box>
+            </Box>
+          ))}
+        </Focus>
+      </Box>
+    </Box>
+  </Box>
+);
+
+// ---------------------------------------------------------------------------
+
+const Legend = ({ regions }) => (
+  <Box as="dl" margin="none">
+    {Object.values(regions).map((r, i, arr) => (
+      <Box
+        key={r.id}
+        pad={{ vertical: 'medium' }}
+        border={
+          i < arr.length - 1 ? { side: 'bottom', color: 'border-weak' } : false
+        }
         gap="xsmall"
       >
         <Box as="dt">
-          <Badge region={region} />
+          <Badge region={r} />
         </Box>
         <Box as="dd" margin={{ left: '32px' }} gap="xxsmall">
+          {r.space && (
+            <Text>
+              <Text weight={500}>Space · </Text>
+              {r.space}
+            </Text>
+          )}
           <Text>
             <Text weight={500}>Owns · </Text>
-            {region.owns}
+            {r.owns}
           </Text>
           <Text>
             <Text weight={500}>Controls · </Text>
-            {region.controls}
+            {r.controls}
           </Text>
           <Text color="text-weak">
             <Text weight={500}>Behaviour · </Text>
-            {region.behaviour}
+            {r.behaviour}
           </Text>
         </Box>
       </Box>
@@ -314,38 +572,89 @@ const Legend = () => (
   </Box>
 );
 
+const Level = ({ title, intro, control, wireframe, regions }) => (
+  <Box gap="medium" pad={{ top: 'medium' }}>
+    <Box direction="row" justify="between" align="start" gap="medium" wrap>
+      <Box gap="xsmall" width={{ max: 'large' }}>
+        <Heading level={2} margin="none">
+          {title}
+        </Heading>
+        <Paragraph margin="none" fill>
+          {intro}
+        </Paragraph>
+      </Box>
+      {control}
+    </Box>
+    {wireframe}
+    <Legend regions={regions} />
+  </Box>
+);
+
 export const AnatomyPage = () => {
-  const [variant, setVariant] = useState('default');
+  const [shell, setShell] = useState('default');
+  const [zone, setZone] = useState('fixed');
+  const [level, setLevel] = useState(0);
   return (
     <Page pad={{ bottom: 'xlarge' }}>
-      <PageContent gap="large">
+      <PageContent gap="medium">
         <PageHeader
           title="List–detail anatomy"
-          subtitle="Regions, landmark roles and what each one is responsible for."
-          actions={
-            <ToggleGroup
-              options={[
-                { label: 'Default shell', value: 'default' },
-                { label: 'Shell V3.1', value: 'v3' },
-              ]}
-              value={variant}
-              onToggle={({ value }) => value && setVariant(value)}
-            />
-          }
+          subtitle="Zoom from the page down into each zone. Every level names its regions, their roles and what they own."
         />
-        <ShellWireframe variant={variant} />
-        <Box gap="small">
-          <Heading level={2} margin="none">
-            Regions
-          </Heading>
-          <Paragraph margin="none" fill>
-            Shell regions (1–3) are shared by every page. Page regions (4–9) are
-            specific to the list–detail pattern: the list is the selection
-            surface, the detail column is the inspection surface, and the page
-            header carries the single collection-level action.
-          </Paragraph>
-          <Legend />
-        </Box>
+        <Tabs activeIndex={level} onActive={setLevel} justify="start">
+          <Tab title="Page">
+            <Level
+              title="Where the surface sits"
+              intro="Shell regions (1–3) are shared by every page. The page header carries the one collection-level action; the list–detail surface fills the rest of Main."
+              control={
+                <ToggleGroup
+                  options={[
+                    { label: 'Default shell', value: 'default' },
+                    { label: 'Shell v3', value: 'v3' },
+                  ]}
+                  value={shell}
+                  onToggle={({ value }) => value && setShell(value)}
+                />
+              }
+              wireframe={<PageWireframe variant={shell} />}
+              regions={PAGE}
+            />
+          </Tab>
+          <Tab title="Zones">
+            <Level
+              title="List zone and detail zone"
+              intro="Two zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
+              control={
+                <ToggleGroup
+                  options={ZONE_VARIANTS.map(({ label, value }) => ({
+                    label,
+                    value,
+                  }))}
+                  value={zone}
+                  onToggle={({ value }) => value && setZone(value)}
+                />
+              }
+              wireframe={<ZonesWireframe variant={zone} />}
+              regions={ZONES}
+            />
+          </Tab>
+          <Tab title="List zone">
+            <Level
+              title="Inside the list zone"
+              intro="A sticky toolbar narrows the collection; the body below scrolls on its own and holds exactly one selection."
+              wireframe={<ListWireframe />}
+              regions={LIST}
+            />
+          </Tab>
+          <Tab title="Detail zone">
+            <Level
+              title="Inside the detail zone"
+              intro="Header identifies the record and owns its actions; tabs split the record into facets; the body is either grouped facts or simple membership lists."
+              wireframe={<DetailWireframe />}
+              regions={DETAIL}
+            />
+          </Tab>
+        </Tabs>
       </PageContent>
     </Page>
   );
