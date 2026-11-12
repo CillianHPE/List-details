@@ -18,6 +18,8 @@ const readVersion = () => {
 
 const App = () => {
   const [version, setVersion] = useState(readVersion);
+  // Anatomy only: hide the global header + nav so the page can be studied alone.
+  const [chrome, setChrome] = useState(true);
 
   useEffect(() => {
     const onHash = () => setVersion(readVersion());
@@ -38,11 +40,14 @@ const App = () => {
           <UsersPage />
         </V3Shell>
       )}
-      {version === 'anatomy' && (
-        <DefaultShell>
-          <AnatomyPage />
-        </DefaultShell>
-      )}
+      {version === 'anatomy' &&
+        (chrome ? (
+          <DefaultShell>
+            <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
+          </DefaultShell>
+        ) : (
+          <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
+        ))}
       {version === 'default' && (
         <DefaultShell>
           <UsersPage />

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Box,
+  CheckBox,
   Heading,
   Page,
   PageContent,
@@ -590,7 +591,7 @@ const Level = ({ title, intro, control, wireframe, regions }) => (
   </Box>
 );
 
-export const AnatomyPage = () => {
+export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
   const [shell, setShell] = useState('default');
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
@@ -600,6 +601,16 @@ export const AnatomyPage = () => {
         <PageHeader
           title="List–detail anatomy"
           subtitle="Zoom from the page down into each zone. Every level names its regions, their roles and what they own."
+          actions={
+            onChromeChange && (
+              <CheckBox
+                toggle
+                label="App chrome"
+                checked={chrome}
+                onChange={(e) => onChromeChange(e.target.checked)}
+              />
+            )
+          }
         />
         <Tabs activeIndex={level} onActive={setLevel} justify="start">
           <Tab title="Page">
