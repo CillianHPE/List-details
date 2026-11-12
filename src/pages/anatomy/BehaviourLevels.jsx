@@ -134,19 +134,27 @@ const SCROLL_VARIANTS = [
 const scrollRegions = (variant) => {
   const panes = variant === 'panes';
   return {
-    viewport: region(
+    globalHeader: region(
       1,
+      'Global header',
+      'sticky · top 0',
+      'Always visible. Main content slides beneath it in both models; this is the app-shell default, not a per-page choice.',
+      '—',
+      'position: sticky; top: 0; z-index above Main. 60px tall. Every other pinned element (nav, list column) offsets from this height.',
+    ),
+    viewport: region(
+      2,
       'Viewport',
       '100vh · overflow hidden',
       'The outer frame. Nothing inside is taller than this except designated scroll containers.',
       '—',
-      'App shell is height: 100vh. Global header and nav never move.',
+      'App shell is height: 100vh. Global header is sticky; nav is pinned beneath it.',
       {
         questions: 'Is the min supported height 600px? What happens below it?',
       },
     ),
     main: region(
-      2,
+      3,
       'Main',
       panes ? 'overflow hidden' : 'overflow auto',
       panes
@@ -154,11 +162,11 @@ const scrollRegions = (variant) => {
         : 'The one page-level scroll container. Page header scrolls away with the content.',
       '—',
       panes
-        ? 'Height = 100vh − global header. Page header stays visible.'
-        : 'Height = 100vh − global header. Scrollbar appears on the right edge of Main.',
+        ? 'Height = 100vh − global header (60px). Page header stays visible.'
+        : 'Height = 100vh − global header (60px). Scrollbar appears on the right edge of Main; content scrolls under the sticky global header.',
     ),
     toolbar: region(
-      3,
+      4,
       'List toolbar',
       'sticky',
       'Stays above the rows at all times.',
@@ -166,13 +174,15 @@ const scrollRegions = (variant) => {
       'Sticky within the list column; never scrolls out of view.',
     ),
     listBody: region(
-      4,
+      5,
       'List body',
       'overflow auto',
       'Rows. Always scrolls independently of everything else.',
       'Wheel · ↑/↓ · PgUp/PgDn',
       `Max height = viewport − header − page header − toolbar. Selected row is scrolled into view on keyboard navigation. ${
-        panes ? '' : 'Column is sticky so it stays put while the page scrolls.'
+        panes
+          ? ''
+          : 'Column is sticky at top: 60px + 24px (global header + edgeSize.medium) so it stays put while the page scrolls.'
       }`,
       {
         questions:
@@ -180,7 +190,7 @@ const scrollRegions = (variant) => {
       },
     ),
     detailHeader: region(
-      5,
+      6,
       'Detail header',
       panes ? 'sticky' : 'static',
       'Record identity and actions.',
@@ -190,7 +200,7 @@ const scrollRegions = (variant) => {
         : 'Scrolls away with the page like normal content.',
     ),
     detailContent: region(
-      6,
+      7,
       'Detail content',
       panes ? 'overflow auto' : 'grows page',
       'Tabs and content for the selected record.',
@@ -210,9 +220,20 @@ const ScrollWireframe = ({ variant }) => {
   const panes = variant === 'panes';
   const R = scrollRegions(variant);
   return (
-    <Focus region={R.viewport} label="100vh" background="background-back">
+    <Focus
+      region={R.viewport}
+      label="100vh"
+      background="background-back"
+      gap="small"
+    >
+      <Focus region={R.globalHeader} label="60px" pad="xsmall">
+        <Box direction="row" gap="small" align="center">
+          <Ghost width="80px" height="16px" />
+          <Ghost width="40%" height="16px" />
+        </Box>
+      </Focus>
       <Box direction="row" gap="small" height="440px">
-        <Dim label="Nav" width="90px" flex={false} />
+        <Dim label="Nav · pinned" width="90px" flex={false} />
         <Focus
           region={R.main}
           label={panes ? 'overflow hidden' : 'overflow auto'}

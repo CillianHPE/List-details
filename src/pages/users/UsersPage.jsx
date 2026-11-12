@@ -17,7 +17,11 @@ import { LinkPrev, Search } from '@hpe-design/icons-grommet';
 import { users } from '../../data/users';
 import { UserList } from './UserList';
 import { UserDetail } from './UserDetail';
-import { useShell } from '../../shell/ShellContext';
+import {
+  APP_HEADER_HEIGHT,
+  stickyBelowHeader,
+  useShell,
+} from '../../shell/ShellContext';
 
 const QUICK_FILTERS = [
   { label: 'All', value: 'all', test: () => true },
@@ -129,8 +133,15 @@ export const UsersPage = () => {
                       ? undefined
                       : { side: 'right', color: 'border-weak' }
                   }
-                  style={stacked ? undefined : { position: 'sticky', top: 24 }}
-                  height={stacked ? undefined : { max: 'calc(100vh - 48px)' }}
+                  style={stacked ? undefined : stickyBelowHeader(24)}
+                  // Pinned 24px below the sticky global header; max height leaves
+                  // room for that gap plus the pane and page bottom padding (72px)
+                  // so the column never slides under the header at full scroll.
+                  height={
+                    stacked
+                      ? undefined
+                      : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
+                  }
                 >
                   <Box gap="xsmall" flex={false}>
                     <TextInput

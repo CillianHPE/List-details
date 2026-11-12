@@ -46,7 +46,7 @@ const PAGE = {
     '<header> · banner',
     'Product identity, workspace switcher, global search, help, notifications, account.',
     'Menu toggle · search · icon buttons · account drop',
-    'Full width, above everything else.',
+    'Full width, 60px tall, position: sticky at top: 0 across every shell. Default behaviour of the app-shell component.',
     see(0),
   ),
   nav: region(
@@ -55,7 +55,7 @@ const PAGE = {
     '<nav aria-label="Primary"> · navigation',
     'Section switching. The current page is marked with aria-current="page".',
     'Collapse toggle · nav items',
-    'Fixed-width column beside Main; collapsible on demand.',
+    'Fixed-width column beside Main, pinned just below the global header; collapsible on demand.',
     see(1),
   ),
   main: region(

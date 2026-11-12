@@ -26,7 +26,7 @@ import {
   navItems,
   selectNavItem,
 } from '../components/NavSidebar';
-import { ShellContext } from './ShellContext';
+import { ShellContext, stickyBelowHeader } from './ShellContext';
 
 // App Shell V3.1 (Figma: Landmark Surface examples → 3250:15494).
 // White canvas · 60px bordered global header · 12px wrapper holding a rounded
@@ -45,6 +45,7 @@ const GlobalHeaderV3 = () => {
       flex={false}
       background="background-front"
       border={{ side: 'bottom', color: 'border-weak' }}
+      style={{ position: 'sticky', top: 0, zIndex: 2 }}
       pad={{ horizontal: compact ? 'medium' : 'xlarge' }}
     >
       <Box direction="row" align="center" gap="medium" flex>
@@ -161,7 +162,7 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
       background="background-back"
       round="large"
       pad={{ horizontal: '3xsmall' }}
-      style={{ position: 'sticky', top: 12, alignSelf: 'flex-start' }}
+      style={stickyBelowHeader(12, { alignSelf: 'flex-start' })}
       height="calc(100vh - 84px)"
     >
       <Box

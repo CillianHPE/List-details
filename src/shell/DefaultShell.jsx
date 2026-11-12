@@ -1,19 +1,19 @@
 import { Box } from 'grommet';
 import { GlobalHeader } from '../components/GlobalHeader';
 import { NavSidebar } from '../components/NavSidebar';
-import { ShellContext } from './ShellContext';
+import { ShellContext, appHeight, stickyBelowHeader } from './ShellContext';
 
 // Default HPE app shell (hpe-design-system/sandbox/grommet-app):
 // Global header → [ NavSidebar | Page → PageContent → PageHeader + content ]
-const appHeaderHeight = '60px';
-export const appHeight = `calc(100vh - ${appHeaderHeight})`;
+// The global header is sticky; the nav pins just below it while Main scrolls.
+export { appHeight };
 
 export const DefaultShell = ({ children }) => (
   <ShellContext.Provider value="default">
     <Box background="background-back" fill="vertical" flex>
-      <GlobalHeader />
+      <GlobalHeader style={{ position: 'sticky', top: 0, zIndex: 2 }} />
       <Box direction="row">
-        <NavSidebar height={appHeight} />
+        <NavSidebar height={appHeight} style={stickyBelowHeader()} />
         {children}
       </Box>
     </Box>

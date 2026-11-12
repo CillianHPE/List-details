@@ -31,7 +31,8 @@ export const GlobalHeader = (props) => {
           justify="between"
           align="center"
           background="background-front"
-          pad={{ horizontal: 'xsmall', vertical: 'small' }}
+          height="60px"
+          pad={{ horizontal: 'xsmall', vertical: 'xsmall' }}
         >
           <Box direction="row" gap="medium" align="center" flex>
             <Box direction="row" gap="xsmall">
