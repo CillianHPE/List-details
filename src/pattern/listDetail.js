@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from 'react';
 // cannot drift apart.
 
 export const SURFACE = {
-  listMin: 192, // size.xsmall
+  listMin: 256, // size.small
   listMax: 384, // size.medium
   gap: 24, // edgeSize.medium
   detailMin: 480, // name–value pairs stack under this
 };
-SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 696
+SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 760
 SURFACE.comfortableMin = 1000;
 
 // The surface responds to its own width, not the viewport's, because the app

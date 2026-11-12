@@ -44,9 +44,9 @@ const ContentPane = forwardRef((props, ref) => (
 // Zones: A page header · B list toolbar · C list body · D/E/F detail column.
 // The surface sizes itself from its own width (not the viewport) because the
 // shell's nav / context panes take width first — see Anatomy › Responsive:
-//   comfortable ≥ 1000px  list clamps size.xsmall–size.medium
-//   compact     696–999px list pinned to size.xsmall
-//   drill-in    < 696px   one column, list → detail
+//   comfortable ≥ 1000px  list clamps size.small–size.medium
+//   compact     760–999px list pinned to size.small
+//   drill-in    < 760px   one column, list → detail
 export const UsersPage = () => {
   const { ref: surfaceRef, tier } = useSurfaceTier();
   const stacked = tier === 'drillIn';
@@ -156,8 +156,8 @@ export const UsersPage = () => {
                   stacked
                     ? undefined
                     : tier === 'compact'
-                      ? 'xsmall'
-                      : { min: 'xsmall', max: 'medium' }
+                      ? 'small'
+                      : { min: 'small', max: 'medium' }
                 }
                 pad={stacked || bare ? undefined : { vertical: 'medium' }}
                 // Grid items default to min-width:auto, which would let the

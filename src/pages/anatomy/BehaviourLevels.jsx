@@ -341,26 +341,26 @@ const BREAKPOINTS = {
     'A',
     'Comfortable',
     '≥ 1000px surface width',
-    'Two columns. Fixed list 192–384px (size.xsmall–size.medium); the detail zone takes the remaining width. Measured on the surface, not the viewport (see Shell configuration below).',
+    'Two columns. Fixed list 256–384px (size.small–size.medium); the detail zone takes the remaining width. Measured on the surface, not the viewport (see Shell configuration below).',
     'Navigation pane expanded',
     'Everything has room: labelled actions, a single row of tabs, name | value pairs side by side.',
   ),
   medium: region(
     'B',
     'Compact',
-    '696 – 999px surface width',
-    'Two columns. The list is held at its 192px (size.xsmall) minimum so the detail zone keeps most of the width.',
+    '760 – 999px surface width',
+    'Two columns. The list is held at its 256px (size.small) minimum so the detail zone keeps most of the width.',
     'Navigation pane collapsed to icons',
     'Chrome gives way first: secondary actions fold into overflow, tabs scroll, the detail header may wrap.',
     {
       questions:
-        'Should Compact drop to a proportional list instead of the 192px (size.xsmall) minimum?',
+        '192px (size.xsmall) was tried and truncated two-line rows; 256px (size.small) is the smallest that fits avatar + two lines. Should Compact drop to a proportional list instead?',
     },
   ),
   narrow: region(
     'C',
     'Drill-in',
-    '< 696px surface width',
+    '< 760px surface width',
     'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once a row is chosen.',
     'Navigation in a drawer behind the header menu button',
     'A Back link in the page header parent slot ("All users") returns to the list; record actions live in an overflow menu; pairs stack.',
@@ -395,11 +395,11 @@ const RESPONSIVE = {
     'two columns → stacked',
     'The arrangement of the two zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns [auto, flex] from 696px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
+    'Grid columns [auto, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
     {
       at: {
-        wide: 'Grid [auto, flex]; list 192–384px (size.xsmall–size.medium).',
-        medium: 'Grid [auto, flex]; list pinned to 192px (size.xsmall).',
+        wide: 'Grid [auto, flex]; list 256–384px (size.small–size.medium).',
+        medium: 'Grid [auto, flex]; list pinned to 256px (size.small).',
         narrow: 'Single column; list screen, then detail screen on selection.',
       },
     },
@@ -578,8 +578,8 @@ const ResponsiveFrame = ({ bp }) => {
                   narrow
                     ? '100%'
                     : medium
-                      ? '192px (size.xsmall)'
-                      : '192–384px (size.xsmall–size.medium)'
+                      ? '256px (size.small)'
+                      : '256–384px (size.small–size.medium)'
                 }
                 style={{ width: narrow ? '100%' : medium ? '36%' : '42%' }}
                 flex={false}

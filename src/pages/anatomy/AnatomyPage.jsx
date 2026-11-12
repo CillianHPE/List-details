@@ -104,7 +104,7 @@ const ZONES = {
     'List toolbar · list body',
     'Fixed-width column, clamped to a token range.',
     {
-      space: 'min 192px (size.xsmall) · max 384px (size.medium)',
+      space: 'min 256px (size.small) · max 384px (size.medium)',
       ...see('scroll', 'responsive'),
     },
   ),
@@ -127,7 +127,7 @@ const ZONE_VARIANTS = [
     value: 'fixed',
     label: 'Fixed list',
     listWidth: '34%',
-    listLabel: '192–384px (size.xsmall–size.medium)',
+    listLabel: '256–384px (size.small–size.medium)',
     detailLabel: 'flex',
     note: 'Current behaviour. The list is clamped to a token range so row content stays legible; the detail zone absorbs all remaining width.',
   },
@@ -143,14 +143,14 @@ const ZONE_VARIANTS = [
     value: 'resizable',
     label: 'Resizable',
     listWidth: '34%',
-    listLabel: 'drag · 192–384px (size.xsmall–size.medium)',
+    listLabel: 'drag · 256–384px (size.small–size.medium)',
     detailLabel: 'flex',
     note: 'Alternative. The divider becomes a handle: drag (or arrow keys) to resize the list within the same token range; double-click resets. Try it in the wireframe.',
   },
 ];
 
 // Resizable variant: the divider is the control
-const RESIZE_MIN = 192; // size.xsmall
+const RESIZE_MIN = 256; // size.small
 const RESIZE_MAX = 384; // size.large
 const RESIZE_STEP = 8; // keyboard step (edgeSize.xxsmall)
 
@@ -160,7 +160,7 @@ const RESIZE_HANDLE = region(
   '<div role="separator" aria-orientation="vertical" aria-valuemin/max/now>',
   'Letting the user trade list width for detail width within the token range.',
   'Pointer drag · ←/→ (8px, size.xxsmall) · Home/End to min/max · double-click to reset',
-  'Sits on the divider, 8px (edgeSize.xxsmall) hit area, col-resize cursor. Width clamps to 192–384px (size.xsmall–size.medium) and persists per user.',
+  'Sits on the divider, 8px (edgeSize.xxsmall) hit area, col-resize cursor. Width clamps to 256–384px (size.small–size.medium) and persists per user.',
   {
     questions:
       'Persist in localStorage or user preferences? Should the handle be always visible or appear on hover/focus?',
