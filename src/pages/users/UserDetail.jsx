@@ -365,11 +365,15 @@ const OrgWorkspaces = ({ user }) =>
 // tab; a visually hidden h3 keeps every panel in the heading outline.
 // Tabs never wrap: Grommet's Tabs detects overflow and swaps to a scrolling
 // tablist with previous/next arrows (Anatomy › Responsive › Detail tabs).
+// alignControls="start" lets the tablist shrink to its content; a full-width
+// tablist on a fractional column (e.g. 1062.74px) trips Grommet's
+// scrollWidth > offsetWidth rounding and shows arrows with nothing clipped.
 const DetailBody = ({ user, tab, setTab }) => (
   <Tabs
     activeIndex={tab}
     onActive={setTab}
     justify="start"
+    alignControls="start"
     flex={false}
     margin={{ top: 'small' }}
   >
