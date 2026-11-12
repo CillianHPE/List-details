@@ -4,30 +4,37 @@ import { Anchor, Box, Heading, Paragraph, Text } from 'grommet';
 // Lets legend entries jump to another group/tab (e.g. Behaviour → Scroll).
 export const AnatomyNav = createContext(() => {});
 
+// Behaviour tabs are addressed by key so links survive reordering or hiding.
+// `hidden` keeps a tab's content in the codebase but out of the UI (and out of
+// any "See Behaviour →" links) until it is ready to present.
 export const BEHAVIOUR_TABS = [
-  'Scroll & height',
-  'Responsive',
-  'States',
-  'Data & performance',
-  'Actions & ownership',
+  { key: 'scroll', label: 'Scroll & height' },
+  { key: 'responsive', label: 'Responsive' },
+  { key: 'states', label: 'States' },
+  { key: 'data', label: 'Data & performance', hidden: true },
+  { key: 'actions', label: 'Actions & ownership' },
 ];
+export const VISIBLE_BEHAVIOUR_TABS = BEHAVIOUR_TABS.filter((t) => !t.hidden);
+const tabByKey = (key) => BEHAVIOUR_TABS.find((t) => t.key === key);
 
 // Cross-reference from a Structure legend entry to a Behaviour tab
-export const see = (...tabs) => ({
-  see: tabs.map((t) => ({ group: 'behaviour', tab: t })),
+export const see = (...keys) => ({
+  see: keys.map((key) => ({ group: 'behaviour', tab: key })),
 });
 
 const SeeAlso = ({ links }) => {
   const go = useContext(AnatomyNav);
+  const visible = links.filter((l) => !tabByKey(l.tab)?.hidden);
+  if (!visible.length) return null;
   return (
     <Text size="small" color="text-weak">
       See Behaviour →{' '}
-      {links.map((l, i) => (
+      {visible.map((l, i) => (
         <Text key={l.tab} size="small">
           {i > 0 && ' · '}
           <Anchor
             size="small"
-            label={BEHAVIOUR_TABS[l.tab]}
+            label={tabByKey(l.tab).label}
             onClick={() => go(l.group, l.tab)}
           />
         </Text>

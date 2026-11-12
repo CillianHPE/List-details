@@ -21,6 +21,7 @@ import {
   Dim,
   GhostRows,
   Level,
+  VISIBLE_BEHAVIOUR_TABS,
 } from './primitives';
 import {
   ScrollLevel,
@@ -29,6 +30,14 @@ import {
   DataLevel,
   ActionsLevel,
 } from './BehaviourLevels';
+
+const BEHAVIOUR_CONTENT = {
+  scroll: ScrollLevel,
+  responsive: ResponsiveLevel,
+  states: StatesLevel,
+  data: DataLevel,
+  actions: ActionsLevel,
+};
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -47,7 +56,7 @@ const PAGE = {
     'Product identity, workspace switcher, global search, help, notifications, account.',
     'Menu toggle · search · icon buttons · account drop',
     'Full width, 60px tall, position: sticky at top: 0 across every shell. Default behaviour of the app-shell component.',
-    see(0),
+    see('scroll'),
   ),
   nav: region(
     2,
@@ -56,7 +65,7 @@ const PAGE = {
     'Section switching. The current page is marked with aria-current="page".',
     'Collapse toggle · nav items',
     'Fixed-width column beside Main, pinned just below the global header; collapsible on demand.',
-    see(1),
+    see('responsive'),
   ),
   main: region(
     3,
@@ -73,7 +82,7 @@ const PAGE = {
     'Page title, subtitle and the single collection-level action.',
     'Page action button (e.g. Add users) · back link when drilled in',
     'Full width of Main, above the surface.',
-    see(0, 1),
+    see('scroll', 'responsive'),
   ),
   surface: region(
     5,
@@ -82,7 +91,7 @@ const PAGE = {
     'The pattern itself: a selection surface (list) beside an inspection surface (detail).',
     'Divider between zones (optional)',
     'Fills the remaining width and height of Main.',
-    see(1),
+    see('responsive'),
   ),
 };
 
@@ -94,7 +103,10 @@ const ZONES = {
     'Finding and selecting one record from the collection.',
     'List toolbar · list body',
     'Fixed-width column, clamped to a token range.',
-    { space: 'min 192px (size.medium) · max 384px (size.large)', ...see(0, 1) },
+    {
+      space: 'min 192px (size.medium) · max 384px (size.large)',
+      ...see('scroll', 'responsive'),
+    },
   ),
   detail: region(
     2,
@@ -105,7 +117,7 @@ const ZONES = {
     'Flexible column. Takes whatever width the list zone leaves.',
     {
       space: 'flex · remaining width (≈ 732px at 1116px content width)',
-      ...see(0, 1),
+      ...see('scroll', 'responsive'),
     },
   ),
 };
@@ -152,7 +164,7 @@ const RESIZE_HANDLE = region(
   {
     questions:
       'Persist in localStorage or user preferences? Should the handle be always visible or appear on hover/focus?',
-    ...see(1, 4),
+    ...see('responsive', 'actions'),
   },
 );
 
@@ -164,7 +176,7 @@ const LIST = {
     'Narrowing the collection without leaving the page.',
     'Search input · quick-filter toggle group · result count',
     'Sits above the rows. Filters apply instantly and update the count.',
-    see(0, 3),
+    see('scroll', 'data'),
   ),
   rows: region(
     2,
@@ -173,7 +185,7 @@ const LIST = {
     'Presenting the collection and holding the current selection.',
     'Rows (avatar, name, role) · ↑/↓ · Enter',
     'Holds exactly one selection — highlighted and announced; first row selected by default.',
-    see(0, 2),
+    see('scroll', 'states'),
   ),
   row: region(
     3,
@@ -182,7 +194,7 @@ const LIST = {
     'One record, summarised to what is needed to choose it.',
     'Click / Enter to select',
     'Primary text + one line of secondary text. No per-row actions — those live in the detail zone.',
-    see(4),
+    see('actions'),
   ),
 };
 
@@ -194,7 +206,7 @@ const DETAIL = {
     'Identity of the selected record and the actions that apply to it.',
     'Leading zone · trailing zone',
     'One row mirroring the page header: identity on the left, actions on the right.',
-    see(4),
+    see('actions'),
   ),
   leading: region(
     '1a',
@@ -211,7 +223,7 @@ const DETAIL = {
     'Actions that apply to the selected record only.',
     'Primary action · overflow menu (destructive last)',
     'Right-aligned, content width.',
-    see(1, 4),
+    see('responsive', 'actions'),
   ),
   tabs: region(
     2,
@@ -220,7 +232,7 @@ const DETAIL = {
     'Switching between facets of the record when there is more than one.',
     'Tab per facet · ←/→',
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
-    see(1),
+    see('responsive'),
   ),
   content: region(
     3,
@@ -229,7 +241,7 @@ const DETAIL = {
     'Whatever best presents the facet: name–value pairs, a list, a table, an empty state …',
     'Depends on the content shown',
     'Fills the remaining height. Section-level actions sit at the top of the area.',
-    see(0, 2),
+    see('scroll', 'states'),
   ),
 };
 
@@ -544,6 +556,11 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
   const [group, setGroup] = useState('structure');
   const [behaviour, setBehaviour] = useState(0);
   const go = (g, tab) => {
+    if (g === 'behaviour') {
+      const i = VISIBLE_BEHAVIOUR_TABS.findIndex((t) => t.key === tab);
+      if (i < 0) return;
+      tab = i;
+    }
     setGroup(g);
     if (g === 'behaviour') setBehaviour(tab);
     else setLevel(tab);
@@ -581,21 +598,14 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
               onActive={setBehaviour}
               justify="start"
             >
-              <Tab title="Scroll & height">
-                <ScrollLevel />
-              </Tab>
-              <Tab title="Responsive">
-                <ResponsiveLevel />
-              </Tab>
-              <Tab title="States">
-                <StatesLevel />
-              </Tab>
-              <Tab title="Data & performance">
-                <DataLevel />
-              </Tab>
-              <Tab title="Actions & ownership">
-                <ActionsLevel />
-              </Tab>
+              {VISIBLE_BEHAVIOUR_TABS.map(({ key, label }) => {
+                const Content = BEHAVIOUR_CONTENT[key];
+                return (
+                  <Tab key={key} title={label}>
+                    <Content />
+                  </Tab>
+                );
+              })}
             </Tabs>
           )}
           {group === 'structure' && (
