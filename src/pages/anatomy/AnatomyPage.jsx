@@ -142,37 +142,37 @@ const LIST = {
 };
 
 const DETAIL = {
-  header: region(
+  heading: region(
     1,
-    'Detail header',
-    '<h2> · menu button',
-    'Identity of the selected record and its record-level actions.',
-    'Actions menu (edit, reset, suspend … destructive last)',
-    'Updates when the selection changes. Inline rename replaces the heading with an input.',
+    'Detail heading',
+    '<h2> · left of header',
+    'Identity of the selected record: name, optional status or subtitle.',
+    'None — may support inline rename',
+    'Updates when the selection changes. Mirrors the page header: heading on the left, actions on the right.',
+  ),
+  actions: region(
+    2,
+    'Detail actions',
+    'buttons · menu',
+    'Actions that apply to the selected record only.',
+    'Primary action · overflow menu (destructive last)',
+    'Right-aligned, same row as the heading. Wraps beneath it on narrow widths.',
   ),
   tabs: region(
-    2,
-    'Detail tabs',
-    'tablist · tab · tabpanel',
-    'Switching between facets of the record.',
-    'Details · Role assignments · User group membership · Org workspace membership · ←/→',
-    'Each panel carries a visually hidden <h3> so the outline stays intact.',
-  ),
-  facts: region(
     3,
-    'Facts',
-    'NameValueList (grouped)',
-    'Read-only attributes of the record, grouped by theme.',
-    'None — read only',
-    'Groups (Identity / Account / Membership) separated by weak dividers. Pairs go horizontal → vertical under 480px.',
+    'Detail tabs',
+    'tablist · tab · tabpanel (optional)',
+    'Switching between facets of the record when there is more than one.',
+    'Tab per facet · ←/→',
+    'Only present when the record has several facets. Otherwise the content area follows the header directly.',
   ),
-  lists: region(
+  content: region(
     4,
-    'Membership lists',
-    'List · row actions',
-    'Related records the user belongs to or has been granted.',
-    'Panel action (Assign / Add) · row remove · inline links to source',
-    'Simple rows instead of tables: title link, one meta line, trailing source and remove control. Empty state when nothing is assigned.',
+    'Content area',
+    'tabpanel or plain region',
+    'Whatever best presents the facet: name–value pairs, a list, a table, an empty state …',
+    'Depends on the content shown',
+    'Fills the remaining height and scrolls with the page. Section-level actions sit at the top of the area.',
   ),
 };
 
@@ -470,69 +470,38 @@ const DetailWireframe = () => (
     <Dim label="List zone" width="30%" flex={false} />
     <Box border={{ side: 'left', color: 'border-weak' }} />
     <Box flex gap="small">
-      <Focus region={DETAIL.header} label="updates on selection">
-        <Box direction="row" justify="between" align="center">
+      <Box direction="row" gap="small">
+        <Focus region={DETAIL.heading} label="updates on selection" flex>
           <Ghost width="160px" height="24px" />
-          <Ghost width="90px" height="32px" round="full" />
-        </Box>
-      </Focus>
-      <Focus region={DETAIL.tabs}>
+          <Ghost width="100px" height="10px" />
+        </Focus>
+        <Focus region={DETAIL.actions} width={{ min: '240px' }} flex={false}>
+          <Box direction="row" justify="end" gap="xsmall">
+            <Ghost width="90px" height="32px" round="full" />
+            <Ghost width="32px" height="32px" round="full" />
+          </Box>
+        </Focus>
+      </Box>
+      <Focus
+        region={DETAIL.tabs}
+        label="optional"
+        border={{ color: 'brand', size: 'small', style: 'dashed' }}
+      >
         <Box direction="row" gap="small" wrap>
           <Ghost width="60px" height="20px" background="brand" />
           <Ghost width="110px" height="20px" />
           <Ghost width="150px" height="20px" />
-          <Ghost width="190px" height="20px" />
         </Box>
       </Focus>
-      <Box direction="row" gap="small" flex>
-        <Focus region={DETAIL.facts} label="Details tab" flex>
-          {['Identity', 'Account', 'Membership'].map((g, gi) => (
-            <Box
-              key={g}
-              gap="xsmall"
-              pad={{ vertical: 'xsmall' }}
-              border={gi < 2 ? { side: 'bottom', color: 'border-weak' } : false}
-            >
-              <Ghost width="80px" height="10px" background="text-weak" />
-              {[0, 1, 2].map((i) => (
-                <Box key={i} direction="row" gap="medium">
-                  <Ghost width="90px" />
-                  <Ghost width="140px" />
-                </Box>
-              ))}
-            </Box>
-          ))}
-        </Focus>
-        <Focus region={DETAIL.lists} label="membership tabs" flex>
-          <Box direction="row" justify="end">
-            <Ghost width="90px" height="28px" round="full" />
-          </Box>
-          {[0, 1, 2].map((i) => (
-            <Box
-              key={i}
-              direction="row"
-              justify="between"
-              align="center"
-              pad={{ vertical: 'xsmall' }}
-              border={i < 2 ? { side: 'bottom', color: 'border-weak' } : false}
-            >
-              <Box gap="xxsmall" flex>
-                <Ghost width="55%" background="brand" />
-                <Ghost width="70%" height="8px" />
-              </Box>
-              <Box direction="row" gap="xsmall" align="center">
-                <Ghost width="40px" height="8px" />
-                <Ghost width="20px" height="20px" />
-              </Box>
-            </Box>
-          ))}
-        </Focus>
-      </Box>
+      <Focus region={DETAIL.content} label="pairs · list · table …" flex>
+        <Box direction="row" justify="end">
+          <Ghost width="90px" height="28px" round="full" />
+        </Box>
+        <Dim label="Content" flex />
+      </Focus>
     </Box>
   </Box>
 );
-
-// ---------------------------------------------------------------------------
 
 const Legend = ({ regions }) => (
   <Box as="dl" margin="none">
@@ -660,7 +629,7 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
           <Tab title="Detail zone">
             <Level
               title="Inside the detail zone"
-              intro="Header identifies the record and owns its actions; tabs split the record into facets; the body is either grouped facts or simple membership lists."
+              intro="The header mirrors the page header — heading on the left, record actions on the right. Tabs appear only when the record has several facets. Below is a single content area that takes whatever fits: pairs, a list, a table."
               wireframe={<DetailWireframe />}
               regions={DETAIL}
             />

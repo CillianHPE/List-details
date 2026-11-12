@@ -9,7 +9,7 @@ Versions are addressed by URL hash and switchable from the floating **Version** 
 | --- | --- | --- |
 | `#/default` | Users list–detail page | Default HPE app shell (`src/shell/DefaultShell.jsx`, mirrors `hpe-design-system/sandbox/grommet-app`) |
 | `#/v3` | Same page | App Shell V3.1 (`src/shell/V3Shell.jsx`, Figma *Landmark Surface examples → 3250:15494*): white canvas, 60px bordered header with workspace switcher, 12px wrapper, rounded grey 256px nav pane |
-| `#/anatomy` | Lo-fi zoom explorer for the pattern (`src/pages/anatomy`) | Four tabbed zoom levels — **Page** (where the surface sits; Default / Shell v3), **Zones** (list vs detail and how width is shared; Fixed list 192–384px / Proportional 40–60), **List zone** (toolbar, body, row) and **Detail zone** (header, tabs, facts, membership lists). Each level pairs a dashed wireframe with a legend of role, owns, controls and behaviour |
+| `#/anatomy` | Lo-fi zoom explorer for the pattern (`src/pages/anatomy`) | Four tabbed zoom levels — **Page** (where the surface sits; Default / Shell v3), **Zones** (list vs detail and how width is shared; Fixed list 192–384px / Proportional 40–60), **List zone** (toolbar, body, row) and **Detail zone** (heading + actions header, optional tabs, generic content area). Each level pairs a dashed wireframe with a legend of role, owns, controls and behaviour |
 
 Pages read the active shell via `ShellContext` so containment can adapt (the list–detail pane gains a `border-weak` border on the white V3 canvas).
 
