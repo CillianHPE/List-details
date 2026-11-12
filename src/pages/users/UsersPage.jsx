@@ -3,6 +3,7 @@ import {
   Anchor,
   Box,
   Button,
+  CheckBox,
   Grid,
   Page,
   PageContent,
@@ -40,6 +41,8 @@ export const UsersPage = () => {
   const [query, setQuery] = useState('');
   const [quickFilter, setQuickFilter] = useState('all');
   const [selectedId, setSelectedId] = useState(users[0].id);
+  // Prototype control: show/hide the divider between list and detail.
+  const [divider, setDivider] = useState(true);
   const [showDetail, setShowDetail] = useState(false);
 
   const visible = useMemo(() => {
@@ -82,7 +85,17 @@ export const UsersPage = () => {
               />
             ) : undefined
           }
-          actions={<Button label="Invite user" primary />}
+          actions={
+            <Box direction="row" align="center" gap="medium">
+              <CheckBox
+                toggle
+                label="Divider"
+                checked={divider}
+                onChange={(e) => setDivider(e.target.checked)}
+              />
+              <Button label="Invite user" primary />
+            </Box>
+          }
         />
 
         {/* One contained surface holding both columns, split by a divider */}
@@ -112,7 +125,7 @@ export const UsersPage = () => {
                   }
                   gap="xsmall"
                   border={
-                    stacked
+                    stacked || !divider
                       ? undefined
                       : { side: 'right', color: 'border-weak' }
                   }
