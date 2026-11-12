@@ -86,7 +86,11 @@ export const UsersPage = () => {
         />
 
         {/* One contained surface holding both columns, split by a divider */}
-        <ContentPane pad="none" overflow="hidden" round="xlarge">
+        <ContentPane
+          pad="none"
+          overflow={bare ? undefined : 'hidden'}
+          round={bare ? false : 'xlarge'}
+        >
           <Grid columns={stacked ? ['auto'] : ['auto', 'flex']} align="start">
             {/* B + C · List pane */}
             {listVisible && (
