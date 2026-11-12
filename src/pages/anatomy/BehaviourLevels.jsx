@@ -334,36 +334,43 @@ export const ScrollLevel = () => {
 // ---------------------------------------------------------------------------
 // Responsive
 
-const BREAKPOINTS = [
-  {
-    name: 'Wide',
-    range: '≥ 1024px',
-    layout: 'Two columns · fixed list 192–384px (size.medium–size.large)',
-    nav: 'expanded',
-    actions: 'labelled buttons',
-    tabs: 'single row',
-    pairs: 'name | value',
-  },
-  {
-    name: 'Medium',
-    range: '768 – 1023px',
-    layout: 'Two columns · list at min width',
-    nav: 'icons only',
-    actions: 'primary + overflow',
-    tabs: 'scroll arrows',
-    pairs: 'name | value',
-  },
-  {
-    name: 'Narrow',
-    range: '< 768px',
-    layout: 'Stacked · list first, detail is a drill-in screen',
-    nav: 'in drawer',
-    actions: 'overflow menu',
-    tabs: 'scroll',
-    pairs: 'stacked',
-  },
-];
+// Lettered so they never clash with the numbered regions in the wireframe
+const BREAKPOINTS = {
+  wide: region(
+    'A',
+    'Wide',
+    '≥ 1024px',
+    'Two columns. Fixed list 192–384px (size.medium–size.large); the detail zone takes the remaining width.',
+    'Navigation pane expanded',
+    'Everything has room: labelled actions, a single row of tabs, name | value pairs side by side.',
+  ),
+  medium: region(
+    'B',
+    'Medium',
+    '768 – 1023px',
+    'Two columns. The list is held at its 192px (size.medium) minimum so the detail zone keeps most of the width.',
+    'Navigation pane collapsed to icons',
+    'Chrome gives way first: secondary actions fold into overflow, tabs gain scroll arrows, the detail header may wrap.',
+    {
+      questions:
+        'Container query on Main or viewport media query? Should Medium drop to a proportional list instead of the 192px (size.medium) minimum?',
+    },
+  ),
+  narrow: region(
+    'C',
+    'Narrow',
+    '< 768px',
+    'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once a row is chosen.',
+    'Navigation in a drawer behind the header menu button',
+    'A Back control in the detail header returns to the list; record actions live in an overflow menu; pairs stack.',
+    {
+      questions:
+        'Does selecting a row push a URL so Back in the browser also returns to the list?',
+    },
+  ),
+};
 
+// Each region's rule at every breakpoint; `role` summarises the arc.
 const RESPONSIVE = {
   nav: region(
     1,
@@ -372,6 +379,13 @@ const RESPONSIVE = {
     'Section switching at every width.',
     'Collapse toggle · menu button',
     'Collapses to icons under 1024px and moves behind the header menu button under 768px.',
+    {
+      at: {
+        wide: 'Expanded, with labels.',
+        medium: 'Icons only; labels on hover/focus.',
+        narrow: 'Hidden in a drawer, opened from the header menu button.',
+      },
+    },
   ),
   surface: region(
     2,
@@ -381,8 +395,11 @@ const RESPONSIVE = {
     'Back button (narrow only)',
     'Grid columns [auto, flex] above 768px. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the detail header.',
     {
-      questions:
-        'Container query on Main or viewport media query? Should Medium drop to a proportional list instead of the 192px (size.medium) minimum?',
+      at: {
+        wide: 'Grid [auto, flex]; list 192–384px (size.medium–size.large).',
+        medium: 'Grid [auto, flex]; list pinned to 192px (size.medium).',
+        narrow: 'Single column; list screen, then detail screen on selection.',
+      },
     },
   ),
   pageHeader: region(
@@ -392,6 +409,14 @@ const RESPONSIVE = {
     'Collection-level actions.',
     'Add users · Divider toggle',
     'Secondary actions fold into an overflow menu first; the primary keeps its label as long as possible.',
+    {
+      at: {
+        wide: 'All actions as labelled buttons.',
+        medium:
+          'Primary keeps its label; secondaries fold into an overflow menu.',
+        narrow: 'Primary as an icon button plus overflow menu.',
+      },
+    },
   ),
   detailHeader: region(
     4,
@@ -400,6 +425,14 @@ const RESPONSIVE = {
     'Heading and record actions.',
     '—',
     'Trailing zone wraps beneath the leading zone when the heading would truncate below ~20 characters. Actions collapse to an overflow menu at narrow.',
+    {
+      at: {
+        wide: 'One row: leading identity, trailing actions.',
+        medium:
+          'Trailing wraps beneath leading when the heading would truncate below ~20 characters.',
+        narrow: 'Back leads the row; actions collapse to an overflow menu.',
+      },
+    },
   ),
   tabs: region(
     5,
@@ -411,6 +444,11 @@ const RESPONSIVE = {
     {
       questions:
         'Shorten labels at narrow widths (e.g. "Groups") or allow scrolling only?',
+      at: {
+        wide: 'Single row, all labels visible.',
+        medium: 'Single row; scroll arrows appear when it overflows.',
+        narrow: 'Scrollable row; never wraps to two lines.',
+      },
     },
   ),
   pairs: region(
@@ -420,184 +458,238 @@ const RESPONSIVE = {
     'Record attributes.',
     '—',
     'Pairs switch from two columns to stacked when the detail zone is under 480px, independent of the viewport.',
+    {
+      at: {
+        wide: 'name | value in two columns.',
+        medium:
+          'Two columns until the detail zone is under 480px, then stacked.',
+        narrow: 'Stacked: name above value.',
+      },
+    },
   ),
 };
 
-const MiniLayout = ({ bp }) => {
-  const narrow = bp.name === 'Narrow';
-  const medium = bp.name === 'Medium';
+const Screen = ({ narrow, children, ...rest }) => (
+  <Frame
+    width={narrow ? '260px' : undefined}
+    flex={narrow ? false : 'grow'}
+    height="360px"
+    pad={{ horizontal: 'small', top: 'xsmall', bottom: 'xsmall' }}
+    gap="small"
+    {...rest}
+  >
+    {children}
+  </Frame>
+);
+
+const ResponsiveFrame = ({ bp }) => {
+  const narrow = bp === 'narrow';
+  const medium = bp === 'medium';
   return (
-    <Box gap="xsmall">
-      <Box direction="row" justify="between" align="baseline">
-        <Text weight={500}>{bp.name}</Text>
-        <Mono color="text-weak">{bp.range}</Mono>
-      </Box>
-      <Box direction={narrow ? 'row' : 'column'} gap="small" align="start">
-        <Frame
-          width={narrow ? '220px' : undefined}
-          flex={narrow ? false : undefined}
-          height="300px"
-          pad={{ horizontal: 'small', top: 'xsmall', bottom: 'xsmall' }}
-          gap="small"
-        >
-          <Box direction="row" gap="xsmall" align="center">
-            <Ghost width="20px" height="20px" round="full" />
-            <Ghost width="60px" height="10px" />
-            <Box flex />
-            {narrow && <Ghost width="20px" height="20px" />}
-          </Box>
-          <Box direction="row" gap="small" flex>
-            {!narrow && (
-              <Mini
-                region={RESPONSIVE.nav}
-                width={medium ? '28px' : '64px'}
-                pad="4xsmall"
-                gap="4xsmall"
-                flex={false}
-              >
-                <Ghost height="8px" />
-                <Ghost height="8px" />
-              </Mini>
-            )}
-            <Box flex gap="small">
-              <Mini
-                region={RESPONSIVE.pageHeader}
-                direction="row"
-                justify="between"
-                align="center"
-                pad="4xsmall"
-              >
-                <Ghost width="40%" height="10px" />
-                <Ghost
-                  width={narrow || medium ? '20px' : '50px'}
-                  height="16px"
-                  round="full"
-                />
-              </Mini>
-              <Mini
-                region={RESPONSIVE.surface}
-                flex
-                direction="row"
-                gap="xsmall"
-                pad="4xsmall"
-              >
-                <Box
-                  width={narrow ? '100%' : medium ? '45%' : '34%'}
-                  gap="4xsmall"
-                  flex={false}
-                >
-                  <Ghost height="14px" />
-                  <GhostRows count={4} />
-                </Box>
-                {!narrow && (
-                  <Box flex gap="small">
-                    <Mini
-                      region={RESPONSIVE.detailHeader}
-                      direction="row"
-                      justify="between"
-                      pad="4xsmall"
-                    >
-                      <Ghost width="40%" height="10px" />
-                      <Ghost width={medium ? '14px' : '30px'} height="10px" />
-                    </Mini>
-                    <Mini
-                      region={RESPONSIVE.tabs}
-                      direction="row"
-                      gap="4xsmall"
-                      pad="4xsmall"
-                    >
-                      <Ghost width="20%" height="6px" background="brand" />
-                      <Ghost width="25%" height="6px" />
-                      <Ghost width="25%" height="6px" />
-                    </Mini>
-                    <Mini
-                      region={RESPONSIVE.pairs}
-                      pad="4xsmall"
-                      gap="4xsmall"
-                      flex
-                    >
-                      {[0, 1, 2].map((i) => (
-                        <Box key={i} direction="row" gap="4xsmall">
-                          <Ghost width="30%" height="6px" />
-                          <Ghost width="50%" height="6px" />
-                        </Box>
-                      ))}
-                    </Mini>
-                  </Box>
-                )}
-              </Mini>
-            </Box>
-          </Box>
-        </Frame>
-        {narrow && (
-          <Frame
-            width="220px"
-            flex={false}
-            height="300px"
-            pad={{ horizontal: 'small', top: 'xsmall', bottom: 'xsmall' }}
-            gap="small"
-          >
-            <Box direction="row" gap="xsmall" align="center">
-              <Ghost width="20px" height="20px" round="full" />
-              <Ghost width="60px" height="10px" />
-            </Box>
+    <Box direction="row" gap="medium" align="start" justify="center">
+      <Screen narrow={narrow}>
+        <Box direction="row" gap="xsmall" align="center">
+          <Ghost width="20px" height="20px" round="full" />
+          <Ghost width="60px" height="10px" />
+          <Box flex />
+          {narrow && <Ghost width="20px" height="20px" />}
+        </Box>
+        <Box direction="row" gap="small" flex>
+          {!narrow && (
             <Mini
-              region={RESPONSIVE.detailHeader}
+              region={RESPONSIVE.nav}
+              width={medium ? '28px' : '72px'}
+              pad="4xsmall"
+              gap="4xsmall"
+              flex={false}
+            >
+              <Ghost height="8px" />
+              <Ghost height="8px" />
+              <Ghost height="8px" />
+            </Mini>
+          )}
+          <Box flex gap="small">
+            <Mini
+              region={RESPONSIVE.pageHeader}
               direction="row"
-              gap="xsmall"
+              justify="between"
               align="center"
               pad="4xsmall"
             >
-              <Tag>← Back</Tag>
               <Ghost width="40%" height="10px" />
-              <Box flex />
-              <Ghost width="14px" height="10px" />
+              <Ghost
+                width={narrow || medium ? '20px' : '50px'}
+                height="16px"
+                round="full"
+              />
             </Mini>
             <Mini
-              region={RESPONSIVE.tabs}
+              region={RESPONSIVE.surface}
+              flex
               direction="row"
-              gap="4xsmall"
+              gap="xsmall"
               pad="4xsmall"
             >
-              <Ghost width="25%" height="6px" background="brand" />
-              <Ghost width="30%" height="6px" />
-              <Ghost width="30%" height="6px" />
-            </Mini>
-            <Mini region={RESPONSIVE.pairs} pad="4xsmall" gap="4xsmall" flex>
-              {[0, 1].map((i) => (
-                <Box key={i} gap="4xsmall">
-                  <Ghost width="30%" height="6px" />
-                  <Ghost width="70%" height="6px" />
+              <Box
+                width={narrow ? '100%' : medium ? '38%' : '30%'}
+                gap="4xsmall"
+                flex={false}
+              >
+                <Ghost height="14px" />
+                <GhostRows count={narrow ? 6 : 5} />
+              </Box>
+              {!narrow && (
+                <Box flex gap="small">
+                  <Mini
+                    region={RESPONSIVE.detailHeader}
+                    direction="row"
+                    justify="between"
+                    pad="4xsmall"
+                  >
+                    <Ghost width="40%" height="10px" />
+                    <Ghost width={medium ? '14px' : '30px'} height="10px" />
+                  </Mini>
+                  <Mini
+                    region={RESPONSIVE.tabs}
+                    direction="row"
+                    gap="4xsmall"
+                    pad="4xsmall"
+                  >
+                    <Ghost width="20%" height="6px" background="brand" />
+                    <Ghost width="25%" height="6px" />
+                    <Ghost width="25%" height="6px" />
+                    {medium && <Ghost width="10%" height="6px" />}
+                  </Mini>
+                  <Mini
+                    region={RESPONSIVE.pairs}
+                    pad="4xsmall"
+                    gap="4xsmall"
+                    flex
+                  >
+                    {[0, 1, 2, 3].map((i) => (
+                      <Box key={i} direction="row" gap="4xsmall">
+                        <Ghost width="30%" height="6px" />
+                        <Ghost width="50%" height="6px" />
+                      </Box>
+                    ))}
+                  </Mini>
                 </Box>
-              ))}
+              )}
             </Mini>
-          </Frame>
-        )}
-      </Box>
-      <Box gap="4xsmall">
-        <Text size="small">{bp.layout}</Text>
-        <Text size="small" color="text-weak">
-          Nav {bp.nav} · actions {bp.actions} · tabs {bp.tabs} · pairs{' '}
-          {bp.pairs}
-        </Text>
-      </Box>
+          </Box>
+        </Box>
+      </Screen>
+      {narrow && (
+        <Screen narrow>
+          <Box direction="row" gap="xsmall" align="center">
+            <Ghost width="20px" height="20px" round="full" />
+            <Ghost width="60px" height="10px" />
+          </Box>
+          <Mini
+            region={RESPONSIVE.detailHeader}
+            direction="row"
+            gap="xsmall"
+            align="center"
+            pad="4xsmall"
+          >
+            <Tag>← Back</Tag>
+            <Ghost width="40%" height="10px" />
+            <Box flex />
+            <Ghost width="14px" height="10px" />
+          </Mini>
+          <Mini
+            region={RESPONSIVE.tabs}
+            direction="row"
+            gap="4xsmall"
+            pad="4xsmall"
+          >
+            <Ghost width="25%" height="6px" background="brand" />
+            <Ghost width="30%" height="6px" />
+            <Ghost width="30%" height="6px" />
+          </Mini>
+          <Mini region={RESPONSIVE.pairs} pad="4xsmall" gap="4xsmall" flex>
+            {[0, 1, 2].map((i) => (
+              <Box key={i} gap="4xsmall">
+                <Ghost width="30%" height="6px" />
+                <Ghost width="70%" height="6px" />
+              </Box>
+            ))}
+          </Mini>
+        </Screen>
+      )}
     </Box>
+  );
+};
+
+// Left-hand picker shared by the States and Responsive explorers
+const Picker = ({ items, value, onChange }) => (
+  <Box as="nav" gap="xxsmall" width={{ min: 'medium' }} flex={false}>
+    {Object.entries(items).map(([key, r]) => {
+      const active = key === value;
+      return (
+        <Button key={key} plain onClick={() => onChange(key)} fill="horizontal">
+          <Box
+            pad={{ vertical: 'xsmall', horizontal: 'small' }}
+            round="xsmall"
+            background={active ? 'background-contrast' : undefined}
+            border={{
+              side: 'left',
+              size: 'medium',
+              color: active ? 'brand' : 'transparent',
+            }}
+          >
+            <Badge region={r} size="small" />
+          </Box>
+        </Button>
+      );
+    })}
+  </Box>
+);
+
+const ResponsiveExplorer = () => {
+  const [bp, setBp] = useState('wide');
+  const r = BREAKPOINTS[bp];
+  return (
+    <Grid columns={['auto', 'flex']} gap="large">
+      <Picker items={BREAKPOINTS} value={bp} onChange={setBp} />
+      <Box gap="medium">
+        <ResponsiveFrame bp={bp} />
+        <Box gap="xsmall">
+          <Badge region={r} />
+          <Box margin={{ left: '32px' }}>
+            <RegionDetails
+              region={r}
+              labels={{ owns: 'Layout', controls: 'Chrome', behaviour: 'Rule' }}
+            />
+          </Box>
+        </Box>
+        <Box gap="xsmall" margin={{ left: '32px' }}>
+          <Text size="small" weight={500} color="text-weak">
+            Per region at this width
+          </Text>
+          <Box as="dl" margin="none" gap="xsmall">
+            {Object.values(RESPONSIVE).map((region) => (
+              <Box key={region.id} direction="row" gap="small" align="start">
+                <Box width="200px" flex={false}>
+                  <Badge region={region} size="small" showRole={false} />
+                </Box>
+                <Text size="small">{region.at[bp]}</Text>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </Grid>
   );
 };
 
 export const ResponsiveLevel = () => (
   <Level
     title="Responsive behaviour"
-    intro="Three widths, side by side. Each shows how the shell, the surface and the detail zone re-flow; the legend states the rule per region."
-    wireframe={
-      <Grid columns={['flex', 'flex', 'auto']} gap="medium">
-        {BREAKPOINTS.map((bp) => (
-          <MiniLayout key={bp.name} bp={bp} />
-        ))}
-      </Grid>
-    }
-    regions={RESPONSIVE}
-  />
+    intro="Pick a width to see how the shell, the surface and the detail zone re-flow. The summary states the rule for that width; the list below gives each region's rule at that width."
+  >
+    <ResponsiveExplorer />
+  </Level>
 );
 
 // ---------------------------------------------------------------------------
@@ -756,36 +848,12 @@ const STATE_FRAMES = {
   ),
 };
 
-const StatePicker = ({ value, onChange }) => (
-  <Box as="nav" gap="xxsmall" width={{ min: 'medium' }} flex={false}>
-    {Object.entries(STATES).map(([key, r]) => {
-      const active = key === value;
-      return (
-        <Button key={key} plain onClick={() => onChange(key)} fill="horizontal">
-          <Box
-            pad={{ vertical: 'xsmall', horizontal: 'small' }}
-            round="xsmall"
-            background={active ? 'background-contrast' : undefined}
-            border={{
-              side: 'left',
-              size: 'medium',
-              color: active ? 'brand' : 'transparent',
-            }}
-          >
-            <Badge region={r} size="small" />
-          </Box>
-        </Button>
-      );
-    })}
-  </Box>
-);
-
 const StatesExplorer = () => {
   const [state, setState] = useState('loading');
   const r = STATES[state];
   return (
     <Grid columns={['auto', 'flex']} gap="large">
-      <StatePicker value={state} onChange={setState} />
+      <Picker items={STATES} value={state} onChange={setState} />
       <Box gap="medium">
         <Frame height="320px" direction="row" pad="small" gap="small">
           {STATE_FRAMES[state]}
