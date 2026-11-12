@@ -1,9 +1,9 @@
 import { Avatar, Box, List, Text } from 'grommet';
 
 const UserRow = ({ user }) => (
-  <Box direction="row" align="start" gap="small" fill="horizontal">
-    <Avatar size="small" background="background-contrast">
-      <Text size="xsmall" weight={500}>
+  <Box direction="row" align="center" gap="small" fill="horizontal">
+    <Avatar size="medium" background="background-contrast">
+      <Text size="small" weight={500}>
         {user.initials}
       </Text>
     </Avatar>
