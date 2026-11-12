@@ -149,7 +149,7 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() =>
-    activeNavItem(navItems['Identity & access'][0]),
+    activeNavItem(navItems.Prototypes[0]),
   );
   const onSelect = (item) => selectNavItem(item, setSelected);
   return (
