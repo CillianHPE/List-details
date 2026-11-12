@@ -13,25 +13,32 @@ import {
   Text,
   TextInput,
 } from 'grommet';
-import { Checkmark, Close, More } from '@hpe-design/icons-grommet';
+import {
+  Checkmark,
+  Close,
+  More,
+  StatusCritical,
+  StatusGood,
+  StatusInfo,
+} from '@hpe-design/icons-grommet';
 
-const statusColor = {
-  Active: 'status-ok',
-  Invited: 'status-unknown',
-  Suspended: 'status-critical',
+// HPE DS status indicator template: semantic icon + visible label.
+// https://design-system.hpe.design/templates/status-indicator
+const STATUS_MAP = {
+  Active: { Icon: StatusGood, color: 'status-ok' },
+  Invited: { Icon: StatusInfo, color: 'text-weak' },
+  Suspended: { Icon: StatusCritical, color: 'status-critical' },
 };
 
-const StatusTag = ({ status }) => (
-  <Box direction="row" align="center" gap="xsmall">
-    <Box
-      width="10px"
-      height="10px"
-      round="full"
-      background={statusColor[status] ?? 'status-unknown'}
-    />
-    <Text size="small">{status}</Text>
-  </Box>
-);
+const StatusIndicator = ({ status }) => {
+  const { Icon, color } = STATUS_MAP[status] ?? STATUS_MAP.Invited;
+  return (
+    <Box direction="row" align="center" gap="3xsmall">
+      <Icon color={color} size="xsmall" aria-hidden />
+      <Text>{status}</Text>
+    </Box>
+  );
+};
 
 // D · Detail header — identity, inline rename, status, sub-tabs
 const DetailHeader = ({ user, name, onRename }) => {
@@ -44,10 +51,7 @@ const DetailHeader = ({ user, name, onRename }) => {
   };
 
   return (
-    <Box
-      flex={false}
-      gap="small"
-    >
+    <Box flex={false} gap="small">
       <Box gap="xsmall">
         <Box direction="row" align="center" gap="small" wrap>
           {editing ? (
@@ -62,7 +66,11 @@ const DetailHeader = ({ user, name, onRename }) => {
                   if (e.key === 'Escape') setEditing(false);
                 }}
               />
-              <Button icon={<Checkmark />} onClick={commit} a11yTitle="Save name" />
+              <Button
+                icon={<Checkmark />}
+                onClick={commit}
+                a11yTitle="Save name"
+              />
               <Button
                 icon={<Close />}
                 onClick={() => setEditing(false)}
@@ -173,10 +181,7 @@ const Properties = ({ user }) => {
   }, []);
   return (
     <Box ref={ref}>
-      <NameValueList
-        pairProps={{ direction }}
-        nameProps={{ width: 'small' }}
-      >
+      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
         <NameValuePair name="Email">
           <Text>{user.email}</Text>
         </NameValuePair>
@@ -186,7 +191,7 @@ const Properties = ({ user }) => {
           </Box>
         </NameValuePair>
         <NameValuePair name="Status">
-          <StatusTag status={user.status} />
+          <StatusIndicator status={user.status} />
         </NameValuePair>
         <NameValuePair name="Multi-factor auth">
           <Text>{user.mfa}</Text>
