@@ -1,9 +1,9 @@
 import { Box, Text, ToggleGroup } from 'grommet';
 
 export const VERSIONS = [
-  { label: 'Default shell', value: 'default' },
-  { label: 'Shell V3.1', value: 'v3' },
   { label: 'Anatomy', value: 'anatomy' },
+  { label: 'Current shell', value: 'default' },
+  { label: 'Shell v3', value: 'v3' },
 ];
 
 // Prototype-only floating switcher; not part of the product UI
