@@ -16,6 +16,7 @@ import {
 import {
   Checkmark,
   Close,
+  Edit,
   More,
   StatusCritical,
   StatusGood,
@@ -238,7 +239,10 @@ const Properties = ({ user }) => {
               : false
           }
         >
-          <Heading level={4} size="xsmall" margin="none">
+          {/* HPE heading `size` is a token scale independent of level
+              (small 18px is the h4 default → medium 22px). One step up so
+              groups read distinctly from the 16px name/value pairs below. */}
+          <Heading level={4} size="medium" margin="none">
             {group.title}
           </Heading>
           <NameValueList
@@ -257,8 +261,8 @@ const Properties = ({ user }) => {
   );
 };
 
-// Shared row shell for the membership lists: primary + secondary text on the
-// left, source/metadata and a remove control on the right.
+// Shared row shell for the membership lists: primary + supplementary text on
+// the left; the right edge holds icon-button actions only (no links/metadata).
 const ListRow = ({ index, count, children }) => (
   <Box
     direction="row"
@@ -289,24 +293,24 @@ const RoleAssignments = ({ user }) => {
           <Box>
             <Anchor label={r.role} weight={500} href="#" />
             <Text size="small" color="text-weak">
-              {r.service} · {r.scope}
+              {r.service} · {r.scope} ·{' '}
+              {r.source === 'Direct' ? 'Direct' : `Via ${r.source}`}
             </Text>
           </Box>
-          <Box direction="row" align="center" gap="small" flex={false}>
-            {r.source === 'Direct' ? (
-              <Text size="small" color="text-weak">
-                Direct
-              </Text>
-            ) : (
-              <Anchor label={r.source} size="small" href="#" />
-            )}
-            {r.source === 'Direct' && (
-              <Button
-                icon={<Trash />}
-                a11yTitle={`Remove role ${r.role}`}
-                onClick={() => {}}
-              />
-            )}
+          {/* Right edge is reserved for actions only; metadata such as the
+              assignment source lives in the supplementary text. */}
+          <Box direction="row" align="center" flex={false}>
+            <Button
+              icon={<Trash />}
+              a11yTitle={`Remove role ${r.role}`}
+              disabled={r.source !== 'Direct'}
+              onClick={() => {}}
+            />
+            <Button
+              icon={<Edit />}
+              a11yTitle={`Edit role ${r.role}`}
+              onClick={() => {}}
+            />
           </Box>
         </ListRow>
       )}
