@@ -7,6 +7,7 @@ import {
   PageHeader,
   Paragraph,
   Tab,
+  Text,
   Tabs,
   ToggleGroup,
 } from 'grommet';
@@ -126,7 +127,34 @@ const ZONE_VARIANTS = [
     detailLabel: '60%',
     note: 'Alternative. Both zones scale with the page, keeping a constant ratio. Suits lists with richer rows (status, meta) at the cost of a narrower detail column on small screens.',
   },
+  {
+    value: 'resizable',
+    label: 'Resizable',
+    listWidth: '34%',
+    listLabel: 'drag · 192–384px (size.medium–size.large)',
+    detailLabel: 'flex',
+    note: 'Alternative. The divider becomes a handle: drag (or arrow keys) to resize the list within the same token range; double-click resets. Try it in the wireframe.',
+  },
 ];
+
+// Resizable variant: the divider is the control
+const RESIZE_MIN = 192; // size.medium
+const RESIZE_MAX = 384; // size.large
+const RESIZE_STEP = 8; // keyboard step (edgeSize.xxsmall)
+
+const RESIZE_HANDLE = region(
+  3,
+  'Resize handle',
+  '<div role="separator" aria-orientation="vertical" aria-valuemin/max/now>',
+  'Letting the user trade list width for detail width within the token range.',
+  'Pointer drag · ←/→ (8px, size.xxsmall) · Home/End to min/max · double-click to reset',
+  'Sits on the divider, 8px (edgeSize.xxsmall) hit area, col-resize cursor. Width clamps to 192–384px (size.medium–size.large) and persists per user.',
+  {
+    questions:
+      'Persist in localStorage or user preferences? Should the handle be always visible or appear on hover/focus?',
+    ...see(1, 4),
+  },
+);
 
 const LIST = {
   toolbar: region(
@@ -305,8 +333,85 @@ const PageWireframe = ({ variant }) => {
 // ---------------------------------------------------------------------------
 // Level 2 · Zones — list vs detail, and how much space each can take
 
+const ResizeHandle = ({ width, onChange }) => {
+  const clamp = (w) => Math.min(RESIZE_MAX, Math.max(RESIZE_MIN, w));
+  const onPointerDown = (e) => {
+    const startX = e.clientX;
+    const startW = width;
+    const move = (ev) => onChange(clamp(startW + ev.clientX - startX));
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    e.preventDefault();
+  };
+  const onKeyDown = (e) => {
+    const map = {
+      ArrowLeft: width - RESIZE_STEP,
+      ArrowRight: width + RESIZE_STEP,
+      Home: RESIZE_MIN,
+      End: RESIZE_MAX,
+    };
+    if (map[e.key] !== undefined) {
+      e.preventDefault();
+      onChange(clamp(map[e.key]));
+    }
+  };
+  return (
+    <Box
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize list zone"
+      aria-valuemin={RESIZE_MIN}
+      aria-valuemax={RESIZE_MAX}
+      aria-valuenow={width}
+      tabIndex={0}
+      width="8px"
+      flex={false}
+      align="center"
+      justify="center"
+      style={{ cursor: 'col-resize', position: 'relative' }}
+      onPointerDown={onPointerDown}
+      onKeyDown={onKeyDown}
+      onDoubleClick={() => onChange(RESIZE_MIN + (RESIZE_MAX - RESIZE_MIN) / 2)}
+    >
+      <Box fill="vertical" border={{ side: 'left', color: 'border-weak' }} />
+      <Box
+        background="brand"
+        round="full"
+        width="6px"
+        height="40px"
+        style={{ position: 'absolute' }}
+      />
+      <Box
+        background="text-strong"
+        round="full"
+        align="center"
+        justify="center"
+        flex={false}
+        style={{
+          position: 'absolute',
+          top: '8px',
+          left: '-6px',
+          width: '20px',
+          height: '20px',
+          maxWidth: 'none',
+        }}
+      >
+        <Text size="xsmall" weight={700} color="#ffffff">
+          {RESIZE_HANDLE.id}
+        </Text>
+      </Box>
+    </Box>
+  );
+};
+
 const ZonesWireframe = ({ variant }) => {
   const v = ZONE_VARIANTS.find((o) => o.value === variant);
+  const resizable = variant === 'resizable';
+  const [listPx, setListPx] = useState(288);
   return (
     <Box gap="small">
       <Box
@@ -320,14 +425,18 @@ const ZonesWireframe = ({ variant }) => {
         <Box direction="row" gap="small" height={{ min: '360px' }}>
           <Focus
             region={ZONES.list}
-            label={v.listLabel}
-            width={v.listWidth}
+            label={resizable ? `${listPx}px` : v.listLabel}
+            width={resizable ? `${listPx}px` : v.listWidth}
             flex={false}
           >
             <Dim label="List toolbar" height="72px" />
             <Dim label="List body" flex />
           </Focus>
-          <Box border={{ side: 'left', color: 'border-weak' }} />
+          {resizable ? (
+            <ResizeHandle width={listPx} onChange={setListPx} />
+          ) : (
+            <Box border={{ side: 'left', color: 'border-weak' }} />
+          )}
           <Focus region={ZONES.detail} label={v.detailLabel} flex>
             <Dim label="Detail header" height="48px" />
             <Dim label="Tabs" height="36px" />
