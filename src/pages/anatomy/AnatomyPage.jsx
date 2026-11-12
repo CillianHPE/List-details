@@ -142,24 +142,32 @@ const LIST = {
 };
 
 const DETAIL = {
-  heading: region(
+  header: region(
     1,
-    'Detail heading',
-    '<h2> · left of header',
-    'Identity of the selected record: name, optional status or subtitle.',
-    'None — may support inline rename',
-    'Updates when the selection changes. Mirrors the page header: heading on the left, actions on the right.',
+    'Detail header',
+    'header row · leading + trailing',
+    'Identity of the selected record and the actions that apply to it.',
+    'Leading zone · trailing zone',
+    'Updates when the selection changes. Mirrors the page header: one row, identity on the left, actions on the right.',
   ),
-  actions: region(
+  leading: region(
     2,
-    'Detail actions',
+    'Leading',
+    '<h2> · identifiers',
+    'Things that identify the record: name, status, subtitle or key metadata.',
+    'None — may support inline rename',
+    'Takes the available width; text truncates or wraps before the trailing zone does.',
+  ),
+  trailing: region(
+    3,
+    'Trailing',
     'buttons · menu',
     'Actions that apply to the selected record only.',
     'Primary action · overflow menu (destructive last)',
-    'Right-aligned, same row as the heading. Wraps beneath it on narrow widths.',
+    'Right-aligned and fixed to content width. Wraps beneath the leading zone on narrow widths.',
   ),
   tabs: region(
-    3,
+    4,
     'Detail tabs',
     'tablist · tab · tabpanel (optional)',
     'Switching between facets of the record when there is more than one.',
@@ -167,7 +175,7 @@ const DETAIL = {
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
   ),
   content: region(
-    4,
+    5,
     'Content area',
     'tabpanel or plain region',
     'Whatever best presents the facet: name–value pairs, a list, a table, an empty state …',
@@ -470,18 +478,20 @@ const DetailWireframe = () => (
     <Dim label="List zone" width="30%" flex={false} />
     <Box border={{ side: 'left', color: 'border-weak' }} />
     <Box flex gap="small">
-      <Box direction="row" gap="small">
-        <Focus region={DETAIL.heading} label="updates on selection" flex>
-          <Ghost width="160px" height="24px" />
-          <Ghost width="100px" height="10px" />
-        </Focus>
-        <Focus region={DETAIL.actions} width={{ min: '240px' }} flex={false}>
-          <Box direction="row" justify="end" gap="xsmall">
-            <Ghost width="90px" height="32px" round="full" />
-            <Ghost width="32px" height="32px" round="full" />
-          </Box>
-        </Focus>
-      </Box>
+      <Focus region={DETAIL.header} label="updates on selection">
+        <Box direction="row" gap="small" align="start">
+          <Block region={DETAIL.leading} flex>
+            <Ghost width="160px" height="24px" />
+            <Ghost width="100px" height="10px" />
+          </Block>
+          <Block region={DETAIL.trailing} flex={false}>
+            <Box direction="row" justify="end" gap="xsmall">
+              <Ghost width="90px" height="32px" round="full" />
+              <Ghost width="32px" height="32px" round="full" />
+            </Box>
+          </Block>
+        </Box>
+      </Focus>
       <Focus
         region={DETAIL.tabs}
         label="optional"
