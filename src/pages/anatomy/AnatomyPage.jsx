@@ -151,7 +151,7 @@ const DETAIL = {
     'Updates when the selection changes. Mirrors the page header: one row, identity on the left, actions on the right.',
   ),
   leading: region(
-    2,
+    '1a',
     'Leading',
     '<h2> · identifiers',
     'Things that identify the record: name, status, subtitle or key metadata.',
@@ -159,7 +159,7 @@ const DETAIL = {
     'Takes the available width; text truncates or wraps before the trailing zone does.',
   ),
   trailing: region(
-    3,
+    '1b',
     'Trailing',
     'buttons · menu',
     'Actions that apply to the selected record only.',
@@ -167,7 +167,7 @@ const DETAIL = {
     'Right-aligned and fixed to content width. Wraps beneath the leading zone on narrow widths.',
   ),
   tabs: region(
-    4,
+    2,
     'Detail tabs',
     'tablist · tab · tabpanel (optional)',
     'Switching between facets of the record when there is more than one.',
@@ -175,7 +175,7 @@ const DETAIL = {
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
   ),
   content: region(
-    5,
+    3,
     'Content area',
     'tabpanel or plain region',
     'Whatever best presents the facet: name–value pairs, a list, a table, an empty state …',
@@ -189,8 +189,9 @@ const Badge = ({ region: r, size = 'medium' }) => (
     <Box
       background="text-strong"
       round="full"
-      width="24px"
+      width={{ min: '24px' }}
       height="24px"
+      pad={{ horizontal: '4xsmall' }}
       align="center"
       justify="center"
       flex={false}
