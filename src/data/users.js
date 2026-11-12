@@ -1,4 +1,4 @@
-export const users = [
+const baseUsers = [
   {
     id: 'usr_01HX2K',
     name: 'Alex Morgan',
@@ -15,7 +15,10 @@ export const users = [
     ],
     activity: [
       { when: 'Today, 09:14', what: 'Signed in from Dublin, IE' },
-      { when: 'Yesterday, 17:02', what: 'Assigned role "Workspace administrator" to Casey Turner' },
+      {
+        when: 'Yesterday, 17:02',
+        what: 'Assigned role "Workspace administrator" to Casey Turner',
+      },
       { when: 'Mar 21st, 2024', what: 'Created API key "ci-deploy"' },
     ],
   },
@@ -46,7 +49,9 @@ export const users = [
     created: 'Mar 24th, 2024',
     lastActive: 'Never',
     groups: [{ name: 'Platform admins', type: 'Group', members: 6 }],
-    activity: [{ when: 'Mar 24th, 2024', what: 'Invitation sent by Alex Morgan' }],
+    activity: [
+      { when: 'Mar 24th, 2024', what: 'Invitation sent by Alex Morgan' },
+    ],
   },
   {
     id: 'usr_04MN3T',
@@ -277,3 +282,63 @@ export const users = [
     activity: [{ when: 'Apr 3rd, 2024', what: 'Invitation accepted' }],
   },
 ];
+
+// Enrich each record with the GreenLake user-detail fields (Details, Role
+// assignments, User group membership, Organization workspace membership).
+const hex = (seed, length) => {
+  let h = 2166136261;
+  let out = '';
+  for (let i = 0; out.length < length; i += 1) {
+    h = Math.imul(h ^ (seed.charCodeAt(i % seed.length) + i), 16777619) >>> 0;
+    out += h.toString(16).padStart(8, '0');
+  }
+  return out.slice(0, length);
+};
+
+const GREENLAKE = 'GreenLake Platform';
+
+export const users = baseUsers.map((u, i) => {
+  const [firstName, ...rest] = u.name.split(' ');
+  const id = hex(u.id, 24);
+  const invited = u.status === 'Invited';
+  const direct = [
+    u.role,
+    ...(u.role === 'Workspace administrator' ? ['Workspace observer'] : []),
+  ].map((role) => ({
+    role,
+    service: GREENLAKE,
+    scope: 'Entire workspace',
+    source: 'Direct',
+  }));
+  const inherited = [
+    {
+      role: 'Intelligence registry user',
+      service: GREENLAKE,
+      scope: 'Copilot built-in read access',
+      source: 'Baseline access',
+    },
+    ...u.groups.slice(0, 1).map((g) => ({
+      role: 'Workspace member',
+      service: GREENLAKE,
+      scope: 'Entire workspace',
+      source: g.name,
+    })),
+  ];
+  return {
+    ...u,
+    firstName,
+    lastName: rest.join(' '),
+    userId: id,
+    principalId: `user:${id}`,
+    verified: invited ? 'No' : 'Yes',
+    authorizationSource: 'Local',
+    lifecycleSource: i % 5 === 0 ? 'SCIM' : 'Local',
+    joinedOrganization: 'April 14, 2025',
+    joinedWorkspace: invited ? '—' : u.created,
+    lastLaunch: invited ? '—' : u.lastActive,
+    lastSignIn: invited ? 'Never' : u.lastActive,
+    roleAssignments: [...direct, ...inherited],
+    groups: u.groups.map((g) => ({ ...g, lifecycleSource: 'Local' })),
+    orgWorkspaces: i % 4 === 1 ? [{ name: 'Acme — EMEA', role: 'Member' }] : [],
+  };
+});

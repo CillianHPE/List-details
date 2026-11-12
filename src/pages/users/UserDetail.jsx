@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  Anchor,
   Box,
   Button,
   Heading,
@@ -9,7 +10,6 @@ import {
   NameValuePair,
   Tab,
   Tabs,
-  Tag,
   Text,
   TextInput,
 } from 'grommet';
@@ -20,6 +20,7 @@ import {
   StatusCritical,
   StatusGood,
   StatusInfo,
+  Trash,
 } from '@hpe-design/icons-grommet';
 
 // HPE DS status indicator template: semantic icon + visible label.
@@ -165,7 +166,7 @@ const Section = ({ title, hideTitle, action, contained, children }) => (
 // narrow to hold the name column plus a reasonable value column.
 const PAIR_ROW_MIN_WIDTH = 480;
 
-const Properties = ({ user }) => {
+const usePairDirection = () => {
   const ref = useRef(null);
   const [direction, setDirection] = useState('row');
   useEffect(() => {
@@ -179,31 +180,139 @@ const Properties = ({ user }) => {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+  return [ref, direction];
+};
+
+// Details are broken into titled groups, each its own NameValueList,
+// separated by a weak divider so the page doesn't read as one long list.
+const DETAIL_GROUPS = [
+  {
+    title: 'Identity',
+    pairs: [
+      ['First name', 'firstName'],
+      ['Last name', 'lastName'],
+      ['Email', 'email'],
+      ['ID', 'userId'],
+      ['Principal ID', 'principalId'],
+    ],
+  },
+  {
+    title: 'Account',
+    pairs: [
+      ['Status', 'status'],
+      ['Verified', 'verified'],
+      ['Authorization source', 'authorizationSource'],
+      ['Lifecycle source', 'lifecycleSource'],
+    ],
+  },
+  {
+    title: 'Membership & activity',
+    pairs: [
+      ['Joined organization', 'joinedOrganization'],
+      ['Joined this workspace', 'joinedWorkspace'],
+      ['Last launch of this workspace', 'lastLaunch'],
+      ['Last sign in', 'lastSignIn'],
+    ],
+  },
+];
+
+const DetailValue = ({ field, user }) =>
+  field === 'status' ? (
+    <StatusIndicator status={user.status} />
+  ) : (
+    <Text>{user[field]}</Text>
+  );
+
+const Properties = ({ user }) => {
+  const [ref, direction] = usePairDirection();
   return (
     <Box ref={ref}>
-      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
-        <NameValuePair name="Email">
-          <Text>{user.email}</Text>
-        </NameValuePair>
-        <NameValuePair name="Role">
-          <Box align="start">
-            <Tag value={user.role} size="small" />
-          </Box>
-        </NameValuePair>
-        <NameValuePair name="Status">
-          <StatusIndicator status={user.status} />
-        </NameValuePair>
-        <NameValuePair name="Multi-factor auth">
-          <Text>{user.mfa}</Text>
-        </NameValuePair>
-        <NameValuePair name="Created">
-          <Text>{user.created}</Text>
-        </NameValuePair>
-        <NameValuePair name="Last active">
-          <Text>{user.lastActive}</Text>
-        </NameValuePair>
-      </NameValueList>
+      {DETAIL_GROUPS.map((group, index) => (
+        <Box
+          key={group.title}
+          gap="small"
+          pad={{ vertical: 'medium' }}
+          border={
+            index < DETAIL_GROUPS.length - 1
+              ? { side: 'bottom', color: 'border-weak' }
+              : false
+          }
+        >
+          <Heading level={4} size="xsmall" margin="none">
+            {group.title}
+          </Heading>
+          <NameValueList
+            pairProps={{ direction }}
+            nameProps={{ width: 'small' }}
+          >
+            {group.pairs.map(([label, field]) => (
+              <NameValuePair key={field} name={label}>
+                <DetailValue field={field} user={user} />
+              </NameValuePair>
+            ))}
+          </NameValueList>
+        </Box>
+      ))}
     </Box>
+  );
+};
+
+// Shared row shell for the membership lists: primary + secondary text on the
+// left, source/metadata and a remove control on the right.
+const ListRow = ({ index, count, children }) => (
+  <Box
+    direction="row"
+    align="center"
+    justify="between"
+    gap="medium"
+    pad={{ vertical: 'small' }}
+    border={
+      index < count - 1 ? { side: 'bottom', color: 'border-weak' } : false
+    }
+  >
+    {children}
+  </Box>
+);
+
+const EmptyState = ({ children }) => (
+  <Box pad="large" align="center">
+    <Text color="text-weak">{children}</Text>
+  </Box>
+);
+
+const RoleAssignments = ({ user }) => {
+  const rows = user.roleAssignments;
+  return rows.length ? (
+    <List data={rows} pad="none">
+      {(r, index) => (
+        <ListRow index={index} count={rows.length}>
+          <Box>
+            <Anchor label={r.role} weight={500} href="#" />
+            <Text size="small" color="text-weak">
+              {r.service} · {r.scope}
+            </Text>
+          </Box>
+          <Box direction="row" align="center" gap="small" flex={false}>
+            {r.source === 'Direct' ? (
+              <Text size="small" color="text-weak">
+                Direct
+              </Text>
+            ) : (
+              <Anchor label={r.source} size="small" href="#" />
+            )}
+            {r.source === 'Direct' && (
+              <Button
+                icon={<Trash />}
+                a11yTitle={`Remove role ${r.role}`}
+                onClick={() => {}}
+              />
+            )}
+          </Box>
+        </ListRow>
+      )}
+    </List>
+  ) : (
+    <EmptyState>No role assignments</EmptyState>
   );
 };
 
@@ -211,74 +320,43 @@ const Groups = ({ user }) =>
   user.groups.length ? (
     <List data={user.groups} pad="none">
       {(group, index) => (
-        <Box
-          direction="row"
-          align="center"
-          justify="between"
-          gap="small"
-          pad={{ vertical: 'small' }}
-          border={
-            index < user.groups.length - 1
-              ? { side: 'bottom', color: 'border-weak' }
-              : false
-          }
-        >
+        <ListRow index={index} count={user.groups.length}>
           <Box>
-            <Text weight={500}>{group.name}</Text>
+            <Anchor label={group.name} weight={500} href="#" />
             <Text size="small" color="text-weak">
-              {group.type} · {group.members}{' '}
+              Lifecycle source: {group.lifecycleSource} · {group.members}{' '}
               {group.members === 1 ? 'member' : 'members'}
             </Text>
           </Box>
-          <Box direction="row" align="center" gap="small">
-            <Menu
-              icon={<More />}
-              a11yTitle={`Actions for ${group.name}`}
-              dropProps={{ align: { top: 'bottom', right: 'right' } }}
-              items={[
-                { label: 'View group', onClick: () => {} },
-                { label: 'Change role', onClick: () => {} },
-                { label: 'Remove from group', onClick: () => {} },
-              ]}
-            />
-          </Box>
-        </Box>
+          <Button
+            icon={<Trash />}
+            a11yTitle={`Remove from ${group.name}`}
+            onClick={() => {}}
+          />
+        </ListRow>
       )}
     </List>
   ) : (
-    <Box
-      pad="medium"
-      align="center"
-      border={{ color: 'border-weak', style: 'dashed' }}
-      round="xsmall"
-    >
-      <Text color="text-weak">No groups assigned</Text>
-    </Box>
+    <EmptyState>No user group membership</EmptyState>
   );
 
-const Activity = ({ user }) => (
-  <List data={user.activity} pad="none">
-    {(a, index) => (
-      <Box
-        direction="row"
-        align="start"
-        justify="between"
-        gap="small"
-        pad={{ vertical: 'small' }}
-        border={
-          index < user.activity.length - 1
-            ? { side: 'bottom', color: 'border-weak' }
-            : false
-        }
-      >
-        <Text>{a.what}</Text>
-        <Text size="xsmall" color="text-weak" flex={false}>
-          {a.when}
-        </Text>
-      </Box>
-    )}
-  </List>
-);
+const OrgWorkspaces = ({ user }) =>
+  user.orgWorkspaces.length ? (
+    <List data={user.orgWorkspaces} pad="none">
+      {(w, index) => (
+        <ListRow index={index} count={user.orgWorkspaces.length}>
+          <Box>
+            <Anchor label={w.name} weight={500} href="#" />
+            <Text size="small" color="text-weak">
+              {w.role}
+            </Text>
+          </Box>
+        </ListRow>
+      )}
+    </List>
+  ) : (
+    <EmptyState>No organization workspace membership</EmptyState>
+  );
 
 // E · Detail body — Tabs own their panels so each tabpanel is labelled by its
 // tab; a visually hidden h3 keeps every panel in the heading outline.
@@ -295,18 +373,27 @@ const DetailBody = ({ user, tab, setTab }) => (
         <Properties user={user} />
       </Section>
     </Tab>
-    <Tab title="Roles & groups">
+    <Tab title="Role assignments">
       <Section
-        title="Roles & groups"
+        title="Role assignments"
         hideTitle
-        action={<Button label="Assign" size="small" />}
+        action={<Button label="Assign roles" secondary />}
+      >
+        <RoleAssignments user={user} />
+      </Section>
+    </Tab>
+    <Tab title="User group membership">
+      <Section
+        title="User group membership"
+        hideTitle
+        action={<Button label="Add to user groups" secondary />}
       >
         <Groups user={user} />
       </Section>
     </Tab>
-    <Tab title="Activity">
-      <Section title="Activity" hideTitle>
-        <Activity user={user} />
+    <Tab title="Organization workspace membership">
+      <Section title="Organization workspace membership" hideTitle>
+        <OrgWorkspaces user={user} />
       </Section>
     </Tab>
   </Tabs>

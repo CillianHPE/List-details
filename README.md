@@ -24,7 +24,7 @@ list–detail research (Figma: *Landmark Surface examples → List details*):
 | B · List toolbar | `UsersPage` | Full‑width search, `ToggleGroup` quick filters (All / Active / Invited), item count |
 | C · List body | `UserList` | 2‑line rows (avatar, name, role, date top‑right); selected row = contrast fill |
 | D · Detail header | `UserDetail` | Name (h2) + inline rename, **Actions** `Menu` grouped per DS guidance (Edit name / Change role / Reset password / Resend invite · Suspend · Remove user last), sub‑tabs |
-| E · Detail body | `UserDetail` | Grommet `Tabs` own the panels (tab ↔ tabpanel wired by Grommet); each panel carries a visually hidden h3. One section per tab: Details (`NameValueList`, row pairs that stack when the pane is narrower than 480px) / Roles & groups (`List` + row menu) / Activity (`List`) |
+| E · Detail body | `UserDetail` | Grommet `Tabs` own the panels (tab ↔ tabpanel wired by Grommet); each panel carries a visually hidden h3. Tabs mirror GreenLake user detail: Details (grouped `NameValueList`s — Identity / Account / Membership & activity — separated by weak dividers; row pairs stack when the pane is narrower than 480px) / Role assignments (`List`: role link, service · scope, source, remove) / User group membership (`List`: group link, lifecycle source, remove) / Organization workspace membership (`List` or empty state) |
 
 Below the `medium` breakpoint (1080px) the two columns collapse into a drill‑in (list → detail; `PageHeader.parent` holds the back link).
 
