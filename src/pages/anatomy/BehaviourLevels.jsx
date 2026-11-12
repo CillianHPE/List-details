@@ -317,7 +317,7 @@ const BREAKPOINTS = [
   {
     name: 'Wide',
     range: '≥ 1024px',
-    layout: 'Two columns · fixed list 192–384px',
+    layout: 'Two columns · fixed list 192–384px (size.medium–size.large)',
     nav: 'expanded',
     actions: 'labelled buttons',
     tabs: 'single row',
@@ -361,7 +361,7 @@ const RESPONSIVE = {
     'Grid columns [auto, flex] above 768px. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the detail header.',
     {
       questions:
-        'Container query on Main or viewport media query? Should Medium drop to a proportional list instead of the 192px minimum?',
+        'Container query on Main or viewport media query? Should Medium drop to a proportional list instead of the 192px (size.medium) minimum?',
     },
   ),
   pageHeader: region(

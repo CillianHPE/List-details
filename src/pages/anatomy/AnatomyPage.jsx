@@ -86,7 +86,7 @@ const ZONES = {
     'Finding and selecting one record from the collection.',
     'List toolbar · list body',
     'Fixed-width column. Sticks to the viewport and scrolls its rows independently.',
-    { space: 'min 192px · max 384px (medium → large tokens)' },
+    { space: 'min 192px (size.medium) · max 384px (size.large)' },
   ),
   detail: region(
     2,
@@ -104,7 +104,7 @@ const ZONE_VARIANTS = [
     value: 'fixed',
     label: 'Fixed list',
     listWidth: '34%',
-    listLabel: '192–384px',
+    listLabel: '192–384px (size.medium–size.large)',
     detailLabel: 'flex',
     note: 'Current behaviour. The list is clamped to a token range so row content stays legible; the detail zone absorbs all remaining width.',
   },
