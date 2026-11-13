@@ -1,8 +1,11 @@
-import { createContext, useContext } from 'react';
-import { Anchor, Box, Heading, Paragraph, Text } from 'grommet';
+import { createContext, useContext, useRef, useState } from 'react';
+import { Anchor, Box, Drop, Heading, Paragraph, Text } from 'grommet';
 
 // Lets legend entries jump to another group/tab (e.g. Behaviour → Scroll).
 export const AnatomyNav = createContext(() => {});
+// Legend label overrides (e.g. behaviour → "Layout") so the wireframe popovers
+// read the same as the legend beneath them.
+const LegendLabels = createContext({});
 
 // Behaviour tabs are addressed by key so links survive reordering or hiding.
 // `hidden` keeps a tab's content in the codebase but out of the UI (and out of
@@ -63,22 +66,83 @@ export const region = (
   ...Object.assign({}, ...extras),
 });
 
-export const Badge = ({ region: r, size = 'medium', showRole = true }) => (
+const Dot = ({ id }) => (
+  <Box
+    background="text-strong"
+    round="full"
+    width={{ min: '24px' }}
+    height="24px"
+    pad={{ horizontal: '4xsmall' }}
+    align="center"
+    justify="center"
+    flex={false}
+  >
+    <Text size="xsmall" weight={700} color="#ffffff">
+      {id}
+    </Text>
+  </Box>
+);
+
+// Numbered dot that reveals the region's legend entry on hover / focus, so
+// the detail is reachable from the diagram without scrolling to the legend.
+export const PopoverDot = ({ region: r, children }) => {
+  const ref = useRef();
+  const [open, setOpen] = useState(false);
+  const labels = useContext(LegendLabels);
+  const show = () => setOpen(true);
+  const hide = () => setOpen(false);
+  return (
+    <>
+      <Box
+        as="button"
+        type="button"
+        ref={ref}
+        aria-label={`${r.id} · ${r.name} — details`}
+        aria-expanded={open}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onFocus={show}
+        onBlur={hide}
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          padding: 0,
+          border: 'none',
+          background: 'none',
+          cursor: 'help',
+          borderRadius: 12,
+        }}
+      >
+        {children ?? <Dot id={r.id} />}
+      </Box>
+      {open && (
+        <Drop
+          target={ref.current}
+          align={{ top: 'bottom', left: 'left' }}
+          margin={{ top: 'xsmall' }}
+          round="small"
+          elevation="medium"
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          trapFocus={false}
+        >
+          <Box pad="medium" width={{ max: 'medium' }} gap="xsmall">
+            <Badge region={r} />
+            <RegionDetails region={r} labels={labels} />
+          </Box>
+        </Drop>
+      )}
+    </>
+  );
+};
+
+export const Badge = ({
+  region: r,
+  size = 'medium',
+  showRole = true,
+  popover = false,
+}) => (
   <Box direction="row" gap="xsmall" align="center" wrap>
-    <Box
-      background="text-strong"
-      round="full"
-      width={{ min: '24px' }}
-      height="24px"
-      pad={{ horizontal: '4xsmall' }}
-      align="center"
-      justify="center"
-      flex={false}
-    >
-      <Text size="xsmall" weight={700} color="#ffffff">
-        {r.id}
-      </Text>
-    </Box>
+    {popover ? <PopoverDot region={r} /> : <Dot id={r.id} />}
     <Text weight={500} size={size}>
       {r.name}
     </Text>
@@ -99,7 +163,7 @@ export const Block = ({ region: r, showRole, children, ...rest }) => (
     gap="small"
     {...rest}
   >
-    <Badge region={r} showRole={showRole} />
+    <Badge region={r} showRole={showRole} popover />
     {children}
   </Box>
 );
@@ -115,7 +179,7 @@ export const Focus = ({ region: r, label, showRole, children, ...rest }) => (
     {...rest}
   >
     <Box direction="row" justify="between" align="start" gap="small" wrap>
-      <Badge region={r} showRole={showRole} />
+      <Badge region={r} showRole={showRole} popover />
       {label && (
         <Text
           size="small"
@@ -263,11 +327,13 @@ export const Level = ({
       </Box>
       {control}
     </Box>
-    {children ?? (
-      <>
-        {wireframe}
-        <Legend regions={regions} labels={labels} />
-      </>
-    )}
+    <LegendLabels.Provider value={labels ?? {}}>
+      {children ?? (
+        <>
+          {wireframe}
+          <Legend regions={regions} labels={labels} />
+        </>
+      )}
+    </LegendLabels.Provider>
   </Box>
 );

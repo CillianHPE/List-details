@@ -9,6 +9,7 @@ import {
   GhostRows,
   Level,
   RegionDetails,
+  PopoverDot,
 } from './primitives';
 import { SURFACE, listWidthFor, tierFor } from '../../pattern/listDetail';
 
@@ -1535,7 +1536,9 @@ const ActionsWireframe = () => (
         >
           <Ghost width="120px" height="14px" />
           <Slot scope="collection" direction="row" align="center" gap="xsmall">
-            <Dot scope="collection" id={ACTIONS.collection.id} />
+            <PopoverDot region={ACTIONS.collection}>
+              <Dot scope="collection" id={ACTIONS.collection.id} />
+            </PopoverDot>
             <Ghost width="80px" height="24px" round="full" />
           </Slot>
         </Box>
@@ -1556,7 +1559,9 @@ const ActionsWireframe = () => (
             >
               <Ghost width="140px" height="20px" />
               <Slot scope="record" direction="row" align="center" gap="xsmall">
-                <Dot scope="record" id={ACTIONS.record.id} />
+                <PopoverDot region={ACTIONS.record}>
+                  <Dot scope="record" id={ACTIONS.record.id} />
+                </PopoverDot>
                 <Ghost width="70px" height="24px" round="full" />
                 <Ghost width="24px" height="24px" round="full" />
               </Slot>
@@ -1579,7 +1584,9 @@ const ActionsWireframe = () => (
                   align="center"
                   gap="xsmall"
                 >
-                  <Dot scope="section" id={ACTIONS.section.id} />
+                  <PopoverDot region={ACTIONS.section}>
+                    <Dot scope="section" id={ACTIONS.section.id} />
+                  </PopoverDot>
                   <Ghost width="90px" height="24px" round="full" />
                 </Slot>
               </Box>
@@ -1603,7 +1610,9 @@ const ActionsWireframe = () => (
                     gap="xsmall"
                     pad="4xsmall"
                   >
-                    <Dot scope="row" id={ACTIONS.row.id} />
+                    <PopoverDot region={ACTIONS.row}>
+                      <Dot scope="row" id={ACTIONS.row.id} />
+                    </PopoverDot>
                     <Ghost width="20px" height="20px" />
                   </Slot>
                 </Box>
