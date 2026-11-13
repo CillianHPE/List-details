@@ -1559,7 +1559,13 @@ const ActionsWireframe = () => (
             {/* List toolbar: search + collection action share a row because
                 they shape the same set. */}
             <Box direction="row" align="center" gap="xsmall">
-              <Ghost height="24px" round="full" />
+              <Ghost
+                width="auto"
+                height="24px"
+                round="full"
+                flex
+                style={{ minWidth: 0 }}
+              />
               <Slot
                 scope="collection"
                 direction="row"
