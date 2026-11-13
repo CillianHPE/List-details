@@ -6,13 +6,23 @@ import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
 import { users } from './data/users';
+import { RecentActivity, UsersSummary } from './pages/users/PageContext';
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/default  → Users in the default HPE shell
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
-//   #/v3-few   → same, with only three users (sparse-data variant)
+//   #/v3-few   → same, with only three users (short list, long detail)
+//   #/v3-short → long list, one-facet detail (no tabs)
+//   #/v3-context → list–detail with other page content above and below
 //   #/anatomy  → lo-fi region/role map of the pattern
-const VERSIONS = ['anatomy', 'default', 'v3', 'v3-few'];
+const VERSIONS = [
+  'anatomy',
+  'default',
+  'v3',
+  'v3-few',
+  'v3-short',
+  'v3-context',
+];
 const fewUsers = users.slice(0, 3);
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
@@ -46,6 +56,19 @@ const App = () => {
       {version === 'v3-few' && (
         <V3Shell>
           <UsersPage users={fewUsers} />
+        </V3Shell>
+      )}
+      {version === 'v3-short' && (
+        <V3Shell>
+          <UsersPage detailVariant="short" />
+        </V3Shell>
+      )}
+      {version === 'v3-context' && (
+        <V3Shell>
+          <UsersPage
+            before={<UsersSummary users={users} />}
+            after={<RecentActivity />}
+          />
         </V3Shell>
       )}
       {version === 'anatomy' &&

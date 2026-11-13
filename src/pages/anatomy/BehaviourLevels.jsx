@@ -124,12 +124,12 @@ const SCROLL_VARIANTS = [
   {
     value: 'page',
     label: 'Page scrolls',
-    note: 'Current behaviour. The page (Main) is the scroll container; the list column is sticky and scrolls its own rows; the detail grows the page.',
+    note: 'Default (stand-up, 12 Nov). The page (Main) is the scroll container, so the surface can sit among other page content; the list column stretches to the surface height, is sticky and scrolls its own rows; the detail grows the page. Try #/v3-few, #/v3-short and #/v3-context.',
   },
   {
     value: 'panes',
     label: 'Panes scroll',
-    note: 'Alternative. Main is locked to the viewport; the list body and the detail content each scroll independently under fixed headers.',
+    note: 'Alternative for standalone, Outlook-style apps where the surface is the whole page. Main is locked to the viewport; the list body and the detail content each scroll independently under fixed headers.',
   },
 ];
 
@@ -184,8 +184,11 @@ const scrollRegions = (variant) => {
       `Max height = viewport − header − page header − toolbar. Selected row is scrolled into view on keyboard navigation. ${
         panes
           ? ''
-          : 'Column is sticky at top: 60px + 24px (global header + edgeSize.medium) so it stays put while the page scrolls.'
+          : 'Column is sticky at top: 60px + 24px (global header + edgeSize.medium) so it stays put while the page scrolls. The column itself stretches to the detail height, so a short list never leaves the divider hanging mid-surface and the empty space below the rows still reads as the list zone.'
       }`,
+      {
+        why: 'Scanning the collection must never cost the user their place in the record, and vice versa; the list keeps its own scroll so switching records is one gesture, not a page round-trip.',
+      },
       {
         questions:
           'Native vs hidden scrollbar? Keep scroll position when the filter changes?',

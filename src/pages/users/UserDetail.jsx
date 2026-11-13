@@ -227,17 +227,17 @@ const DetailValue = ({ field, user }) =>
     <Text>{user[field]}</Text>
   );
 
-const Properties = ({ user }) => {
+const Properties = ({ user, groups = DETAIL_GROUPS }) => {
   const [ref, direction] = usePairDirection();
   return (
     <Box ref={ref}>
-      {DETAIL_GROUPS.map((group, index) => (
+      {groups.map((group, index) => (
         <Box
           key={group.title}
           gap="small"
           pad={{ vertical: 'medium' }}
           border={
-            index < DETAIL_GROUPS.length - 1
+            index < groups.length - 1
               ? { side: 'bottom', color: 'border-weak' }
               : false
           }
@@ -429,13 +429,21 @@ const DetailBody = ({ user, tab, setTab }) => (
   </Tabs>
 );
 
-export const UserDetail = ({ user }) => {
+// variant="short": a record with one facet — no tabs, identity only. Used by
+// the long-list / short-detail route to study scroll & height.
+export const UserDetail = ({ user, variant = 'full' }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useState(0);
   return (
     <Box>
       <DetailHeader user={user} name={name} onRename={setName} />
-      <DetailBody user={user} tab={tab} setTab={setTab} />
+      {variant === 'short' ? (
+        <Section title="Details" hideTitle>
+          <Properties user={user} groups={DETAIL_GROUPS.slice(0, 1)} />
+        </Section>
+      ) : (
+        <DetailBody user={user} tab={tab} setTab={setTab} />
+      )}
     </Box>
   );
 };

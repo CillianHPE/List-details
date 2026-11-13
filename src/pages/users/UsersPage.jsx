@@ -50,7 +50,12 @@ const ContentPane = forwardRef((props, ref) => (
 //   drill-in    < 760px   one column, list → detail
 // `users` lets a route render a sparse variant (e.g. three users) to study
 // how the list zone behaves with little data.
-export const UsersPage = ({ users = allUsers }) => {
+export const UsersPage = ({
+  users = allUsers,
+  detailVariant = 'full',
+  before,
+  after,
+}) => {
   const { ref: surfaceRef, width: surfaceWidth, tier } = useSurfaceTier();
   const stacked = tier === 'drillIn';
   // V3.1 shell: content sits directly on the white canvas, so the list–detail
@@ -143,6 +148,8 @@ export const UsersPage = ({ users = allUsers }) => {
           actions={headerActions}
         />
 
+        {before}
+
         {/* One contained surface holding both columns, split by a divider */}
         <ContentPane
           ref={surfaceRef}
@@ -158,7 +165,10 @@ export const UsersPage = ({ users = allUsers }) => {
                 ? ['auto']
                 : [`${listWidthFor(surfaceWidth ?? 1440)}px`, 'flex']
             }
-            align="start"
+            // Columns stretch to the row height, so a short list still owns
+            // the full height of the surface beside a long detail
+            // (Anatomy › Scroll & height).
+            align="stretch"
           >
             {/* B + C · List pane */}
             {listVisible && (
@@ -168,85 +178,99 @@ export const UsersPage = ({ users = allUsers }) => {
                 // toolbar's intrinsic width override the fr share.
                 style={stacked ? undefined : { minWidth: 0 }}
               >
-                {/* Divider lives on the sticky inner box so it stops short of
-                    the container edges rather than spanning its full height */}
+                {/* Rail: fills the column so the divider runs the full height
+                    of the surface (inset by the pane padding); the sticky
+                    toolbar + rows box pins inside it. */}
                 <Box
-                  pad={
-                    bare
-                      ? stacked
-                        ? { vertical: 'medium' }
-                        : { right: 'medium' }
-                      : stacked
-                        ? 'medium'
-                        : { horizontal: 'medium' }
-                  }
-                  gap="xsmall"
+                  flex
                   border={
                     stacked || !divider
                       ? undefined
                       : { side: 'right', color: 'border-weak' }
                   }
-                  style={stacked ? undefined : stickyBelowHeader(24)}
-                  // Pinned 24px below the sticky global header; max height leaves
-                  // room for that gap plus the pane and page bottom padding (72px)
-                  // so the column never slides under the header at full scroll.
-                  height={
-                    stacked
-                      ? undefined
-                      : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
-                  }
                 >
-                  <Box gap="xsmall" flex={false}>
-                    <Box direction="row" gap="small" align="center">
-                      <Box flex>
-                        <TextInput
-                          icon={<Search />}
-                          placeholder="Search users"
-                          value={query}
-                          onChange={(e) => setQuery(e.target.value)}
+                  <Box
+                    pad={
+                      bare
+                        ? stacked
+                          ? { vertical: 'medium' }
+                          : { right: 'medium' }
+                        : stacked
+                          ? 'medium'
+                          : { horizontal: 'medium' }
+                    }
+                    gap="xsmall"
+                    style={stacked ? undefined : stickyBelowHeader(24)}
+                    // Pinned 24px below the sticky global header; max height leaves
+                    // room for that gap plus the pane and page bottom padding (72px)
+                    // so the column never slides under the header at full scroll.
+                    height={
+                      stacked
+                        ? undefined
+                        : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
+                    }
+                  >
+                    <Box gap="xsmall" flex={false}>
+                      <Box direction="row" gap="small" align="center">
+                        <Box flex>
+                          <TextInput
+                            icon={<Search />}
+                            placeholder="Search users"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                          />
+                        </Box>
+                        {addUsers}
+                      </Box>
+                      <Box
+                        overflow={{ horizontal: 'auto' }}
+                        flex={false}
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        <ToggleGroup
+                          options={QUICK_FILTERS.map(({ label, value }) => ({
+                            label,
+                            value,
+                          }))}
+                          value={quickFilter}
+                          onToggle={({ value }) =>
+                            value && setQuickFilter(value)
+                          }
                         />
                       </Box>
-                      {addUsers}
+                      <Text size="small" color="text-weak">
+                        {visible.length} items
+                      </Text>
                     </Box>
                     <Box
-                      overflow={{ horizontal: 'auto' }}
-                      flex={false}
-                      style={{ whiteSpace: 'nowrap' }}
+                      overflow="auto"
+                      flex
+                      style={{ scrollbarColor: 'auto' }}
                     >
-                      <ToggleGroup
-                        options={QUICK_FILTERS.map(({ label, value }) => ({
-                          label,
-                          value,
-                        }))}
-                        value={quickFilter}
-                        onToggle={({ value }) => value && setQuickFilter(value)}
-                      />
+                      {visible.length ? (
+                        <UserList
+                          users={visible}
+                          selectedId={selectedId}
+                          onSelect={onSelect}
+                        />
+                      ) : (
+                        // No results: message replaces the rows, toolbar stays,
+                        // detail keeps the last selection.
+                        <Box
+                          pad={{ vertical: 'medium' }}
+                          gap="small"
+                          align="start"
+                        >
+                          <Text color="text-weak">
+                            No users match your search.
+                          </Text>
+                          <Button
+                            label="Clear filters"
+                            onClick={clearFilters}
+                          />
+                        </Box>
+                      )}
                     </Box>
-                    <Text size="small" color="text-weak">
-                      {visible.length} items
-                    </Text>
-                  </Box>
-                  <Box overflow="auto" flex style={{ scrollbarColor: 'auto' }}>
-                    {visible.length ? (
-                      <UserList
-                        users={visible}
-                        selectedId={selectedId}
-                        onSelect={onSelect}
-                      />
-                    ) : (
-                      // No results: message replaces the rows, toolbar stays,
-                      // detail keeps the last selection.
-                      <Box
-                        pad={{ vertical: 'medium' }}
-                        gap="small"
-                        align="start"
-                      >
-                        <Text color="text-weak">
-                          No users match your search.
-                        </Text>
-                        <Button label="Clear filters" onClick={clearFilters} />
-                      </Box>
-                    )}
                   </Box>
                 </Box>
               </Box>
@@ -260,7 +284,11 @@ export const UsersPage = ({ users = allUsers }) => {
                 }
               >
                 {selected ? (
-                  <UserDetail key={selected.id} user={selected} />
+                  <UserDetail
+                    key={selected.id}
+                    user={selected}
+                    variant={detailVariant}
+                  />
                 ) : (
                   <Box pad="large" align="center" justify="center">
                     <Text color="text-weak">Select a user to see details</Text>
@@ -270,6 +298,8 @@ export const UsersPage = ({ users = allUsers }) => {
             )}
           </Grid>
         </ContentPane>
+
+        {after}
       </PageContent>
     </Page>
   );
