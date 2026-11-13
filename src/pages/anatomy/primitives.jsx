@@ -52,7 +52,7 @@ export const region = (
   owns,
   controls,
   behaviour,
-  extra = {},
+  ...extras
 ) => ({
   id,
   name,
@@ -60,7 +60,7 @@ export const region = (
   owns,
   controls,
   behaviour,
-  ...extra,
+  ...Object.assign({}, ...extras),
 });
 
 export const Badge = ({ region: r, size = 'medium', showRole = true }) => (
@@ -217,6 +217,12 @@ export const RegionDetails = ({ region: r, labels = {} }) => {
         <Text weight={500}>{l.owns} · </Text>
         {r.owns}
       </Text>
+      {r.why && (
+        <Text>
+          <Text weight={500}>Why · </Text>
+          {r.why}
+        </Text>
+      )}
       <Text>
         <Text weight={500}>{l.controls} · </Text>
         {r.controls}

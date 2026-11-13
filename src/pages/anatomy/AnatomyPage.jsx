@@ -57,6 +57,9 @@ const PAGE = {
     'Menu toggle · search · icon buttons · account drop',
     'Full width, 60px tall, position: sticky at top: 0 across every shell. Default behaviour of the app-shell component.',
     see('scroll'),
+    {
+      why: 'Users move between workspaces and products constantly; keeping identity, search and account in one fixed place means they never have to hunt for the way out or the way up, whatever page they are on.',
+    },
   ),
   nav: region(
     2,
@@ -66,6 +69,9 @@ const PAGE = {
     'Collapse toggle · nav items',
     'Fixed-width column beside Main, pinned just below the global header; collapsible on demand.',
     see('responsive'),
+    {
+      why: 'Users need to know where they are and jump to a sibling section without losing context. A persistent, marked list of sections provides orientation and one-click movement at every width.',
+    },
   ),
   main: region(
     3,
@@ -74,6 +80,9 @@ const PAGE = {
     'Everything page-specific. Exactly one per page.',
     '—',
     'Hosts the page header and the list–detail surface.',
+    {
+      why: 'A single page-owned region gives every page the same predictable stage to fill, so patterns like list–detail can assume the same width, height and scroll rules wherever they appear.',
+    },
   ),
   pageHeader: region(
     4,
@@ -83,6 +92,9 @@ const PAGE = {
     'Back link when drilled in · page settings / help · prototype toggles',
     'Full width of Main, above the surface.',
     see('scroll', 'responsive'),
+    {
+      why: 'Users need to confirm what page they are on and what it is for before acting. A consistent title/subtitle slot answers that instantly, and keeping data actions out of it stops the header from competing with the collection.',
+    },
   ),
   surface: region(
     5,
@@ -91,7 +103,10 @@ const PAGE = {
     'The pattern itself: a selection surface (list) beside an inspection surface (detail).',
     'Divider between zones (optional)',
     'Fills the remaining width and height of Main.',
-    see('responsive'),
+    {
+      why: 'Scanning many records and inspecting one are different jobs; doing them side by side lets users compare, select and read without round-tripping between pages, keeping their place in the collection at all times.',
+      ...see('responsive'),
+    },
   ),
 };
 
@@ -107,6 +122,9 @@ const ZONES = {
       space: '40% of surface · min 256px (size.small)',
       ...see('scroll', 'responsive'),
     },
+    {
+      why: 'Users arrive with a vague target ("the user who left") rather than an ID. A compact, filterable list lets them find and pick one record quickly while staying aware of the rest of the set.',
+    },
   ),
   detail: region(
     2,
@@ -118,6 +136,9 @@ const ZONES = {
     {
       space: '60% of surface (≈ 670px at 1116px content width)',
       ...see('scroll', 'responsive'),
+    },
+    {
+      why: 'Once a record is chosen, users want everything about it and the ability to act on it without navigating away. Giving the detail its own zone keeps the selection context visible while they read and edit.',
     },
   ),
 };
@@ -180,6 +201,9 @@ const LIST = {
     'Search input · Add users (collection action, trailing) · quick-filter toggle group · result count',
     'Sits above the rows. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
     see('scroll', 'data'),
+    {
+      why: 'Collections grow beyond what can be scanned; search and filters make the list usable at any size. Placing the add action here puts it next to the set it changes, so proximity tells users what the button will affect.',
+    },
   ),
   rows: region(
     2,
@@ -188,7 +212,10 @@ const LIST = {
     'Presenting the collection and holding the current selection.',
     'Rows (avatar, name, role) · ↑/↓ · Enter',
     'Holds exactly one selection — highlighted and announced; first row selected by default.',
-    see('scroll', 'states'),
+    {
+      why: 'Users need a scannable, consistent rhythm of rows to compare records and a clear mark of which one is open, so they can keep their place while reading the detail beside it.',
+      ...see('scroll', 'states'),
+    },
   ),
   row: region(
     3,
@@ -198,6 +225,9 @@ const LIST = {
     'Click / Enter to select',
     'Primary text + one line of secondary text. No per-row actions — those live in the detail zone.',
     see('actions'),
+    {
+      why: 'A row must carry just enough to decide "is this the one?" — more makes scanning slower, less forces a click to find out. Keeping rows summary-only keeps the list fast to read.',
+    },
   ),
 };
 
@@ -210,6 +240,9 @@ const DETAIL = {
     'Leading zone · trailing zone',
     'One row mirroring the page header: identity on the left, actions on the right.',
     see('actions'),
+    {
+      why: 'Users need certainty about which record they are looking at before they act on it. Pairing the identity with its actions avoids applying an action to the wrong record and keeps record-level controls in one predictable place.',
+    },
   ),
   leading: region(
     '1a',
@@ -235,7 +268,10 @@ const DETAIL = {
     'Switching between facets of the record when there is more than one.',
     'Tab per facet · ←/→',
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
-    see('responsive'),
+    {
+      why: "Records accumulate many facets (profile, roles, groups). Tabs let users jump to the facet they need instead of scrolling one long page, and keep each facet's content and actions clearly scoped.",
+      ...see('responsive'),
+    },
   ),
   content: region(
     3,
@@ -245,6 +281,9 @@ const DETAIL = {
     'Depends on the content shown',
     'Fills the remaining height. Section-level actions sit at the top of the area.',
     see('scroll', 'states'),
+    {
+      why: 'Different facets need different presentations; a neutral area that accepts pairs, lists or tables lets each facet use the clearest form without forcing them into one layout.',
+    },
   ),
 };
 
