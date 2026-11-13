@@ -1538,19 +1538,47 @@ const ActionsWireframe = () => (
           round="xsmall"
         >
           <Ghost width="120px" height="14px" />
-          <Slot scope="collection" direction="row" align="center" gap="xsmall">
-            <PopoverDot region={ACTIONS.collection}>
-              <Dot scope="collection" id={ACTIONS.collection.id} />
-            </PopoverDot>
-            <Ghost width="80px" height="24px" round="full" />
-          </Slot>
+          {/* Page-level controls (Back, settings, export of the view) act on
+              the surface, not its data — no scope colour, not numbered. */}
+          <Box direction="row" align="center" gap="xsmall">
+            <Text size="xsmall" color="text-weak">
+              Page-level
+            </Text>
+            <Ghost width="24px" height="24px" round="full" />
+          </Box>
         </Box>
         <Box direction="row" gap="small" flex>
-          <Dim
-            label="List — selection only, no actions"
+          <Box
             width="34%"
             flex={false}
-          />
+            border={{ color: 'border-weak', style: 'dashed' }}
+            round="xsmall"
+            pad="xsmall"
+            gap="xsmall"
+          >
+            {/* List toolbar: search + collection action share a row because
+                they shape the same set. */}
+            <Box direction="row" align="center" gap="xsmall">
+              <Ghost height="24px" round="full" />
+              <Slot
+                scope="collection"
+                direction="row"
+                align="center"
+                gap="xsmall"
+              >
+                <PopoverDot region={ACTIONS.collection}>
+                  <Dot scope="collection" id={ACTIONS.collection.id} />
+                </PopoverDot>
+                <Ghost width="48px" height="24px" round="full" />
+              </Slot>
+            </Box>
+            <Box direction="row" gap="xsmall">
+              {[0, 1, 2].map((i) => (
+                <Ghost key={i} width="36px" height="14px" round="full" />
+              ))}
+            </Box>
+            <Dim label="Rows — selection only, no actions" flex />
+          </Box>
           <Box flex gap="xsmall">
             <Box
               direction="row"
