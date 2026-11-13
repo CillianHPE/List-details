@@ -146,8 +146,11 @@ const ZONE_VARIANTS = [
     listLabel: 'drag · 256–384px (size.small–size.medium)',
     detailLabel: 'flex',
     note: 'Alternative. The divider becomes a handle: drag (or arrow keys) to resize the list within the same token range; double-click resets. Try it in the wireframe.',
+    // Parked after the 12 Nov stand-up; implementation kept for later.
+    hidden: true,
   },
 ];
+const VISIBLE_ZONE_VARIANTS = ZONE_VARIANTS.filter((v) => !v.hidden);
 
 // Resizable variant: the divider is the control
 const RESIZE_MIN = 256; // size.small
@@ -635,10 +638,12 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
                   intro="Two zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
                   control={
                     <ToggleGroup
-                      options={ZONE_VARIANTS.map(({ label, value }) => ({
-                        label,
-                        value,
-                      }))}
+                      options={VISIBLE_ZONE_VARIANTS.map(
+                        ({ label, value }) => ({
+                          label,
+                          value,
+                        }),
+                      )}
                       value={zone}
                       onToggle={({ value }) => value && setZone(value)}
                     />
