@@ -117,6 +117,51 @@ const GlobalHeaderV3 = () => {
   );
 };
 
+// Global Header V2, application variant (HPE DS template → "Global Header",
+// Figma mNCeAPPHJ2E8NtLaJlqSpM / 103:11776): HPE logo + "HPE <app name>"
+// leading, a single account button trailing. No search, workspace or tools.
+const GlobalHeaderApp = ({ appName }) => {
+  const size = useContext(ResponsiveContext);
+  const compact = ['xsmall', 'small'].includes(size);
+  return (
+    <Box
+      as="header"
+      direction="row"
+      align="center"
+      justify="between"
+      height="60px"
+      flex={false}
+      background="background-front"
+      border={{ side: 'bottom', color: 'border-weak' }}
+      style={{ position: 'sticky', top: 0, zIndex: 2 }}
+      pad={{ horizontal: compact ? 'medium' : 'xlarge', vertical: 'xsmall' }}
+    >
+      <Box direction="row" align="center" gap="medium" flex={false}>
+        <Box height="24px" width="48px" flex={false}>
+          <Image src="/hpe_logo.svg" fit="contain" alt="HPE" />
+        </Box>
+        <Text>
+          <Text weight={600}>HPE</Text> {appName}
+        </Text>
+      </Box>
+      <DropButton
+        icon={<User />}
+        size="small"
+        a11yTitle="Account"
+        dropAlign={{ top: 'bottom', right: 'right' }}
+        dropContent={
+          <Box pad="medium" width="small">
+            <Text weight={500}>Alex Morgan</Text>
+            <Text size="small" color="text-weak">
+              alex.morgan@hpe.com
+            </Text>
+          </Box>
+        }
+      />
+    </Box>
+  );
+};
+
 // Nav item: 36px min height, radius small, 4×24 brand bar when selected
 const NavItemV3 = ({ item, selected, onSelect }) => (
   <Button
@@ -231,10 +276,11 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   );
 };
 
-export const V3Shell = ({ children }) => (
+// `appName` swaps the GreenLake platform header for the application variant.
+export const V3Shell = ({ appName, children }) => (
   <ShellContext.Provider value="v3">
     <Box background="background" fill="vertical" flex>
-      <GlobalHeaderV3 />
+      {appName ? <GlobalHeaderApp appName={appName} /> : <GlobalHeaderV3 />}
       <Box direction="row" gap="xsmall" pad="xsmall" align="start" flex>
         <NavPaneV3 />
         <Box as="main" flex style={{ minWidth: 0 }}>

@@ -83,7 +83,7 @@ const App = () => {
         </V3Shell>
       )}
       {version === 'accounts-cockpit' && (
-        <V3Shell>
+        <V3Shell appName="Sales Cockpit">
           <CockpitPage />
         </V3Shell>
       )}
