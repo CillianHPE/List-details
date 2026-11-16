@@ -567,6 +567,7 @@ const Adoption = ({ account }) => {
               })),
               type: 'bars',
               thickness: 'medium',
+              round: true,
             },
           ]}
           axis={{
