@@ -17,7 +17,8 @@ import {
 } from 'grommet';
 import {
   Analytics,
-  Descend,
+  Down,
+  Up,
   LinkNext,
   ChartLine,
   StatusCritical,
@@ -292,11 +293,11 @@ const UserEngagement = ({ account }) => {
           value={kpis.logins.total}
           unit={
             <Box direction="row" align="center" gap="xxsmall">
-              <Descend
-                size="small"
-                color={kpis.logins.delta < 0 ? 'status-critical' : 'status-ok'}
-                aria-hidden
-              />
+              {kpis.logins.delta < 0 ? (
+                <Down size="small" color="text-weak" aria-hidden />
+              ) : (
+                <Up size="small" color="text-weak" aria-hidden />
+              )}
               {Math.abs(kpis.logins.delta)}% vs Aug
             </Box>
           }
@@ -345,7 +346,7 @@ const UserEngagement = ({ account }) => {
                 property: 'day',
                 label: 'Days ago',
                 render: (d) => (
-                  <Text size="small" style={{ whiteSpace: 'nowrap' }}>
+                  <Text size="xsmall" style={{ whiteSpace: 'nowrap' }}>
                     {d === 0
                       ? '30 days ago'
                       : d === 30
@@ -356,7 +357,10 @@ const UserEngagement = ({ account }) => {
                   </Text>
                 ),
               },
-              { property: 'value', suffix: '%' },
+              {
+                property: 'value',
+                render: (v) => <Text size="xsmall">{`${v}%`}</Text>,
+              },
             ]}
             chart={[
               {
@@ -369,10 +373,10 @@ const UserEngagement = ({ account }) => {
             ]}
             axis={{
               x: { property: 'day', granularity: 'medium' },
-              y: { property: 'value', granularity: 'medium' },
+              y: { property: 'value', granularity: 'fine' },
             }}
-            guide={{ y: { granularity: 'medium' } }}
-            size={{ width: 'fill', height: 'small' }}
+            guide={{ y: { granularity: 'fine' } }}
+            size={{ width: 'fill', height: '200px' }}
             detail
           />
         ) : (
