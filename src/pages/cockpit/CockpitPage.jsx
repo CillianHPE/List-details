@@ -44,6 +44,7 @@ export const CockpitPage = () => (
     quickFilters={QUICK_FILTERS}
     searchPlaceholder="Search accounts"
     collectionAction={{ label: 'Add account', icon: <Add /> }}
+    dividerControl={false}
     renderList={({ items, selectedId, onSelect }) => (
       <AccountList
         accounts={items}

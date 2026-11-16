@@ -47,6 +47,7 @@ const ContentPane = forwardRef((props, ref) => (
 //   renderList       ({ items, selectedId, onSelect }) → list body
 //   renderDetail     (item) → detail column content
 //   collectionAction { label, icon } — trailing in the toolbar, beside search
+//   dividerControl   show the prototype-only divider toggle in the page header
 export const ListDetailPage = ({
   title,
   subtitle,
@@ -56,6 +57,7 @@ export const ListDetailPage = ({
   quickFilters,
   searchPlaceholder = 'Search',
   collectionAction,
+  dividerControl = true,
   renderList,
   renderDetail,
   noResultsText = 'Nothing matches your search.',
@@ -102,22 +104,21 @@ export const ListDetailPage = ({
     label: divider ? 'Hide divider' : 'Show divider',
     onClick: () => setDivider((d) => !d),
   };
-  const headerActions =
-    tier === 'comfortable' ? (
-      <CheckBox
-        toggle
-        label="Divider"
-        checked={divider}
-        onChange={(e) => setDivider(e.target.checked)}
-      />
-    ) : (
-      <Menu
-        icon={<More />}
-        a11yTitle="More actions"
-        dropAlign={{ top: 'bottom', right: 'right' }}
-        items={[dividerItem]}
-      />
-    );
+  const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
+    <CheckBox
+      toggle
+      label="Divider"
+      checked={divider}
+      onChange={(e) => setDivider(e.target.checked)}
+    />
+  ) : (
+    <Menu
+      icon={<More />}
+      a11yTitle="More actions"
+      dropAlign={{ top: 'bottom', right: 'right' }}
+      items={[dividerItem]}
+    />
+  );
 
   // Collection action: adds to the set the toolbar controls, so it sits
   // trailing in the toolbar beside search. Labelled when comfortable,
