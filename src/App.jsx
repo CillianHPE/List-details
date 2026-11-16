@@ -4,6 +4,7 @@ import { hpe } from 'grommet-theme-hpe';
 import { DefaultShell } from './shell/DefaultShell';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
+import { AccountsPage } from './pages/accounts/AccountsPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
 import { users } from './data/users';
 import { RecentActivity, UsersSummary } from './pages/users/PageContext';
@@ -14,6 +15,7 @@ import { RecentActivity, UsersSummary } from './pages/users/PageContext';
 //   #/v3-few   → same, with only three users (short list, long detail)
 //   #/v3-short → long list, one-facet detail (no tabs)
 //   #/v3-context → list–detail with other page content above and below
+//   #/accounts → Accounts (portfolio health data) in App Shell V3.1
 //   #/anatomy  → lo-fi region/role map of the pattern
 const VERSIONS = [
   'anatomy',
@@ -22,6 +24,7 @@ const VERSIONS = [
   'v3-few',
   'v3-short',
   'v3-context',
+  'accounts',
 ];
 const fewUsers = users.slice(0, 3);
 const readVersion = () => {
@@ -69,6 +72,11 @@ const App = () => {
             before={<UsersSummary users={users} />}
             after={<RecentActivity />}
           />
+        </V3Shell>
+      )}
+      {version === 'accounts' && (
+        <V3Shell>
+          <AccountsPage />
         </V3Shell>
       )}
       {version === 'anatomy' &&

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Anchor,
   Box,
@@ -26,6 +26,7 @@ import {
   Trash,
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
+import { ListRow, Section, usePairDirection } from '../../pattern/detail';
 
 // HPE DS status indicator template: semantic icon + visible label.
 // https://design-system.hpe.design/templates/status-indicator
@@ -121,72 +122,6 @@ const DetailHeader = ({ user, name, onRename }) => {
   );
 };
 
-// Keeps a heading in the document outline without rendering it visibly
-const visuallyHidden = {
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  margin: -1,
-  padding: 0,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  whiteSpace: 'nowrap',
-  border: 0,
-};
-
-const Section = ({ title, hideTitle, action, contained, children }) => (
-  <Box
-    gap="small"
-    flex={false}
-    margin={{ top: 'medium' }}
-    pad={contained ? 'medium' : undefined}
-    round={contained ? 'medium' : undefined}
-    background={contained ? 'background-contrast' : undefined}
-  >
-    {hideTitle && (
-      <Heading level={3} margin="none" style={visuallyHidden}>
-        {title}
-      </Heading>
-    )}
-    {((title && !hideTitle) || action) && (
-      <Box
-        direction="row"
-        align="center"
-        justify={hideTitle ? 'end' : 'between'}
-      >
-        {!hideTitle && (
-          <Heading level={3} size="xsmall" margin="none">
-            {title}
-          </Heading>
-        )}
-        {action}
-      </Box>
-    )}
-    {children}
-  </Box>
-);
-
-// Horizontal name/value pairs; stack vertically once the container is too
-// narrow to hold the name column plus a reasonable value column.
-const PAIR_ROW_MIN_WIDTH = 480;
-
-const usePairDirection = () => {
-  const ref = useRef(null);
-  const [direction, setDirection] = useState('row');
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const observer = new ResizeObserver(([entry]) =>
-      setDirection(
-        entry.contentRect.width < PAIR_ROW_MIN_WIDTH ? 'column' : 'row',
-      ),
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return [ref, direction];
-};
-
 // Details are broken into titled groups, each its own NameValueList,
 // separated by a weak divider so the page doesn't read as one long list.
 const DETAIL_GROUPS = [
@@ -263,23 +198,6 @@ const Properties = ({ user, groups = DETAIL_GROUPS }) => {
     </Box>
   );
 };
-
-// Shared row shell for the membership lists: primary + supplementary text on
-// the left; the right edge holds icon-button actions only (no links/metadata).
-const ListRow = ({ index, count, children }) => (
-  <Box
-    direction="row"
-    align="center"
-    justify="between"
-    gap="medium"
-    pad={{ vertical: 'small' }}
-    border={
-      index < count - 1 ? { side: 'bottom', color: 'border-weak' } : false
-    }
-  >
-    {children}
-  </Box>
-);
 
 const RoleAssignments = ({ user }) => {
   const rows = user.roleAssignments;

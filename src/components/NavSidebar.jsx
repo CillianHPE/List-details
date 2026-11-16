@@ -32,6 +32,11 @@ export const navItems = {
     label: 'Shell v3 · page context',
     href: '#/v3-context',
   },
+  Accounts: {
+    key: 'proto-accounts',
+    label: 'Accounts',
+    href: '#/accounts',
+  },
 };
 
 // Items with an href navigate the prototype; others only update selection.
