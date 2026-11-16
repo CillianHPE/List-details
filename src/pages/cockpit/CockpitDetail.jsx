@@ -28,11 +28,10 @@ import {
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import { ListRow, Section } from '../../pattern/detail';
-import { SERVICES, TIERS, portfolio } from '../../data/cockpit';
+import { SERVICES, TIERS } from '../../data/cockpit';
 import {
   Bullets,
   Card,
-  DataNotes,
   KpiCard,
   KpiRow,
   Legend,
@@ -228,8 +227,6 @@ const Summary = ({ account }) => {
           signals={account.signals}
         />
       </Card>
-
-      <DataNotes notes={portfolio.dataNotes} />
     </Box>
   );
 };
@@ -462,8 +459,6 @@ const UserEngagement = ({ account }) => {
           />
         )}
       </Box>
-
-      <DataNotes notes={portfolio.dataNotes} />
     </Box>
   );
 };
