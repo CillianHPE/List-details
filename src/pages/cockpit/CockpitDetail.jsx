@@ -255,7 +255,9 @@ const TierDistribution = ({ mix, period, onPeriod }) => (
   >
     <Meter
       type="bar"
-      thickness="small"
+      size="full"
+      thickness="xsmall"
+      round
       max={100}
       values={TIERS.map((t) => ({
         value: mix[t.key],
@@ -360,7 +362,8 @@ const UserEngagement = ({ account }) => {
               {
                 property: 'value',
                 type: 'line',
-                thickness: 'xsmall',
+                thickness: 'hair',
+                round: true,
                 color: 'graph-0',
               },
             ]}
