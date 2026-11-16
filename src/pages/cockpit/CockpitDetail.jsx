@@ -29,6 +29,7 @@ import {
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import { ListRow, Section } from '../../pattern/detail';
+import { hpe } from 'grommet-theme-hpe';
 import { SERVICES, TIERS } from '../../data/cockpit';
 import {
   Bullets,
@@ -367,7 +368,8 @@ const UserEngagement = ({ account }) => {
               {
                 property: 'value',
                 type: 'line',
-                thickness: 'hair',
+                // borderSize.small (2px) — Chart thickness only maps edgeSize
+                thickness: hpe.global.borderSize.small,
                 round: true,
                 color: 'graph-0',
               },
