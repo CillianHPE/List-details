@@ -4,6 +4,10 @@ import { ListDetailPage } from '../../pattern/ListDetailPage';
 import { AccountList } from '../accounts/AccountList';
 import { CockpitDetail } from './CockpitDetail';
 
+const accountsByName = [...cockpitAccounts].sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
+
 // Accounts · Sales Cockpit. Pure list–detail: the Figma collection page's
 // portfolio KPIs, tier chart and Data notes are intentionally left out so the
 // surface stands alone.
@@ -35,7 +39,7 @@ export const CockpitPage = () => (
   <ListDetailPage
     title="Accounts"
     backLabel="Accounts"
-    items={cockpitAccounts}
+    items={accountsByName}
     matches={matches}
     quickFilters={QUICK_FILTERS}
     searchPlaceholder="Search accounts"
