@@ -306,6 +306,7 @@ const UserEngagement = ({ account }) => {
               options={['Last 30 days', 'Last 90 days']}
               value="Last 30 days"
               size="small"
+              width="auto"
               a11yTitle="Login period"
               onChange={() => {}}
             />

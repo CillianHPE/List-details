@@ -26,7 +26,7 @@ export const KpiCard = ({ label, value, unit, note, action }) => (
     gap="small"
     flex="grow"
   >
-    <Box direction="row" align="start" justify="between" gap="small" wrap>
+    <Box direction="row" align="center" justify="between" gap="small">
       <Text weight={500}>{label}</Text>
       {action && <Box flex={false}>{action}</Box>}
     </Box>
@@ -51,7 +51,7 @@ export const KpiCard = ({ label, value, unit, note, action }) => (
 );
 
 export const KpiRow = ({ children }) => (
-  <Grid columns={{ count: 'fit', size: ['xsmall', 'flex'] }} gap="small">
+  <Grid columns={{ count: 'fit', size: ['small', 'flex'] }} gap="small">
     {children}
   </Grid>
 );
