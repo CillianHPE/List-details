@@ -101,7 +101,7 @@ const Summary = ({ account }) => {
   const [period, setPeriod] = usePeriod('30 days');
   return (
     <Box gap="large">
-      <Grid columns={{ count: 'fit', size: ['small', 'flex'] }} gap="small">
+      <Grid columns={{ count: 'fit', size: ['large', 'flex'] }} gap="small">
         <Card title="Health" help subtitle="Score out of 100 · updated daily">
           <ScoreBlock
             score={account.health.score}
@@ -472,7 +472,7 @@ const Adoption = ({ account }) => {
   );
   return (
     <Box gap="medium">
-      <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="small">
+      <Grid columns={{ count: 'fit', size: ['large', 'flex'] }} gap="small">
         <Card title="Adoption checks">
           {totalGaps > 0 && (
             <Box
