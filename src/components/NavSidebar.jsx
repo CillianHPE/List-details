@@ -37,6 +37,11 @@ export const navItems = {
     label: 'Accounts',
     href: '#/accounts',
   },
+  'Accounts · Sales Cockpit': {
+    key: 'proto-accounts-cockpit',
+    label: 'Accounts · Sales Cockpit',
+    href: '#/accounts-cockpit',
+  },
 };
 
 // Items with an href navigate the prototype; others only update selection.

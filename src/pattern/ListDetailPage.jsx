@@ -153,7 +153,9 @@ export const ListDetailPage = ({
           actions={headerActions}
         />
 
-        {before}
+        {/* Page context describes the collection, so it steps aside while a
+            single record is drilled into on the narrow tier. */}
+        {!(stacked && showDetail) && before}
 
         {/* One contained surface holding both columns, split by a divider */}
         <ContentPane

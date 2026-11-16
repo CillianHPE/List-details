@@ -5,6 +5,7 @@ import { DefaultShell } from './shell/DefaultShell';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { AccountsPage } from './pages/accounts/AccountsPage';
+import { CockpitPage } from './pages/cockpit/CockpitPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
 import { users } from './data/users';
 import { RecentActivity, UsersSummary } from './pages/users/PageContext';
@@ -16,6 +17,7 @@ import { RecentActivity, UsersSummary } from './pages/users/PageContext';
 //   #/v3-short → long list, one-facet detail (no tabs)
 //   #/v3-context → list–detail with other page content above and below
 //   #/accounts → Accounts (portfolio health data) in App Shell V3.1
+//   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
 //   #/anatomy  → lo-fi region/role map of the pattern
 const VERSIONS = [
   'anatomy',
@@ -25,6 +27,7 @@ const VERSIONS = [
   'v3-short',
   'v3-context',
   'accounts',
+  'accounts-cockpit',
 ];
 const fewUsers = users.slice(0, 3);
 const readVersion = () => {
@@ -77,6 +80,11 @@ const App = () => {
       {version === 'accounts' && (
         <V3Shell>
           <AccountsPage />
+        </V3Shell>
+      )}
+      {version === 'accounts-cockpit' && (
+        <V3Shell>
+          <CockpitPage />
         </V3Shell>
       )}
       {version === 'anatomy' &&
