@@ -150,7 +150,9 @@ export const ScoreBlock = ({ score, tier, signals }) => (
     <Box gap="xxsmall">
       <Meter
         type="bar"
+        size="full"
         thickness="xsmall"
+        round
         max={100}
         values={[{ value: score, color: TIER_COLOR[tier] }]}
         a11yTitle={`${score} of 100`}
