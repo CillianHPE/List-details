@@ -597,7 +597,7 @@ export const PAGES = {
   'responsive/breakpoints': {
     title: 'Breakpoints',
     subtitle:
-      'The three width tiers the surface responds to, and how width is shared between the zones in each.',
+      'The 3 width tiers the surface responds to, and how width is shared between the zones in each.',
     Content: BreakpointsLevel,
   },
   'responsive/regions': {
