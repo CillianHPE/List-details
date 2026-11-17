@@ -139,7 +139,12 @@ const SCROLL = {
     'overflow auto',
     'Scrolls the items independently so browsing the list never moves the record beside it.',
     'Wheel · ↑/↓ · PgUp/PgDn',
-    'Max height = visible page content − page header − toolbar. Selected item is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
+    [
+      'Height is what remains of the visible page after the page header and toolbar.',
+      'The column sticks below the global header (offset 24px, edgeSize.medium) so it stays put while the page scrolls.',
+      'It stretches to match the detail height, so a short list never leaves the divider hanging mid-surface.',
+      'Keyboard navigation scrolls the selected item into view.',
+    ],
     {
       why: [
         'Scrolling the list never loses the place in the record',
