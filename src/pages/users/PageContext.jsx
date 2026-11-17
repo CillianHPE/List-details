@@ -2,8 +2,15 @@ import { Box, Grid, Heading, Text } from 'grommet';
 
 // Extra page content around the list–detail surface, for studying scroll &
 // height when the surface is not the only thing on the page.
+// Contained cards: background-contrast on the shell's white canvas, radius
+// medium — same treatment as the cockpit detail cards.
 const Metric = ({ label, value }) => (
-  <Box background="background-front" round="xlarge" pad="medium" gap="xsmall">
+  <Box
+    background="background-contrast"
+    round="medium"
+    pad="medium"
+    gap="xsmall"
+  >
     <Text size="small" color="text-weak">
       {label}
     </Text>
@@ -38,8 +45,8 @@ const ACTIVITY = [
 
 export const RecentActivity = () => (
   <Box
-    background="background-front"
-    round="xlarge"
+    background="background-contrast"
+    round="medium"
     pad="medium"
     gap="small"
     margin={{ top: 'medium' }}
