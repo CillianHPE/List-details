@@ -48,64 +48,19 @@ const BEHAVIOUR_CONTENT = {
 // controls / layout). How regions *act* (scroll, responsive, states…) lives
 // in BehaviourLevels; Structure legends link there instead of repeating it.
 
+// Only the surface is documented here; the shell around it (global header,
+// nav, page header) is drawn dimmed as context and owned by the app shell.
 const PAGE = {
-  header: region(
-    1,
-    'Global header',
-    '<header> · banner',
-    'Product identity, workspace switcher, global search, help, notifications, account.',
-    'Menu toggle · search · icon buttons · account drop',
-    'Full width, 60px tall, position: sticky at top: 0 across every shell. Default behaviour of the app-shell component.',
-    see('scroll'),
-    {
-      why: 'Users move between workspaces and products constantly; keeping identity, search and account in one fixed place means they never have to hunt for the way out or the way up, whatever page they are on.',
-    },
-  ),
-  nav: region(
-    2,
-    'Navigation pane',
-    '<nav aria-label="Primary"> · navigation',
-    'Section switching. The current page is marked with aria-current="page".',
-    'Collapse toggle · nav items',
-    'Fixed-width column beside Main, pinned just below the global header; collapsible on demand.',
-    see('responsive'),
-    {
-      why: 'Users need to know where they are and jump to a sibling section without losing context. A persistent, marked list of sections provides orientation and one-click movement at every width.',
-    },
-  ),
-  main: region(
-    3,
-    'Main',
-    '<main> · main',
-    'Everything page-specific. Exactly one per page.',
-    '—',
-    'Hosts the page header and the list–detail surface.',
-    {
-      why: 'A single page-owned region gives every page the same predictable stage to fill, so patterns like list–detail can assume the same width, height and scroll rules wherever they appear.',
-    },
-  ),
-  pageHeader: region(
-    4,
-    'Page header',
-    'PageHeader · <h1>',
-    'Page title, subtitle and page-level controls (not data actions).',
-    'Back link when drilled in · page settings / help · prototype toggles',
-    'Full width of Main, above the surface.',
-    see('scroll', 'responsive'),
-    {
-      why: 'Users need to confirm what page they are on and what it is for before acting. A consistent title/subtitle slot answers that instantly, and keeping data actions out of it stops the header from competing with the collection.',
-    },
-  ),
   surface: region(
-    5,
+    1,
     'List–detail surface',
     'Grid · 2 columns',
-    'The pattern itself: a selection surface (list) beside an inspection surface (detail).',
+    'The pattern itself: a selection surface (list) beside an inspection surface (detail). Sits in the page content, directly below the page header.',
     'Divider between zones (optional)',
-    'Fills the remaining width and height of Main.',
+    'Fills the remaining width and height of the page content; never sets its own.',
     {
       why: 'Scanning many records and inspecting one are different jobs; doing them side by side lets users compare, select and read without round-tripping between pages, keeping their place in the collection at all times.',
-      ...see('responsive'),
+      ...see('scroll', 'responsive'),
     },
   ),
 };
@@ -290,94 +245,53 @@ const DETAIL = {
 // ---------------------------------------------------------------------------
 // Level 1 · Page — where the surface sits in the shell
 
-// Drawn against App Shell V3 (page canvas + contained nav pane).
-const PageWireframe = () => {
-  return (
+// Drawn against App Shell V3; shell regions are dimmed context only.
+const PageWireframe = () => (
+  <Box
+    border={{ color: 'border-weak' }}
+    background="background"
+    round="small"
+    overflow="hidden"
+  >
     <Box
-      border={{ color: 'border-weak' }}
-      background="background"
-      round="small"
-      overflow="hidden"
+      direction="row"
+      align="center"
+      justify="between"
+      pad="small"
+      border={{ side: 'bottom', color: 'border-weak' }}
+      background="background-front"
     >
-      <Block
-        showRole={false}
-        region={PAGE.header}
-        direction="row"
-        align="center"
-        round="none"
-        border={{
-          side: 'bottom',
-          color: 'border',
-          style: 'dashed',
-          size: 'small',
-        }}
-        background="background-front"
-      >
-        <Box direction="row" gap="small" align="center" flex justify="end">
-          <Ghost width="200px" height="28px" />
-          <Ghost width="28px" height="28px" round="full" />
-          <Ghost width="28px" height="28px" round="full" />
-          <Ghost width="28px" height="28px" round="full" />
-        </Box>
-      </Block>
-
-      <Box direction="row" gap="xsmall" pad="xsmall" align="stretch">
-        <Block
-          showRole={false}
-          region={PAGE.nav}
-          width="220px"
-          flex={false}
-          background="background-back"
-          round="large"
-        >
-          <Ghost width="60%" />
-          <Ghost width="80%" height="28px" />
-          <Ghost
-            width="80%"
-            height="28px"
-            background="transparent"
-            border={{ color: 'border-weak' }}
-          />
-          <Ghost
-            width="80%"
-            height="28px"
-            background="transparent"
-            border={{ color: 'border-weak' }}
-          />
-        </Block>
-
-        <Block showRole={false} region={PAGE.main} flex round="none">
-          <Block
-            showRole={false}
-            region={PAGE.pageHeader}
-            direction="row"
-            justify="between"
-            align="center"
-          >
-            <Box gap="xsmall">
-              <Ghost width="120px" height="24px" />
-              <Ghost width="240px" />
-            </Box>
-            <Ghost width="110px" height="36px" round="full" />
-          </Block>
-
-          <Focus
-            showRole={false}
-            region={PAGE.surface}
-            label="fills remaining width"
-            round="xsmall"
-            height={{ min: '260px' }}
-          >
-            <Box direction="row" gap="small" flex>
-              <Dim label="List zone" width="34%" flex={false} />
-              <Dim label="Detail zone" flex />
-            </Box>
-          </Focus>
-        </Block>
+      <Text size="small" color="text-weak">
+        Global header
+      </Text>
+      <Box direction="row" gap="small" align="center">
+        <Ghost width="200px" height="28px" />
+        <Ghost width="28px" height="28px" round="full" />
+        <Ghost width="28px" height="28px" round="full" />
       </Box>
     </Box>
-  );
-};
+
+    <Box direction="row" gap="xsmall" pad="xsmall" align="stretch">
+      <Dim label="Navigation pane" width="200px" flex={false} round="large" />
+
+      <Box flex gap="small" pad="small">
+        <Dim label="Page header" pad="medium" />
+        <Focus
+          showRole={false}
+          region={PAGE.surface}
+          label="fills page content"
+          round="xsmall"
+          height={{ min: '260px' }}
+        >
+          <Box direction="row" gap="small" flex>
+            <Dim label="List zone" width="34%" flex={false} />
+            <Dim label="Detail zone" flex />
+          </Box>
+        </Focus>
+      </Box>
+    </Box>
+  </Box>
+);
 
 // ---------------------------------------------------------------------------
 // Level 2 · Zones — list vs detail, and how much space each can take
@@ -660,7 +574,7 @@ export const AnatomyPage = ({
               <Tab title="Page">
                 <Level
                   title="Where the surface sits"
-                  intro="Shell regions (1–3) are shared by every page. The page header carries page-level controls only; collection actions (Add users) sit in the list toolbar. The list–detail surface fills the rest of Main."
+                  intro="The list–detail surface lives in the page content, below the page header, and fills whatever space the shell gives it. Everything around it belongs to the app shell and is not part of this pattern."
                   wireframe={<PageWireframe />}
                   regions={PAGE}
                   labels={{ behaviour: 'Layout' }}
