@@ -120,221 +120,131 @@ const Frame = ({ children, ...rest }) => (
 // ---------------------------------------------------------------------------
 // Scroll & height
 
-const SCROLL_VARIANTS = [
-  {
-    value: 'page',
-    label: 'Page scrolls',
-    note: 'Default (stand-up, 12 Nov). The page (Main) is the scroll container, so the surface can sit among other page content; the list column stretches to the surface height, is sticky and scrolls its own rows; the detail grows the page.',
-  },
-  {
-    value: 'panes',
-    label: 'Panes scroll',
-    note: 'Alternative for standalone, Outlook-style apps where the surface is the whole page. Main is locked to the viewport; the list body and the detail content each scroll independently under fixed headers.',
-  },
-];
-
-const scrollRegions = (variant) => {
-  const panes = variant === 'panes';
-  return {
-    globalHeader: region(
-      1,
-      'Global header',
-      'sticky · top 0',
-      'Always visible. Main content slides beneath it in both models; this is the app-shell default, not a per-page choice.',
-      '—',
-      'position: sticky; top: 0; z-index above Main. 60px tall. Every other pinned element (nav, list column) offsets from this height.',
-    ),
-    viewport: region(
-      2,
-      'Viewport',
-      '100vh · overflow hidden',
-      'The outer frame. Nothing inside is taller than this except designated scroll containers.',
-      '—',
-      'App shell is height: 100vh. Global header is sticky; nav is pinned beneath it.',
-      {
-        questions: 'Is the min supported height 600px? What happens below it?',
-      },
-    ),
-    main: region(
-      3,
-      'Main',
-      panes ? 'overflow hidden' : 'overflow auto',
-      panes
-        ? 'Fixed-height column; delegates scrolling to the two zones.'
-        : 'The one page-level scroll container. Page header scrolls away with the content.',
-      '—',
-      panes
-        ? 'Height = 100vh − global header (60px). Page header stays visible.'
-        : 'Height = 100vh − global header (60px). Scrollbar appears on the right edge of Main; content scrolls under the sticky global header.',
-    ),
-    toolbar: region(
-      4,
-      'List toolbar',
-      'sticky',
-      'Stays above the rows at all times.',
-      'Search · filters · count',
-      'Sticky within the list column; never scrolls out of view.',
-    ),
-    listBody: region(
-      5,
-      'List body',
-      'overflow auto',
-      'Rows. Always scrolls independently of everything else.',
-      'Wheel · ↑/↓ · PgUp/PgDn',
-      `Max height = viewport − header − page header − toolbar. Selected row is scrolled into view on keyboard navigation. ${
-        panes
-          ? ''
-          : 'Column is sticky at top: 60px + 24px (global header + edgeSize.medium) so it stays put while the page scrolls. The column itself stretches to the detail height, so a short list never leaves the divider hanging mid-surface and the empty space below the rows still reads as the list zone.'
-      }`,
-      {
-        why: 'Scanning the collection must never cost the user their place in the record, and vice versa; the list keeps its own scroll so switching records is one gesture, not a page round-trip.',
-      },
-      {
-        questions:
-          'Native vs hidden scrollbar? Keep scroll position when the filter changes?',
-      },
-    ),
-    detailHeader: region(
-      6,
-      'Detail header',
-      panes ? 'sticky' : 'static',
-      'Record identity and actions.',
-      '—',
-      panes
-        ? 'Pinned at the top of the detail zone while its content scrolls.'
-        : 'Scrolls away with the page like normal content.',
-    ),
-    detailContent: region(
-      7,
-      'Detail content',
-      panes ? 'overflow auto' : 'grows page',
-      'Tabs and content for the selected record.',
-      '—',
-      panes
-        ? 'Scrolls under the pinned header and tabs. Scroll resets to top when the selection changes.'
-        : 'Long content makes the page taller. Changing selection scrolls the page back to the top of the detail zone.',
-      {
-        questions:
-          'Reset scroll on selection change, or preserve when switching between records of the same type?',
-      },
-    ),
-  };
+// The page (Main) is the scroll container, so the surface can sit among other
+// page content: the list column is sticky and scrolls its own rows while the
+// detail grows the page. Global header and viewport are app-shell concerns and
+// are deliberately out of scope here.
+const SCROLL = {
+  main: region(
+    1,
+    'Main',
+    'overflow auto',
+    'The one page-level scroll container. Page header scrolls away with the content.',
+    '—',
+    'Scrollbar appears on the right edge of Main. Height is whatever the shell gives it; the surface never sets its own.',
+  ),
+  toolbar: region(
+    2,
+    'List toolbar',
+    'sticky',
+    'Stays above the rows at all times.',
+    'Search · filters · count',
+    'Sticky within the list column; never scrolls out of view.',
+  ),
+  listBody: region(
+    3,
+    'List body',
+    'overflow auto',
+    'Rows. Always scrolls independently of everything else.',
+    'Wheel · ↑/↓ · PgUp/PgDn',
+    'Max height = visible Main − page header − toolbar. Selected row is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
+    {
+      why: 'Scanning the collection must never cost the user their place in the record, and vice versa; the list keeps its own scroll so switching records is one gesture, not a page round-trip.',
+    },
+    {
+      questions:
+        'Native vs hidden scrollbar? Keep scroll position when the filter changes?',
+    },
+  ),
+  detailHeader: region(
+    4,
+    'Detail header',
+    'static',
+    'Record identity and actions.',
+    '—',
+    'Scrolls away with the page like normal content.',
+  ),
+  detailContent: region(
+    5,
+    'Detail content',
+    'grows page',
+    'Tabs and content for the selected record.',
+    '—',
+    'Long content makes the page taller. Changing selection scrolls the page back to the top of the detail zone.',
+    {
+      questions:
+        'Reset scroll on selection change, or preserve when switching between records of the same type?',
+    },
+  ),
 };
 
-const ScrollWireframe = ({ variant }) => {
-  const panes = variant === 'panes';
-  const R = scrollRegions(variant);
+const ScrollWireframe = () => {
+  const R = SCROLL;
   return (
-    <Focus
-      region={R.viewport}
-      label="100vh"
-      background="background-back"
-      gap="small"
-    >
-      <Focus region={R.globalHeader} label="60px" pad="xsmall">
-        <Box direction="row" gap="small" align="center">
-          <Ghost width="80px" height="16px" />
-          <Ghost width="40%" height="16px" />
-        </Box>
-      </Focus>
-      <Box direction="row" gap="small" height="440px">
-        <Dim label="Nav · pinned" width="90px" flex={false} />
-        <Focus
-          region={R.main}
-          label={panes ? 'overflow hidden' : 'overflow auto'}
-          flex
-        >
-          <Box direction="row" gap="small" flex>
-            <Box flex gap="small">
-              <Box direction="row" gap="small" align="center">
-                <Dim label="Page header" flex />
-                <Tag color={panes ? 'brand' : 'text-weak'}>
-                  {panes ? 'fixed' : 'scrolls away'}
-                </Tag>
-              </Box>
-              <Box direction="row" gap="small" flex>
-                <Box width="40%" gap="xsmall" flex={false}>
-                  <Focus
-                    region={R.toolbar}
-                    label="sticky"
-                    pad="xsmall"
-                    gap="xsmall"
-                  >
-                    <Ghost height="24px" />
-                  </Focus>
-                  <Focus region={R.listBody} label="scrolls" pad="xsmall" flex>
-                    <Box direction="row" gap="xsmall" flex>
-                      <Box flex overflow="hidden">
-                        <GhostRows count={7} />
-                      </Box>
-                      <ScrollTrack thumb="40%" />
-                    </Box>
-                  </Focus>
-                </Box>
-                <Box flex gap="xsmall">
-                  <Focus
-                    region={R.detailHeader}
-                    label={panes ? 'sticky' : 'static'}
-                    pad="xsmall"
-                    gap="xsmall"
-                  >
-                    <Ghost width="140px" height="20px" />
-                  </Focus>
-                  <Focus
-                    region={R.detailContent}
-                    label={panes ? 'scrolls' : 'grows page'}
-                    pad="xsmall"
-                    flex
-                  >
-                    <Box direction="row" gap="xsmall" flex>
-                      <Box flex gap="xsmall" overflow="hidden">
-                        {Array.from({ length: 9 }, (_, i) => (
-                          <Ghost key={i} width={`${60 + ((i * 17) % 35)}%`} />
-                        ))}
-                      </Box>
-                      {panes && <ScrollTrack thumb="30%" />}
-                    </Box>
-                  </Focus>
-                </Box>
-              </Box>
-            </Box>
-            {!panes && <ScrollTrack thumb="55%" />}
+    <Focus region={R.main} label="overflow auto" height="440px">
+      <Box direction="row" gap="small" flex>
+        <Box flex gap="small">
+          <Box direction="row" gap="small" align="center">
+            <Dim label="Page header" flex />
+            <Tag color="text-weak">scrolls away</Tag>
           </Box>
-        </Focus>
+          <Box direction="row" gap="small" flex>
+            <Box width="40%" gap="xsmall" flex={false}>
+              <Focus
+                region={R.toolbar}
+                label="sticky"
+                pad="xsmall"
+                gap="xsmall"
+              >
+                <Ghost height="24px" />
+              </Focus>
+              <Focus region={R.listBody} label="scrolls" pad="xsmall" flex>
+                <Box direction="row" gap="xsmall" flex>
+                  <Box flex overflow="hidden">
+                    <GhostRows count={7} />
+                  </Box>
+                  <ScrollTrack thumb="40%" />
+                </Box>
+              </Focus>
+            </Box>
+            <Box flex gap="xsmall">
+              <Focus
+                region={R.detailHeader}
+                label="static"
+                pad="xsmall"
+                gap="xsmall"
+              >
+                <Ghost width="140px" height="20px" />
+              </Focus>
+              <Focus
+                region={R.detailContent}
+                label="grows page"
+                pad="xsmall"
+                flex
+              >
+                <Box flex gap="xsmall" overflow="hidden">
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <Ghost key={i} width={`${60 + ((i * 17) % 35)}%`} />
+                  ))}
+                </Box>
+              </Focus>
+            </Box>
+          </Box>
+        </Box>
+        <ScrollTrack thumb="55%" />
       </Box>
     </Focus>
   );
 };
 
-export const ScrollLevel = () => {
-  const [variant, setVariant] = useState('page');
-  const v = SCROLL_VARIANTS.find((x) => x.value === variant);
-  return (
-    <Level
-      title="Scroll and height"
-      intro="Developers need to know which element owns each scrollbar, what is pinned, and how heights are derived. Toggle the two models to compare."
-      control={
-        <ToggleGroup
-          options={SCROLL_VARIANTS.map(({ label, value }) => ({
-            label,
-            value,
-          }))}
-          value={variant}
-          onToggle={({ value }) => value && setVariant(value)}
-        />
-      }
-      wireframe={
-        <Box gap="small">
-          <ScrollWireframe variant={variant} />
-          <Text size="small" color="text-weak">
-            {v.note}
-          </Text>
-        </Box>
-      }
-      regions={scrollRegions(variant)}
-    />
-  );
-};
+export const ScrollLevel = () => (
+  <Level
+    title="Scroll and height"
+    intro="Which element inside Main owns each scrollbar, what is pinned, and how heights are derived. The page scrolls; the list keeps its own scroll."
+    wireframe={<ScrollWireframe />}
+    regions={SCROLL}
+  />
+);
 
 // ---------------------------------------------------------------------------
 // Responsive

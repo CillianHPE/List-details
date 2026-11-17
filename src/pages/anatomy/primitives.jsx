@@ -1,5 +1,14 @@
 import { createContext, useContext, useRef, useState } from 'react';
-import { Anchor, Box, Drop, Heading, Paragraph, Text } from 'grommet';
+import {
+  Anchor,
+  Box,
+  Drop,
+  Heading,
+  NameValueList,
+  NameValuePair,
+  Paragraph,
+  Text,
+} from 'grommet';
 
 // Lets legend entries jump to another group/tab (e.g. Behaviour → Scroll).
 export const AnatomyNav = createContext(() => {});
@@ -127,7 +136,7 @@ export const PopoverDot = ({ region: r, children }) => {
         >
           <Box pad="medium" width={{ max: 'medium' }} gap="xsmall">
             <Badge region={r} />
-            <RegionDetails region={r} labels={labels} />
+            <RegionDetails region={r} labels={labels} compact />
           </Box>
         </Drop>
       )}
@@ -262,45 +271,39 @@ export const Legend = ({ regions, labels }) => (
   </Box>
 );
 
-export const RegionDetails = ({ region: r, labels = {} }) => {
+// Facts about a region. `compact` (wireframe popovers) stacks name over
+// value; the legend lays them out as a two-column NameValueList.
+export const RegionDetails = ({ region: r, labels = {}, compact = false }) => {
   const l = {
     owns: 'Owns',
     controls: 'Controls',
     behaviour: 'Behaviour',
     ...labels,
   };
+  const pairs = [
+    r.space && ['Space', r.space],
+    [l.owns, r.owns],
+    r.why && ['Why', r.why],
+    [l.controls, r.controls],
+    [l.behaviour, r.behaviour],
+    r.questions && ['Open questions', r.questions],
+  ].filter(Boolean);
   return (
-    <Box gap="xxsmall">
-      {r.space && (
-        <Text>
-          <Text weight={500}>Space · </Text>
-          {r.space}
-        </Text>
-      )}
-      <Text>
-        <Text weight={500}>{l.owns} · </Text>
-        {r.owns}
-      </Text>
-      {r.why && (
-        <Text>
-          <Text weight={500}>Why · </Text>
-          {r.why}
-        </Text>
-      )}
-      <Text>
-        <Text weight={500}>{l.controls} · </Text>
-        {r.controls}
-      </Text>
-      <Text color="text-weak">
-        <Text weight={500}>{l.behaviour} · </Text>
-        {r.behaviour}
-      </Text>
-      {r.questions && (
-        <Text color="brand">
-          <Text weight={500}>Open questions · </Text>
-          {r.questions}
-        </Text>
-      )}
+    <Box gap="small">
+      <NameValueList
+        pairProps={{ direction: compact ? 'column' : 'row' }}
+        nameProps={{ width: compact ? undefined : 'xsmall' }}
+        valueProps={{ width: 'auto' }}
+        gap={compact ? 'small' : 'xsmall'}
+      >
+        {pairs.map(([name, value]) => (
+          <NameValuePair key={name} name={name}>
+            <Text color={name === 'Open questions' ? 'brand' : undefined}>
+              {value}
+            </Text>
+          </NameValuePair>
+        ))}
+      </NameValueList>
       {r.see && <SeeAlso links={r.see} />}
     </Box>
   );
