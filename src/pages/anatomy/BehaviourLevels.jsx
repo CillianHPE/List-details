@@ -149,7 +149,11 @@ const SCROLL = {
     'Wheel · ↑/↓ · PgUp/PgDn',
     'Max height = visible Main − page header − toolbar. Selected row is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
     {
-      why: 'Scanning the collection must never cost the user their place in the record, and vice versa; the list keeps its own scroll so switching records is one gesture, not a page round-trip.',
+      why: [
+        'Scrolling the list never loses the place in the record',
+        'Scrolling the record never loses the place in the list',
+        'Switching records is one gesture',
+      ],
     },
     {
       questions:
@@ -1341,7 +1345,11 @@ const ACTIONS = {
     'One secondary button · overflow for the rest · icon-only below Comfortable',
     'Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.',
     {
-      why: "Users expect a control to sit beside the thing it affects. Keeping add/import with the list's own search and filters makes their scope obvious and keeps the page header free of data actions.",
+      why: [
+        'Controls sit beside what they affect',
+        'Add/import scope is obvious next to search and filters',
+        'Page header stays free of data actions',
+      ],
     },
   ),
   record: region(
@@ -1356,7 +1364,10 @@ const ACTIONS = {
         'Should the most common action be a visible button or everything in the menu?',
     },
     {
-      why: "Actions on a record are only meaningful once the user knows which record is in focus. Placing them beside the record's identity makes the target unambiguous and reduces mis-applied actions.",
+      why: [
+        'Target is unambiguous: actions sit beside the record’s name',
+        'Fewer mis-applied actions',
+      ],
     },
   ),
   section: region(
@@ -1367,7 +1378,10 @@ const ACTIONS = {
     'One secondary button per section',
     'Scoped to the visible tab. Opens a layer; on success the list in the section updates in place.',
     {
-      why: "A facet's list has its own additions (assign a role, join a group). Keeping that action with the facet makes it clear what is being added to, and avoids a crowded record-level menu.",
+      why: [
+        'Clear what is being added to (a role, a group)',
+        'Keeps the record-level menu uncluttered',
+      ],
     },
   ),
   row: region(
@@ -1382,7 +1396,11 @@ const ACTIONS = {
         'Do we ever need bulk selection in the main list? If so this model changes.',
     },
     {
-      why: 'Removing or inspecting one membership is a decision about that row alone. Inline placement makes the target self-evident and keeps the main list reserved for selection.',
+      why: [
+        'Decision is about that row alone',
+        'Inline placement makes the target self-evident',
+        'Main list stays reserved for selection',
+      ],
     },
   ),
 };

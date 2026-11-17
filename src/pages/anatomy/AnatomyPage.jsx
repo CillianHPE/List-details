@@ -59,7 +59,11 @@ const PAGE = {
     'Divider between zones (optional)',
     'Fills the remaining width and height of the page content; never sets its own.',
     {
-      why: 'Scanning many records and inspecting one are different jobs; doing them side by side lets users compare, select and read without round-tripping between pages, keeping their place in the collection at all times.',
+      why: [
+        'Find and inspect without leaving the page',
+        'Keep the selected record visible while scanning the rest',
+        'Switch records in one click, not a page round-trip',
+      ],
       ...see('scroll', 'responsive'),
     },
   ),
@@ -78,7 +82,11 @@ const ZONES = {
       ...see('scroll', 'responsive'),
     },
     {
-      why: 'Users arrive with a vague target ("the user who left") rather than an ID. A compact, filterable list lets them find and pick one record quickly while staying aware of the rest of the set.',
+      why: [
+        'Users arrive with a vague target, not an ID',
+        'Search and filters narrow the set fast',
+        'Stays visible so the chosen record keeps its context',
+      ],
     },
   ),
   detail: region(
@@ -93,7 +101,11 @@ const ZONES = {
       ...see('scroll', 'responsive'),
     },
     {
-      why: 'Once a record is chosen, users want everything about it and the ability to act on it without navigating away. Giving the detail its own zone keeps the selection context visible while they read and edit.',
+      why: [
+        'Show everything about the chosen record in one place',
+        'Act on it (edit, remove) without navigating away',
+        'Dedicated zone keeps the list in view while reading',
+      ],
     },
   ),
 };
@@ -157,7 +169,11 @@ const LIST = {
     'Sits above the rows. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
     see('scroll', 'data'),
     {
-      why: 'Collections grow beyond what can be scanned; search and filters make the list usable at any size. Placing the add action here puts it next to the set it changes, so proximity tells users what the button will affect.',
+      why: [
+        'Search and filters keep long lists usable',
+        'Add action sits beside the set it changes',
+        'Proximity tells users what the button affects',
+      ],
     },
   ),
   rows: region(
@@ -168,7 +184,11 @@ const LIST = {
     'Rows (avatar, name, role) · ↑/↓ · Enter',
     'Holds exactly one selection — highlighted and announced; first row selected by default.',
     {
-      why: 'Users need a scannable, consistent rhythm of rows to compare records and a clear mark of which one is open, so they can keep their place while reading the detail beside it.',
+      why: [
+        'Consistent row rhythm makes records easy to compare',
+        'Selected state marks which record is open',
+        'Users keep their place while reading the detail',
+      ],
       ...see('scroll', 'states'),
     },
   ),
@@ -181,7 +201,11 @@ const LIST = {
     'Primary text + one line of secondary text. No per-row actions — those live in the detail zone.',
     see('actions'),
     {
-      why: 'A row must carry just enough to decide "is this the one?" — more makes scanning slower, less forces a click to find out. Keeping rows summary-only keeps the list fast to read.',
+      why: [
+        'Just enough to answer “is this the one?”',
+        'More slows scanning; less forces a click',
+        'Summary-only rows keep the list fast to read',
+      ],
     },
   ),
 };
@@ -196,7 +220,11 @@ const DETAIL = {
     'One row mirroring the page header: identity on the left, actions on the right.',
     see('actions'),
     {
-      why: 'Users need certainty about which record they are looking at before they act on it. Pairing the identity with its actions avoids applying an action to the wrong record and keeps record-level controls in one predictable place.',
+      why: [
+        'Confirms which record is in focus before acting',
+        'Identity next to actions avoids acting on the wrong record',
+        'Record-level controls live in one predictable place',
+      ],
     },
   ),
   leading: region(
@@ -224,7 +252,11 @@ const DETAIL = {
     'Tab per facet · ←/→',
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
     {
-      why: "Records accumulate many facets (profile, roles, groups). Tabs let users jump to the facet they need instead of scrolling one long page, and keep each facet's content and actions clearly scoped.",
+      why: [
+        'Jump straight to the facet needed (profile, roles, groups)',
+        'Avoids one long scrolling page',
+        'Scopes each facet’s content and actions',
+      ],
       ...see('responsive'),
     },
   ),
@@ -237,7 +269,10 @@ const DETAIL = {
     'Fills the remaining height. Section-level actions sit at the top of the area.',
     see('scroll', 'states'),
     {
-      why: 'Different facets need different presentations; a neutral area that accepts pairs, lists or tables lets each facet use the clearest form without forcing them into one layout.',
+      why: [
+        'Each facet uses the clearest form: pairs, list or table',
+        'Neutral area, no forced single layout',
+      ],
     },
   ),
 };

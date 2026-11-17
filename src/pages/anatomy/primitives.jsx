@@ -298,9 +298,19 @@ export const RegionDetails = ({ region: r, labels = {}, compact = false }) => {
       >
         {pairs.map(([name, value]) => (
           <NameValuePair key={name} name={name}>
-            <Text color={name === 'Open questions' ? 'brand' : undefined}>
-              {value}
-            </Text>
+            {Array.isArray(value) ? (
+              <Box as="ul" margin="none" pad={{ left: 'medium' }} gap="xxsmall">
+                {value.map((item) => (
+                  <Text as="li" key={item}>
+                    {item}
+                  </Text>
+                ))}
+              </Box>
+            ) : (
+              <Text color={name === 'Open questions' ? 'brand' : undefined}>
+                {value}
+              </Text>
+            )}
           </NameValuePair>
         ))}
       </NameValueList>
