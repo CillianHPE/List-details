@@ -11,37 +11,26 @@ import {
 // title header with collapse toggle, divider, then plain or expandable text items.
 export const navItems = {
   Anatomy: { key: 'proto-anatomy', label: 'Anatomy', href: '#/anatomy' },
-  'Current shell': {
-    key: 'proto-default',
-    label: 'Current shell',
-    href: '#/default',
-  },
-  'Shell v3': { key: 'proto-v3', label: 'Shell v3', href: '#/v3' },
-  'Shell v3 · few users': {
-    key: 'proto-v3-few',
-    label: 'Shell v3 · few users',
-    href: '#/v3-few',
-  },
-  'Shell v3 · short detail': {
-    key: 'proto-v3-short',
-    label: 'Shell v3 · short detail',
-    href: '#/v3-short',
-  },
-  'Shell v3 · page context': {
-    key: 'proto-v3-context',
-    label: 'Shell v3 · page context',
-    href: '#/v3-context',
-  },
-  Accounts: {
-    key: 'proto-accounts',
-    label: 'Accounts',
-    href: '#/accounts',
-  },
-  'Accounts · Sales Cockpit': {
-    key: 'proto-accounts-cockpit',
-    label: 'Accounts · Sales Cockpit',
-    href: '#/accounts-cockpit',
-  },
+  Examples: [
+    {
+      key: 'proto-v3',
+      label: 'Users',
+      description: 'Long list, tabbed detail',
+      href: '#/v3',
+    },
+    {
+      key: 'proto-v3-context',
+      label: 'Users · page context',
+      description: 'Surface among other page content',
+      href: '#/v3-context',
+    },
+    {
+      key: 'proto-accounts-cockpit',
+      label: 'Sales Cockpit',
+      description: 'Account health and engagement',
+      href: '#/accounts-cockpit',
+    },
+  ],
 };
 
 // Items with an href navigate the prototype; others only update selection.
@@ -96,14 +85,24 @@ const ExpandableMenuItem = ({
             label={
               <Box direction="row" align="center" justify="between">
                 <Box direction="row" align="center" gap="small">
-                  <Box width="24px">{active && <LinkNext />}</Box>
-                  <Text>{subItem.label}</Text>
+                  <Box width="24px" flex={false}>
+                    {active && <LinkNext />}
+                  </Box>
+                  <Box>
+                    <Text>{subItem.label}</Text>
+                    {subItem.description && (
+                      <Text size="xsmall" color="text-weak">
+                        {subItem.description}
+                      </Text>
+                    )}
+                  </Box>
                 </Box>
                 {subItem.count !== undefined && <Text>{subItem.count}</Text>}
               </Box>
             }
             onClick={() => onSelect(subItem)}
             active={active}
+            justify="start"
           />
         );
       })}

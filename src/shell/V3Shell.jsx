@@ -182,12 +182,19 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
     >
       <Box
         width="4px"
-        height="24px"
         round="medium"
         background={selected ? 'brand' : undefined}
         flex={false}
+        alignSelf="stretch"
       />
-      <Text weight={selected ? 500 : undefined}>{item.label}</Text>
+      <Box>
+        <Text weight={selected ? 500 : undefined}>{item.label}</Text>
+        {item.description && (
+          <Text size="xsmall" color="text-weak">
+            {item.description}
+          </Text>
+        )}
+      </Box>
     </Box>
   </Button>
 );
