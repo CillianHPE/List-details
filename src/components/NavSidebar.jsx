@@ -17,11 +17,31 @@ export const navItems = {
       description: 'Page, zones, list and detail',
       href: '#/anatomy',
     },
+  ],
+  Behaviour: [
     {
-      key: 'proto-behaviour',
-      label: 'Behaviour',
-      description: 'How the surface responds',
-      href: '#/behaviour',
+      key: 'proto-behaviour-scroll',
+      label: 'Scroll & height',
+      description: 'What scrolls, what sticks',
+      href: '#/behaviour/scroll',
+    },
+    {
+      key: 'proto-behaviour-responsive',
+      label: 'Responsive',
+      description: 'How the surface re-flows',
+      href: '#/behaviour/responsive',
+    },
+    {
+      key: 'proto-behaviour-states',
+      label: 'States',
+      description: 'Empty, loading, error, selected',
+      href: '#/behaviour/states',
+    },
+    {
+      key: 'proto-behaviour-actions',
+      label: 'Actions & ownership',
+      description: 'Where each action lives',
+      href: '#/behaviour/actions',
     },
   ],
   Examples: [

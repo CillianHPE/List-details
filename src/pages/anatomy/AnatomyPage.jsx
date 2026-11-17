@@ -22,7 +22,6 @@ import {
   Dim,
   GhostRows,
   Level,
-  VISIBLE_BEHAVIOUR_TABS,
 } from './primitives';
 import {
   ScrollLevel,
@@ -572,8 +571,8 @@ const DetailWireframe = () => (
   </Box>
 );
 
-// Structure and Behaviour are separate pages (#/anatomy, #/behaviour); both
-// render through this component so tab state survives cross-links between them.
+// Structure (#/anatomy) and each Behaviour level (#/behaviour/<key>) are
+// separate pages; all render through this component so cross-links work.
 const SECTIONS = {
   structure: {
     hash: 'anatomy',
@@ -581,11 +580,33 @@ const SECTIONS = {
     subtitle:
       'Zoom from the page down into each zone. Every level names its regions, their roles and what they own.',
   },
-  behaviour: {
-    hash: 'behaviour',
-    title: 'Behaviour',
+  scroll: {
+    hash: 'behaviour/scroll',
+    title: 'Scroll & height',
     subtitle:
-      'How the surface responds: selection, navigation, scroll, responsive and more.',
+      'Which part of the surface owns each scrollbar, what is pinned, and how heights are derived.',
+  },
+  responsive: {
+    hash: 'behaviour/responsive',
+    title: 'Responsive',
+    subtitle:
+      'How the shell, the surface and the detail zone re-flow by width.',
+  },
+  states: {
+    hash: 'behaviour/states',
+    title: 'States',
+    subtitle: 'Where each state renders and what control it offers.',
+  },
+  data: {
+    hash: 'behaviour/data',
+    title: 'Data & performance',
+    subtitle: 'What loads when, and how the surface stays responsive.',
+  },
+  actions: {
+    hash: 'behaviour/actions',
+    title: 'Actions & ownership',
+    subtitle:
+      'Every action lives in exactly one scope with one home on the page.',
   },
 };
 
@@ -596,17 +617,15 @@ export const AnatomyPage = ({
 }) => {
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
-  const [behaviour, setBehaviour] = useState(0);
   const go = (g, tab) => {
-    if (g === 'behaviour') {
-      const i = VISIBLE_BEHAVIOUR_TABS.findIndex((t) => t.key === tab);
-      if (i < 0) return;
-      setBehaviour(i);
-    } else setLevel(tab);
-    window.location.hash = `/${SECTIONS[g].hash}`;
+    const key = g === 'behaviour' ? tab : 'structure';
+    if (!SECTIONS[key]) return;
+    if (key === 'structure') setLevel(tab);
+    window.location.hash = `/${SECTIONS[key].hash}`;
     window.scrollTo({ top: 0 });
   };
-  const group = section;
+  const group = SECTIONS[section] ? section : 'structure';
+  const Behaviour = BEHAVIOUR_CONTENT[group];
   return (
     <AnatomyNav.Provider value={go}>
       <Page pad={{ bottom: 'xlarge' }}>
@@ -625,22 +644,7 @@ export const AnatomyPage = ({
               )
             }
           />
-          {group === 'behaviour' && (
-            <Tabs
-              activeIndex={behaviour}
-              onActive={setBehaviour}
-              justify="start"
-            >
-              {VISIBLE_BEHAVIOUR_TABS.map(({ key, label }) => {
-                const Content = BEHAVIOUR_CONTENT[key];
-                return (
-                  <Tab key={key} title={label}>
-                    <Content />
-                  </Tab>
-                );
-              })}
-            </Tabs>
-          )}
+          {Behaviour && <Behaviour />}
           {group === 'structure' && (
             <Tabs activeIndex={level} onActive={setLevel} justify="start">
               <Tab title="Page">

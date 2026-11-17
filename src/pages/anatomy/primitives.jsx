@@ -16,8 +16,8 @@ export const AnatomyNav = createContext(() => {});
 // read the same as the legend beneath them.
 const LegendLabels = createContext({});
 
-// Behaviour tabs are addressed by key so links survive reordering or hiding.
-// `hidden` keeps a tab's content in the codebase but out of the UI (and out of
+// Behaviour pages are addressed by key so links survive reordering or hiding.
+// `hidden` keeps a page's content in the codebase but out of the UI (and out of
 // any "See Behaviour →" links) until it is ready to present.
 export const BEHAVIOUR_TABS = [
   { key: 'scroll', label: 'Scroll & height' },
@@ -337,9 +337,11 @@ export const Level = ({
   <Box gap="medium" pad={{ top: 'medium' }}>
     <Box direction="row" justify="between" align="start" gap="medium" wrap>
       <Box gap="xsmall" width={{ max: 'large' }}>
-        <Heading level={2} margin="none">
-          {title}
-        </Heading>
+        {title && (
+          <Heading level={2} margin="none">
+            {title}
+          </Heading>
+        )}
         <Paragraph margin="none" fill>
           {intro}
         </Paragraph>

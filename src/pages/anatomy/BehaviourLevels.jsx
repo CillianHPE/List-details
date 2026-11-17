@@ -247,7 +247,6 @@ const ScrollWireframe = () => {
 
 export const ScrollLevel = () => (
   <Level
-    title="Scroll and height"
     intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. The page scrolls; the list keeps its own scroll."
     wireframe={<ScrollWireframe />}
     regions={SCROLL}
@@ -975,10 +974,7 @@ const ShellMatrix = () => {
 };
 
 export const ResponsiveLevel = () => (
-  <Level
-    title="Responsive behaviour"
-    intro="Pick a width to see how the shell, the surface and the detail zone re-flow. The summary states the rule for that width; the list below gives each region's rule at that width."
-  >
+  <Level intro="Pick a width to see how the shell, the surface and the detail zone re-flow. The summary states the rule for that width; the list below gives each region's rule at that width.">
     <ResponsiveExplorer />
     <Box gap="small" margin={{ top: 'large' }}>
       <Text size="large" weight={500}>
@@ -1185,10 +1181,7 @@ const StatesExplorer = () => {
 };
 
 export const StatesLevel = () => (
-  <Level
-    title="States"
-    intro="Pick a state to see where it renders and what control it offers. Each state is scoped to a zone; everything outside the highlighted block keeps working."
-  >
+  <Level intro="Pick a state to see where it renders and what control it offers. Each state is scoped to a zone; everything outside the highlighted block keeps working.">
     <StatesExplorer />
   </Level>
 );
@@ -1322,7 +1315,6 @@ const DataWireframe = () => (
 
 export const DataLevel = () => (
   <Level
-    title="Data and performance"
     intro="Where requests originate, what triggers them and how results are cached. Numbers mark the fetch points; the legend gives the strategy for each."
     wireframe={<DataWireframe />}
     regions={DATA}
@@ -1595,7 +1587,6 @@ const ActionsWireframe = () => (
 
 export const ActionsLevel = () => (
   <Level
-    title="Actions and ownership"
     intro="Every action lives in exactly one scope, and each scope has one home on the page. Colour marks the scope; the legend gives the rules."
     wireframe={<ActionsWireframe />}
     regions={ACTIONS}
