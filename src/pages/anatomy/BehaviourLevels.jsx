@@ -73,7 +73,7 @@ const SCROLL = {
       why: [
         'Scrolling the list never loses the place in the record',
         'Scrolling the record never loses the place in the list',
-        'Switching records is one gesture',
+        'Switching records is 1 gesture',
       ],
     },
   ),
@@ -326,7 +326,7 @@ const ACTIONS = {
     'Collection actions',
     'list toolbar · trailing, beside search',
     'Creates or changes items in the collection the toolbar controls: add, import, bulk select.',
-    'One secondary button · overflow for the rest · icon-only below Comfortable',
+    '1 secondary button · overflow for the rest · icon-only below Comfortable',
     'Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.',
     {
       why: [
@@ -359,7 +359,7 @@ const ACTIONS = {
     'Section actions',
     'content area · top trailing',
     'Adds to the facet being viewed, e.g. assign or add to a related set.',
-    'One secondary button per section',
+    '1 secondary button per section',
     'Scoped to the visible tab. Opens a layer; on success the list in the section updates in place.',
     {
       why: [
@@ -576,7 +576,7 @@ const ActionsWireframe = () => (
 
 export const ActionsLevel = () => (
   <Level
-    intro="Every action lives in exactly one scope, and each scope has one home on the page. Colour marks the scope; the legend gives the rules."
+    intro="Every action lives in exactly 1 scope, and each scope has 1 home on the page. Colour marks the scope; the legend gives the rules."
     wireframe={<ActionsWireframe />}
     regions={ACTIONS}
   />

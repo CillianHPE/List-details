@@ -61,7 +61,7 @@ const PAGE = {
       why: [
         'Find and inspect without leaving the page',
         'Keep the selected record visible while scanning the rest',
-        'Switch records in one click, not a page round-trip',
+        'Switch records in 1 click, not a page round-trip',
       ],
       ...see('scroll', 'responsive'),
     },
@@ -101,7 +101,7 @@ const ZONES = {
     },
     {
       why: [
-        'Show everything about the chosen record in one place',
+        'Show everything about the chosen record in 1 place',
         'Act on it (edit, remove) without navigating away',
         'Dedicated zone keeps the list in view while reading',
       ],
@@ -197,7 +197,7 @@ const LIST = {
     'role="option" · aria-selected',
     'Summarises one record with just enough to decide whether to open it.',
     'Click / Enter to select',
-    'Primary text + one line of secondary text. No per-item actions — those live in the detail zone.',
+    'Primary text + 1 line of secondary text. No per-item actions — those live in the detail zone.',
     see('actions'),
     {
       why: [
@@ -216,7 +216,7 @@ const DETAIL = {
     'header row · leading + trailing',
     'Confirms which record is open and offers the actions that apply to the whole record.',
     'Leading zone · trailing zone',
-    'One row mirroring the page header: identity on the left, actions on the right.',
+    '1 row mirroring the page header: identity on the left, actions on the right.',
     see('actions'),
     {
       why: [
@@ -263,7 +263,7 @@ const DETAIL = {
     '2a',
     'Tabs',
     'optional · tablist',
-    'One way of organising the content area when the record has more than one facet. Alternatives are stacked sections or an accordion.',
+    'One way of organising the content area when the record has more than 1 facet. Alternatives are stacked sections or an accordion.',
     'Tab per facet · ←/→',
     'Sits at the top of the content area and stays put while the panel scrolls. Each tab scopes its own content and actions. Omitted when there is a single facet.',
     {
@@ -591,8 +591,7 @@ export const PAGES = {
   },
   'behaviour/actions': {
     title: 'Actions & ownership',
-    subtitle:
-      'Every action lives in exactly one scope with one home on the page.',
+    subtitle: 'Every action lives in exactly 1 scope with 1 home on the page.',
     Content: ActionsLevel,
   },
   'responsive/breakpoints': {
@@ -608,7 +607,7 @@ export const PAGES = {
   },
   'responsive/drill-in': {
     title: 'Drill-in',
-    subtitle: 'Below the narrow breakpoint the two zones become two screens.',
+    subtitle: 'Below the narrow breakpoint the 2 zones become 2 screens.',
     Content: DrillInLevel,
   },
   'responsive/shell': {
@@ -694,7 +693,7 @@ export const AnatomyPage = ({
               <Tab title="Zones">
                 <Level
                   title="List zone and detail zone"
-                  intro="Two zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
+                  intro="2 zones with distinct jobs: the list is for finding and choosing, the detail is for inspecting and acting. Toggle the variations to compare how width is shared."
                   control={
                     <ToggleGroup
                       options={VISIBLE_ZONE_VARIANTS.map(

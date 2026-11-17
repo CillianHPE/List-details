@@ -30,7 +30,7 @@ const BREAKPOINTS = {
     'A',
     'Comfortable',
     '≥ 1000px surface width',
-    'Two columns, proportional 40 / 60 (list min 256px, size.small). Measured on the surface, not the viewport.',
+    '2 columns, proportional 40 / 60 (list min 256px, size.small). Measured on the surface, not the viewport.',
     'Navigation pane expanded',
     'Everything has room: labelled actions, a single row of tabs, name | value pairs side by side.',
   ),
@@ -38,7 +38,7 @@ const BREAKPOINTS = {
     'B',
     'Compact',
     '760 – 999px surface width',
-    'Two columns, still 40 / 60: list 304–400px, detail 456–600px. The 256px (size.small) floor never binds above 640px.',
+    '2 columns, still 40 / 60: list 304–400px, detail 456–600px. The 256px (size.small) floor never binds above 640px.',
     'Navigation pane collapsed to icons',
     'Chrome gives way first: secondary actions fold into overflow, tabs scroll, the detail header may wrap.',
     {
@@ -50,7 +50,7 @@ const BREAKPOINTS = {
     'C',
     'Drill-in',
     '< 760px surface width',
-    'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once an item is chosen.',
+    'Stacked. Only 1 zone is visible: the list by default, the detail as a drill-in screen once an item is chosen.',
     'Navigation in a drawer behind the header menu button',
     'A Back link in the page header parent slot ("All <collection>") returns to the list; record actions live in an overflow menu; pairs stack.',
     {
@@ -81,10 +81,10 @@ const RESPONSIVE = {
   surface: region(
     2,
     'List–detail surface',
-    'two columns → stacked',
-    'The arrangement of the two zones.',
+    '2 columns → stacked',
+    'The arrangement of the 2 zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns [40% in px, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after an item is chosen, with Back in the page header parent slot.',
+    'Grid columns [40% in px, flex] from 760px surface width. Below, only 1 zone is visible: the list by default, the detail after an item is chosen, with Back in the page header parent slot.',
     {
       at: {
         wide: 'Grid [40% in px, flex]; list 40% (400–576px at 1000–1440).',
@@ -117,7 +117,7 @@ const RESPONSIVE = {
     'Trailing zone wraps beneath the leading zone when the heading would truncate below ~20 characters. Actions collapse to an overflow menu at narrow.',
     {
       at: {
-        wide: 'One row: leading identity, trailing actions.',
+        wide: '1 row: leading identity, trailing actions.',
         medium:
           'Trailing wraps beneath leading when the heading would truncate below ~20 characters.',
         narrow:
@@ -131,13 +131,13 @@ const RESPONSIVE = {
     'row → scrollable row',
     'Facet switching.',
     '←/→ scroll arrows',
-    'Tabs never wrap to two lines; the tablist scrolls horizontally with arrows when it overflows (Grommet Tabs does this natively).',
+    'Tabs never wrap to 2 lines; the tablist scrolls horizontally with arrows when it overflows (Grommet Tabs does this natively).',
     {
       questions: 'Shorten labels at narrow widths or allow scrolling only?',
       at: {
         wide: 'Single row, all labels visible.',
         medium: 'Single row; scroll arrows appear when it overflows.',
-        narrow: 'Scrollable row; never wraps to two lines.',
+        narrow: 'Scrollable row; never wraps to 2 lines.',
       },
     },
   ),
@@ -147,12 +147,11 @@ const RESPONSIVE = {
     'horizontal → vertical',
     'Record attributes.',
     '—',
-    'Pairs switch from two columns to stacked when the detail zone is under 480px, independent of the viewport.',
+    'Pairs switch from 2 columns to stacked when the detail zone is under 480px, independent of the viewport.',
     {
       at: {
-        wide: 'name | value in two columns.',
-        medium:
-          'Two columns until the detail zone is under 480px, then stacked.',
+        wide: 'name | value in 2 columns.',
+        medium: '2 columns until the detail zone is under 480px, then stacked.',
         narrow: 'Stacked: name above value.',
       },
     },
@@ -358,19 +357,19 @@ const shellLayout = (width, nav, context) => {
 
 const TIERS = {
   comfortable: {
-    label: 'Comfortable · two columns',
+    label: 'Comfortable · 2 columns',
     color: 'brand',
     rule: `≥ ${SURFACE.comfortableMin}px available. List ${SURFACE.listShare * 100}% (min ${SURFACE.listMin}px, size.small), detail ${(1 - SURFACE.listShare) * 100}%; name–value pairs stay side by side.`,
   },
   compact: {
-    label: 'Compact · two columns',
+    label: 'Compact · 2 columns',
     color: 'status-warning',
     rule: `${SURFACE.twoColumnMin}–${SURFACE.comfortableMin - 1}px available. Still ${SURFACE.listShare * 100} / ${(1 - SURFACE.listShare) * 100}; detail may drop under ${SURFACE.detailMin}px so pairs stack and tabs scroll.`,
   },
   drillIn: {
-    label: 'Drill-in · one column',
+    label: 'Drill-in · 1 column',
     color: 'status-critical',
-    rule: `< ${SURFACE.twoColumnMin}px available (${SURFACE.listMin} list + ${SURFACE.gap} gap + ${SURFACE.detailMin} detail). One zone at a time: list first, detail on selection with Back.`,
+    rule: `< ${SURFACE.twoColumnMin}px available (${SURFACE.listMin} list + ${SURFACE.gap} gap + ${SURFACE.detailMin} detail). 1 zone at a time: list first, detail on selection with Back.`,
   },
 };
 
@@ -567,7 +566,7 @@ const ShellConfigExplorer = () => {
           note={`Main − 2×${l.pad} padding`}
         />
         <Num
-          label="Needed for two columns"
+          label="Needed for 2 columns"
           value={`${SURFACE.twoColumnMin}px`}
           note={`${SURFACE.listMin} + ${SURFACE.gap} + ${SURFACE.detailMin}`}
         />
@@ -763,7 +762,7 @@ const WidthShare = () => (
       The list takes {SURFACE.listShare * 100}% of the surface, never less than{' '}
       {SURFACE.listMin}px (size.small); the detail takes the rest after a{' '}
       {SURFACE.gap}px (edgeSize.medium) gap. Under {SURFACE.twoColumnMin}px the
-      two no longer fit side by side.
+      2 no longer fit side by side.
     </Text>
     <Box gap="xsmall" margin={{ top: 'small' }}>
       {[1440, 1200, 1000, 900, 760, 600].map((w) => (
@@ -796,7 +795,7 @@ const BreakpointsExplorer = () => {
 };
 
 export const BreakpointsLevel = () => (
-  <Level intro="Three tiers, measured on the surface's own width rather than the browser's. Pick one to see how the two zones share the space and what the shell does around them.">
+  <Level intro="3 tiers, measured on the surface's own width rather than the browser's. Pick one to see how the 2 zones share the space and what the shell does around them.">
     <BreakpointsExplorer />
     <Box margin={{ top: 'large' }}>
       <WidthShare />
@@ -1120,7 +1119,7 @@ const DRILL = {
     4,
     'Detail content',
     'stacked',
-    'The record’s facets, one above the other.',
+    'The record’s facets, 1 above the other.',
     'Tabs scroll · pairs stack',
     'Tabs stay on one scrollable row; name–value pairs stack with the name above the value.',
   ),
@@ -1244,7 +1243,7 @@ const DrillInWireframe = () => (
 
 export const DrillInLevel = () => (
   <Level
-    intro={`Under ${SURFACE.twoColumnMin}px of surface width only one zone fits, so the pattern becomes two screens: the list first, then the detail once an item is chosen.`}
+    intro={`Under ${SURFACE.twoColumnMin}px of surface width only 1 zone fits, so the pattern becomes 2 screens: the list first, then the detail once an item is chosen.`}
     wireframe={
       <Frame>
         <DrillInWireframe />
