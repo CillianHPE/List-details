@@ -479,7 +479,16 @@ const ListWireframe = () => (
             <Search size="small" color="text-weak" />
             <Ghost width="60px" height="8px" />
           </Box>
-          <Ghost width="72px" height="36px" background="transparent" border />
+          <Box
+            width="84px"
+            height="36px"
+            align="center"
+            justify="center"
+            border={{ color: 'brand', size: 'small' }}
+            round="full"
+          >
+            <Ghost width="44px" height="6px" background="brand" />
+          </Box>
         </Box>
         <Box direction="row" border round="xsmall" alignSelf="start">
           {[{ w: '44px', active: true }, { w: '56px' }, { w: '60px' }].map(
