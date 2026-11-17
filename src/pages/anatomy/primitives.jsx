@@ -153,7 +153,15 @@ export const Badge = ({
   showRole = false,
   popover = false,
 }) => (
-  <Box direction="row" gap="xsmall" align="center" wrap>
+  <Box
+    direction="row"
+    gap="xsmall"
+    align="center"
+    wrap
+    data-doc="badge"
+    data-doc-id={r.id}
+    data-doc-name={r.name}
+  >
     {popover ? <PopoverDot region={r} /> : <Dot id={r.id} />}
     <Text weight={500} size={size}>
       {r.name}
@@ -354,7 +362,7 @@ export const Level = ({
     <LegendLabels.Provider value={labels ?? {}}>
       {children ?? (
         <>
-          {wireframe}
+          <Box data-doc="figure">{wireframe}</Box>
           <Legend regions={regions} labels={labels} />
         </>
       )}

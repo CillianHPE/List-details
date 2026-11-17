@@ -236,7 +236,13 @@ const ResponsiveFrame = ({ bp }) => {
   const narrow = bp === 'narrow';
   const medium = bp === 'medium';
   return (
-    <Box direction="row" gap="medium" align="start" justify="center">
+    <Box
+      direction="row"
+      gap="medium"
+      align="start"
+      justify="center"
+      data-doc="figure"
+    >
       <Screen narrow={narrow}>
         <Box direction="row" gap="xsmall" align="center">
           <Ghost width="20px" height="20px" round="full" />
@@ -546,13 +552,15 @@ const ShellConfigSections = () => (
               <Tag color={tier.color}>{tier.label}</Tag>
             </Box>
           </Box>
-          <ShellBar
-            width={c.width}
-            nav={c.nav}
-            context={!!c.context}
-            layout={l}
-            axis={false}
-          />
+          <Box data-doc="figure">
+            <ShellBar
+              width={c.width}
+              nav={c.nav}
+              context={!!c.context}
+              layout={l}
+              axis={false}
+            />
+          </Box>
           {c.note && (
             <Text size="small" color="text-weak">
               {c.note}
@@ -652,7 +660,7 @@ const WidthShare = () => (
       {SURFACE.gap}px (edgeSize.medium) gap. Under {SURFACE.twoColumnMin}px the
       2 no longer fit side by side.
     </Text>
-    <Box gap="xsmall" margin={{ top: 'small' }}>
+    <Box gap="xsmall" margin={{ top: 'small' }} data-doc="figure">
       {[1440, 1200, 1000, 900, 760, 600].map((w) => (
         <WidthBar key={w} width={w} />
       ))}
@@ -920,7 +928,7 @@ const MINIS = {
 };
 
 const RegionsMatrix = () => (
-  <Box gap="small">
+  <Box gap="small" data-doc="figure">
     <Grid columns={['small', 'flex', 'flex', 'flex']} gap="small" align="end">
       <Box />
       {Object.entries(BREAKPOINTS).map(([key, r]) => (

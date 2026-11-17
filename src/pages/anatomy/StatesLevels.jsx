@@ -74,7 +74,7 @@ const Toolbar = () => (
 
 // Side-by-side variants of one state, each with a caption
 const Variants = ({ children }) => (
-  <Box direction="row" gap="medium" wrap>
+  <Box direction="row" gap="medium" wrap data-doc="figure">
     {children}
   </Box>
 );
