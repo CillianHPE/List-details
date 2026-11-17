@@ -342,3 +342,18 @@ export const users = baseUsers.map((u, i) => {
     orgWorkspaces: i % 4 === 1 ? [{ name: 'Acme — EMEA', role: 'Member' }] : [],
   };
 });
+
+// Sparse variant: a new workspace with four users, nothing assigned yet and
+// most activity fields not yet available. Used by Examples › Users (short).
+const NA = 'Not available';
+export const sparseUsers = users.slice(0, 4).map((u) => ({
+  ...u,
+  roleAssignments: [],
+  groups: [],
+  orgWorkspaces: [],
+  lifecycleSource: 'Local',
+  joinedOrganization: NA,
+  joinedWorkspace: NA,
+  lastLaunch: NA,
+  lastSignIn: NA,
+}));

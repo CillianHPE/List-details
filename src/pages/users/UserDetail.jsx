@@ -124,6 +124,7 @@ const DetailHeader = ({ user, name, onRename }) => {
 
 // Details are broken into titled groups, each its own NameValueList,
 // separated by a weak divider so the page doesn't read as one long list.
+// `optional` groups are dropped for the sparse variant.
 const DETAIL_GROUPS = [
   {
     title: 'Identity',
@@ -146,6 +147,7 @@ const DETAIL_GROUPS = [
   },
   {
     title: 'Membership & activity',
+    optional: true,
     pairs: [
       ['Joined organization', 'joinedOrganization'],
       ['Joined this workspace', 'joinedWorkspace'],
@@ -300,7 +302,7 @@ const OrgWorkspaces = ({ user }) =>
 // tablist with previous/next arrows (Anatomy › Responsive › Detail tabs).
 // Grommet's overflow check (scrollWidth > offsetWidth) misfires on fractional
 // widths, so the page keeps the grid columns in whole px (see listDetail.js).
-const DetailBody = ({ user, tab, setTab }) => (
+const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
   <Tabs
     activeIndex={tab}
     onActive={setTab}
@@ -310,7 +312,7 @@ const DetailBody = ({ user, tab, setTab }) => (
   >
     <Tab title="Details">
       <Section title="Details" hideTitle>
-        <Properties user={user} />
+        <Properties user={user} groups={groups} />
       </Section>
     </Tab>
     <Tab title="Role assignments">
@@ -347,8 +349,9 @@ const DetailBody = ({ user, tab, setTab }) => (
   </Tabs>
 );
 
-// variant="short": a record with one facet — no tabs, identity only. Used by
-// the long-list / short-detail route to study scroll & height.
+// variant="short": a record with one facet — no tabs, identity only.
+// variant="sparse": tabs kept, but only the identity/account groups and empty
+// states in every other tab — a workspace with little data yet.
 export const UserDetail = ({ user, variant = 'full' }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useState(0);
@@ -360,7 +363,16 @@ export const UserDetail = ({ user, variant = 'full' }) => {
           <Properties user={user} groups={DETAIL_GROUPS.slice(0, 1)} />
         </Section>
       ) : (
-        <DetailBody user={user} tab={tab} setTab={setTab} />
+        <DetailBody
+          user={user}
+          tab={tab}
+          setTab={setTab}
+          groups={
+            variant === 'sparse'
+              ? DETAIL_GROUPS.filter((g) => !g.optional)
+              : DETAIL_GROUPS
+          }
+        />
       )}
     </Box>
   );

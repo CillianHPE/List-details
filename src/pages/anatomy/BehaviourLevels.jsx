@@ -124,7 +124,7 @@ const SCROLL_VARIANTS = [
   {
     value: 'page',
     label: 'Page scrolls',
-    note: 'Default (stand-up, 12 Nov). The page (Main) is the scroll container, so the surface can sit among other page content; the list column stretches to the surface height, is sticky and scrolls its own rows; the detail grows the page. Try Examples › Users · page context (#/v3-context).',
+    note: 'Default (stand-up, 12 Nov). The page (Main) is the scroll container, so the surface can sit among other page content; the list column stretches to the surface height, is sticky and scrolls its own rows; the detail grows the page.',
   },
   {
     value: 'panes',

@@ -6,15 +6,14 @@ import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
 import { AnatomyPage } from './pages/anatomy/AnatomyPage';
-import { users } from './data/users';
-import { RecentActivity, UsersSummary } from './pages/users/PageContext';
+import { sparseUsers } from './data/users';
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/anatomy  → lo-fi region/role map of the pattern
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
-//   #/v3-context → list–detail with other page content above and below
+//   #/v3-sparse → four users, little data yet (empty states, unavailable values)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
-const VERSIONS = ['anatomy', 'v3', 'v3-context', 'accounts-cockpit'];
+const VERSIONS = ['anatomy', 'v3', 'v3-sparse', 'accounts-cockpit'];
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
   return VERSIONS.includes(v) ? v : 'v3';
@@ -44,12 +43,9 @@ const App = () => {
           <UsersPage />
         </V3Shell>
       )}
-      {version === 'v3-context' && (
+      {version === 'v3-sparse' && (
         <V3Shell>
-          <UsersPage
-            before={<UsersSummary users={users} />}
-            after={<RecentActivity />}
-          />
+          <UsersPage users={sparseUsers} detailVariant="sparse" />
         </V3Shell>
       )}
       {version === 'accounts-cockpit' && (

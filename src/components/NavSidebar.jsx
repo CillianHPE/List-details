@@ -19,10 +19,10 @@ export const navItems = {
       href: '#/v3',
     },
     {
-      key: 'proto-v3-context',
-      label: 'Users · page context',
-      description: 'Surface among other page content',
-      href: '#/v3-context',
+      key: 'proto-v3-sparse',
+      label: 'Users',
+      description: 'Short amount of content',
+      href: '#/v3-sparse',
     },
     {
       key: 'proto-accounts-cockpit',
