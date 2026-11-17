@@ -38,6 +38,26 @@ const Msg = ({ children, action, size = 'medium' }) => (
   </Box>
 );
 
+// Lo-fi standard empty state: icon, title, short description, primary action
+const EmptyState = ({ title, action }) => (
+  <Box flex align="center" justify="center" gap="small" pad="medium">
+    <Box
+      width="40px"
+      height="40px"
+      round="full"
+      background="background-contrast"
+      flex={false}
+    />
+    <Text textAlign="center" weight={500}>
+      {title}
+    </Text>
+    <Ghost width="60%" height="8px" />
+    <Box margin={{ top: 'xsmall' }}>
+      <Tag>{action}</Tag>
+    </Box>
+  </Box>
+);
+
 const Pair = () => (
   <Box direction="row" gap="small">
     <Ghost width="30%" height="10px" />
@@ -185,9 +205,7 @@ export const EmptyLevel = () => (
   >
     <Variants>
       <Variant caption="No records exist" region={EMPTY.collection}>
-        <Hot flex>
-          <Msg action="Add item">No items yet</Msg>
-        </Hot>
+        <EmptyState title="No items yet" action="Add item" />
       </Variant>
       <Variant caption="Query matched nothing" region={EMPTY.noResults}>
         <Box width="40%" gap="small">
