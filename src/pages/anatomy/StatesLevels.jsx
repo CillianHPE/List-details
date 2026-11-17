@@ -200,7 +200,7 @@ const EMPTY = {
 
 export const EmptyLevel = () => (
   <StatePage
-    intro="Two different situations that look similar: nothing exists yet, or nothing matched. They render in different places and offer different ways out."
+    intro="2 different situations that look similar: nothing exists yet, or nothing matched. They render in different places and offer different ways out."
     regions={EMPTY}
   >
     <Variants>
