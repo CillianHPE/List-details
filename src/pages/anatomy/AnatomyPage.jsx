@@ -95,7 +95,7 @@ const ZONES = {
     'Detail zone',
     '<section> · inspection surface',
     'Shows the selected record in full and offers the actions that apply to it. It is for reading and acting, not for browsing.',
-    'Detail header · tabs · body',
+    'Detail header · content area',
     'Proportional column: 60% of the surface.',
     {
       space: '60% of surface (≈ 670px at 1116px content width)',
@@ -245,13 +245,29 @@ const DETAIL = {
     'Right-aligned, content width. Visible actions are ordered by frequency of use; destructive actions sit last in the menu.',
     see('responsive', 'actions'),
   ),
-  tabs: region(
+  content: region(
     2,
-    'Detail tabs',
-    'tablist · tab · tabpanel (optional)',
-    'Switches between the record’s facets when it has more than one.',
+    'Content area',
+    'everything below the header',
+    'Presents the record in whatever form suits it best: name–value pairs, a list, a table or an empty state. When the record has several facets, tabs at the top of the area organise them.',
+    'Depends on the content shown',
+    'Fills the remaining height. Section-level actions sit at the top of the area, or at the top of the active tab when tabs are used.',
+    see('scroll', 'states'),
+    {
+      why: [
+        'Each record uses the clearest form: pairs, list or table',
+        'Neutral area, no forced single layout',
+        'Optional structure (tabs, sections) lives inside it rather than beside it',
+      ],
+    },
+  ),
+  tabs: region(
+    '2a',
+    'Tabs',
+    'optional · tablist',
+    'One way of organising the content area when the record has more than one facet. Alternatives are stacked sections or an accordion.',
     'Tab per facet · ←/→',
-    'Only present when the record has several facets. Otherwise the content area follows the header directly.',
+    'Sits at the top of the content area and stays put while the panel scrolls. Each tab scopes its own content and actions. Omitted when there is a single facet.',
     {
       why: [
         'Jump straight to the facet needed',
@@ -259,21 +275,6 @@ const DETAIL = {
         'Scopes each facet’s content and actions',
       ],
       ...see('responsive'),
-    },
-  ),
-  content: region(
-    3,
-    'Content area',
-    'tabpanel or plain region',
-    'Presents the current facet in whatever form suits it best: name–value pairs, a list, a table or an empty state.',
-    'Depends on the content shown',
-    'Fills the remaining height. Section-level actions sit at the top of the area.',
-    see('scroll', 'states'),
-    {
-      why: [
-        'Each facet uses the clearest form: pairs, list or table',
-        'Neutral area, no forced single layout',
-      ],
     },
   ),
 };
@@ -545,26 +546,25 @@ const DetailWireframe = () => (
           </Block>
           <Block region={DETAIL.trailing} flex={false}>
             <Box direction="row" justify="end" gap="xsmall">
-              <Ghost width="90px" height="32px" round="full" />
+              <Ghost width="90px" height="32px" round="xsmall" />
               <Ghost width="32px" height="32px" round="full" />
             </Box>
           </Block>
         </Box>
       </Focus>
-      <Focus
-        region={DETAIL.tabs}
-        label="optional"
-        border={{ color: 'brand', size: 'small', style: 'dashed' }}
-      >
-        <Box direction="row" gap="small" wrap>
-          <Ghost width="60px" height="20px" background="brand" />
-          <Ghost width="110px" height="20px" />
-          <Ghost width="150px" height="20px" />
-        </Box>
-      </Focus>
       <Focus region={DETAIL.content} label="pairs · list · table …" flex>
+        <Block
+          region={DETAIL.tabs}
+          border={{ color: 'border', size: 'small', style: 'dashed' }}
+        >
+          <Box direction="row" gap="small" wrap>
+            <Ghost width="60px" height="20px" background="brand" />
+            <Ghost width="110px" height="20px" />
+            <Ghost width="150px" height="20px" />
+          </Box>
+        </Block>
         <Box direction="row" justify="end">
-          <Ghost width="90px" height="28px" round="full" />
+          <Ghost width="90px" height="28px" round="xsmall" />
         </Box>
         <Dim label="Content" flex />
       </Focus>
@@ -685,7 +685,7 @@ export const AnatomyPage = ({
               <Tab title="Detail zone">
                 <Level
                   title="Inside the detail zone"
-                  intro="The header mirrors the page header — heading on the left, record actions on the right. Tabs appear only when the record has several facets. Below is a single content area that takes whatever fits: pairs, a list, a table."
+                  intro="The header mirrors the page header — heading on the left, record actions on the right. Below it is a single content area that takes whatever fits: pairs, a list, a table. Tabs are one optional way of organising that area when the record has several facets."
                   wireframe={<DetailWireframe />}
                   regions={DETAIL}
                   labels={{ behaviour: 'Layout' }}
