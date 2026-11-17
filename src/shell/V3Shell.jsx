@@ -164,19 +164,30 @@ const GlobalHeaderApp = ({ appName }) => {
   );
 };
 
-// Nav item: 36px min height, radius small, 4×24 brand bar when selected
-const NavItemV3 = ({ item, selected, onSelect }) => (
+// Nav item (NavigationMenu/NavItem): 36px min height, radius small, 4×24
+// brand bar when selected. `level` indents children of an expandable parent
+// by widening the gap after the marker, as ItemContainer does.
+const levelGap = ['xxsmall', 'small', 'medium', 'large'];
+const NavItemV3 = ({
+  item,
+  selected,
+  onSelect,
+  level = 0,
+  actions,
+  ...rest
+}) => (
   <Button
     plain
     onClick={() => onSelect(item)}
     aria-current={selected ? 'page' : undefined}
     hoverIndicator="background-contrast"
     style={{ borderRadius: 8 }}
+    {...rest}
   >
     <Box
       direction="row"
       align="center"
-      gap="xxsmall"
+      gap={levelGap[Math.min(level, levelGap.length - 1)]}
       height={{ min: '36px' }}
       pad={{ left: '3xsmall', right: 'xxsmall', vertical: '3xsmall' }}
       round="small"
@@ -189,7 +200,7 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
         flex={false}
         alignSelf="stretch"
       />
-      <Box>
+      <Box flex>
         <Text weight={selected ? 500 : undefined}>{item.label}</Text>
         {item.description && (
           <Text size="xsmall" color="text-weak">
@@ -197,40 +208,32 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
           </Text>
         )}
       </Box>
+      {actions}
     </Box>
   </Button>
 );
 
-// Group header: toggles its items. Groups start open; the group holding the
-// current page is re-opened whenever the route moves into it.
+// Expandable parent (NavigationMenu/NavList): a regular nav item whose
+// trailing action is the Up/Down chevron; children sit one level deeper.
+// Parents start open and re-open whenever the route moves into them.
 const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
   <Box>
-    <Button
-      plain
-      onClick={onToggle}
+    <NavItemV3
+      item={{ label: group }}
+      onSelect={onToggle}
       aria-expanded={open}
-      hoverIndicator="background-contrast"
-      style={{ borderRadius: 8 }}
-    >
-      <Box
-        direction="row"
-        align="center"
-        justify="between"
-        pad={{ left: '18px', right: 'xsmall', vertical: 'xsmall' }}
-        height={{ min: '36px' }}
-      >
-        <Text size="xsmall" weight={500}>
-          {group}
-        </Text>
-        {open ? <Up size="small" /> : <Down size="small" />}
-      </Box>
-    </Button>
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && open) onToggle();
+      }}
+      actions={open ? <Up aria-hidden="true" /> : <Down aria-hidden="true" />}
+    />
     <Collapsible open={open}>
-      <Box gap="4xsmall" pad={{ top: '4xsmall' }}>
+      <Box gap="4xsmall">
         {items.map((item) => (
           <NavItemV3
             key={item.key}
             item={item}
+            level={1}
             selected={selected.key === item.key}
             onSelect={onSelect}
           />
@@ -302,7 +305,7 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
         />
       </Box>
       {open && (
-        <Nav gap="xsmall" pad={{ bottom: 'small' }} overflow="auto">
+        <Nav gap="4xsmall" pad={{ bottom: 'small' }} overflow="auto">
           {Object.entries(items).map(([group, value]) =>
             Array.isArray(value) ? (
               <NavGroupV3
