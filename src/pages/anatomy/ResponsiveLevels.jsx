@@ -391,7 +391,7 @@ const Seg = ({ px, total, label, children, ...rest }) => (
   </Box>
 );
 
-const ShellBar = ({ width, nav, context, layout: l }) => {
+const ShellBar = ({ width, nav, context, layout: l, axis = true }) => {
   const tierColor = TIERS[l.tier].color;
   const Pane = ({ px, label, on }) =>
     px > 0 ? (
@@ -476,10 +476,12 @@ const ShellBar = ({ width, nav, context, layout: l }) => {
         <Pane px={l.ctxTakes} label="Context" on={context} />
         <Seg px={l.gutter} total={width} />
       </Box>
-      <Box direction="row" justify="between">
-        <Mono color="text-weak">0</Mono>
-        <Mono color="text-weak">{width}px browser</Mono>
-      </Box>
+      {axis && (
+        <Box direction="row" justify="between">
+          <Mono color="text-weak">0</Mono>
+          <Mono color="text-weak">{width}px browser</Mono>
+        </Box>
+      )}
     </Box>
   );
 };
@@ -662,23 +664,37 @@ const ShellConfigSections = () => (
       const l = shellLayout(c.width, c.nav, !!c.context);
       const tier = TIERS[l.tier];
       return (
-        <Box key={c.title} gap="small">
-          <Text size="large" weight={500}>
-            {c.title}
-          </Text>
+        <Box
+          key={c.title}
+          border={{ color: 'border' }}
+          round="small"
+          pad="medium"
+          gap="medium"
+        >
+          <Box
+            direction="row"
+            justify="between"
+            align="center"
+            wrap
+            gap="small"
+          >
+            <Text size="large" weight={500}>
+              {c.title}
+            </Text>
+            <Box direction="row" gap="small" align="center">
+              <Text size="small" color="text-weak">
+                Surface gets <Mono color="text">{l.available}px</Mono>
+              </Text>
+              <Tag color={tier.color}>{tier.label}</Tag>
+            </Box>
+          </Box>
           <ShellBar
             width={c.width}
             nav={c.nav}
             context={!!c.context}
             layout={l}
+            axis={false}
           />
-          <Box direction="row" gap="small" align="center" wrap>
-            <Tag color={tier.color}>{tier.label}</Tag>
-            <Text size="small">
-              Surface gets <Mono color="text">{l.available}px</Mono>
-              {l.tier !== 'drillIn' && ` · list ${l.list} / detail ${l.detail}`}
-            </Text>
-          </Box>
           {c.note && (
             <Text size="small" color="text-weak">
               {c.note}
