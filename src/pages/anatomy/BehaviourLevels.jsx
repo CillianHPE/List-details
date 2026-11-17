@@ -155,6 +155,10 @@ const SCROLL = {
     {
       questions:
         'Native vs hidden scrollbar? Keep scroll position when the filter changes?',
+      recommendation: [
+        'Native scrollbar. People need to see that the list scrolls; a hidden scrollbar hides content.',
+        'Jump to the top when the filter changes. A new filter is a new list, and keeping the old position can leave an empty gap.',
+      ],
     },
   ),
   detailHeader: region(
@@ -175,6 +179,8 @@ const SCROLL = {
     {
       questions:
         'Reset scroll on selection change, or preserve when switching between records of the same type?',
+      recommendation:
+        'Reset to the top of the detail. Every record then starts the same way, with the header and first facet visible. If a tab is open, keep that tab but still scroll to the top.',
     },
   ),
 };

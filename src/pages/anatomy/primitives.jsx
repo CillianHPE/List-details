@@ -293,6 +293,7 @@ export const RegionDetails = ({ region: r, labels = {}, compact = false }) => {
     [l.controls, r.controls],
     [l.behaviour, r.behaviour],
     r.questions && ['Open questions', r.questions],
+    r.recommendation && ['Recommendation', r.recommendation],
   ].filter(Boolean);
   return (
     <Box gap="small">
