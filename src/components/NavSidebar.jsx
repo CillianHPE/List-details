@@ -46,11 +46,6 @@ export const navItems = {
       href: '#/responsive/drill-in',
     },
     {
-      key: 'proto-responsive-shell',
-      label: 'Shell configuration',
-      href: '#/responsive/shell',
-    },
-    {
       key: 'proto-responsive-shell-configs',
       label: 'Shell configurations',
       href: '#/responsive/shell-configs',

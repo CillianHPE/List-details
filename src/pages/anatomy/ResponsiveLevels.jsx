@@ -320,8 +320,6 @@ const SHELL = {
 // What the surface needs to stay two-column — shared with the prototype
 // (src/pattern/listDetail.js) so documentation and implementation agree.
 
-const BROWSER_WIDTHS = [1920, 1536, 1366, 1024, 768, 414];
-
 const NAV_WIDTH = { expanded: SHELL.nav, collapsed: SHELL.navRail, hidden: 0 };
 
 // nav: 'expanded' | 'collapsed' | 'hidden'
@@ -486,146 +484,6 @@ const ShellBar = ({ width, nav, context, layout: l, axis = true }) => {
   );
 };
 
-const Num = ({ label, value, note }) => (
-  <Box>
-    <Text size="xsmall" color="text-weak">
-      {label}
-    </Text>
-    <Box direction="row" gap="xsmall" align="baseline">
-      <Mono color="text">{value}</Mono>
-      {note && (
-        <Text size="xsmall" color="text-weak">
-          {note}
-        </Text>
-      )}
-    </Box>
-  </Box>
-);
-
-// Bar, numbers, tier and shell notes for one width × pane configuration.
-// Shared by the interactive explorer and the static per-configuration page.
-const ShellReadout = ({ width, nav, context }) => {
-  const l = shellLayout(width, nav, context);
-  const tier = TIERS[l.tier];
-  return (
-    <Box gap="medium">
-      <ShellBar width={width} nav={nav} context={context} layout={l} />
-
-      <Box direction="row" gap="large" wrap>
-        <Num
-          label="Main pane"
-          value={`${l.main}px`}
-          note={
-            l.overlay
-              ? `${width} − 2×${l.gutter} gutter (panes overlay)`
-              : `${width} − 2×${l.gutter} gutter${l.navPx ? ` − ${l.navPx}+${SHELL.gap} nav` : ''}${context ? ` − ${SHELL.context}+${SHELL.gap} context` : ''}`
-          }
-        />
-        <Num
-          label="Available to surface"
-          value={`${l.available}px`}
-          note={`Main − 2×${l.pad} padding`}
-        />
-        <Num
-          label="Needed for 2 columns"
-          value={`${SURFACE.twoColumnMin}px`}
-          note={`${SURFACE.listMin} + ${SURFACE.gap} + ${SURFACE.detailMin}`}
-        />
-      </Box>
-
-      <Box gap="xsmall">
-        <Box direction="row" gap="xsmall" align="center">
-          <Tag color={tier.color}>{tier.label}</Tag>
-        </Box>
-        <Text size="small">{tier.rule}</Text>
-      </Box>
-
-      {l.conflict && (
-        <Box
-          background={{ color: 'status-critical', opacity: 'weak' }}
-          pad="small"
-          round="xsmall"
-          gap="xxsmall"
-        >
-          <Text size="small" weight={500}>
-            Shell rule · expanded nav and context pane are mutually exclusive
-            under {SHELL.coexistFrom}px
-          </Text>
-          <Text size="small">
-            With both open only {l.available}px is left. Opening the context
-            pane should collapse the navigation to its {SHELL.navRail}px rail,
-            leaving {shellLayout(width, 'collapsed', true).available}px (
-            {TIERS[shellLayout(width, 'collapsed', true).tier].label
-              .split(' ·')[0]
-              .toLowerCase()}
-            ); expanding the nav again closes the context pane. From{' '}
-            {SHELL.coexistFrom}px both can stay open and the surface still gets
-            ≥ {shellLayout(SHELL.coexistFrom, 'expanded', true).available}px.
-          </Text>
-        </Box>
-      )}
-      {l.overlay && (nav !== 'hidden' || context) && (
-        <Text size="small" color="text-weak">
-          Under {SHELL.overlayBelow}px the panes float over the page, so they
-          take no width from the surface — the Figma set shows no inline panes
-          at 768 or 414.
-        </Text>
-      )}
-    </Box>
-  );
-};
-
-const ShellConfigExplorer = () => {
-  const [width, setWidth] = useState(1366);
-  const [nav, setNav] = useState('expanded');
-  const [context, setContext] = useState(false);
-  return (
-    <Box gap="medium">
-      <Box direction="row" gap="large" wrap align="center">
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Browser width
-          </Text>
-          <ToggleGroup
-            options={BROWSER_WIDTHS.map((w) => ({ label: `${w}`, value: w }))}
-            value={width}
-            onToggle={({ value }) => value && setWidth(value)}
-          />
-        </Box>
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Navigation
-          </Text>
-          <ToggleGroup
-            options={[
-              { label: `Expanded ${SHELL.nav}px`, value: 'expanded' },
-              { label: `Collapsed ${SHELL.navRail}px`, value: 'collapsed' },
-              { label: 'Hidden', value: 'hidden' },
-            ]}
-            value={nav}
-            onToggle={({ value }) => value && setNav(value)}
-          />
-        </Box>
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Context pane
-          </Text>
-          <ToggleGroup
-            options={[
-              { label: `Open ${SHELL.context}px`, value: true },
-              { label: 'Closed', value: false },
-            ]}
-            value={context}
-            onToggle={({ value }) => value !== undefined && setContext(value)}
-          />
-        </Box>
-      </Box>
-
-      <ShellReadout width={width} nav={nav} context={context} />
-    </Box>
-  );
-};
-
 // The configurations that actually occur, one glanceable section each.
 // Static by design: this page is destined for Confluence, where there are
 // no toggles.
@@ -705,68 +563,6 @@ const ShellConfigSections = () => (
     })}
   </Box>
 );
-
-// Every width × pane combination at a glance
-const ShellMatrix = () => {
-  const combos = [
-    ['Nav expanded', 'expanded', false],
-    ['Nav collapsed', 'collapsed', false],
-    ['Rail + context', 'collapsed', true],
-    ['Nav + context', 'expanded', true],
-  ];
-  const cell = { padding: '6px 16px 6px 0', textAlign: 'left' };
-  return (
-    <table style={{ borderCollapse: 'collapse' }}>
-      <thead>
-        <tr>
-          <th style={cell}>
-            <Text size="xsmall" color="text-weak" weight={400}>
-              Browser
-            </Text>
-          </th>
-          {combos.map(([name]) => (
-            <th key={name} style={cell}>
-              <Text size="xsmall" color="text-weak" weight={400}>
-                {name}
-              </Text>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {BROWSER_WIDTHS.map((w) => (
-          <tr key={w}>
-            <td style={cell}>
-              <Mono color="text">{w}</Mono>
-            </td>
-            {combos.map(([name, nav, context]) => {
-              const l = shellLayout(w, nav, context);
-              return (
-                <td key={name} style={cell}>
-                  <Box direction="row" gap="xsmall" align="center">
-                    <Box
-                      width="8px"
-                      height="8px"
-                      round="full"
-                      background={TIERS[l.tier].color}
-                      flex={false}
-                    />
-                    <Mono color="text">{l.available}</Mono>
-                    {l.conflict && (
-                      <Text size="xsmall" color="status-critical">
-                        ✕
-                      </Text>
-                    )}
-                  </Box>
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-};
 
 // ---------------------------------------------------------------------------
 // Breakpoints page
@@ -1348,25 +1144,6 @@ export const DrillInLevel = () => (
 
 // ---------------------------------------------------------------------------
 // Shell configuration page
-
-export const ShellLevel = () => (
-  <Level
-    intro={`The breakpoints assume the surface owns the viewport. In the V3.1 shell the navigation (${SHELL.nav}px expanded, ${SHELL.navRail}px collapsed to a rail) and the context pane (${SHELL.context}px) take width first, so the surface responds to its own container width, not the browser's. Toggle panes to see what is left and which tier the surface lands in.`}
-  >
-    <ShellConfigExplorer />
-    <Box gap="xsmall" margin={{ top: 'large' }}>
-      <Text size="large" weight={500}>
-        All configurations
-      </Text>
-      <Text size="small" color="text-weak">
-        Pixels available to the surface for every width and pane combination (✕
-        = expanded nav with context pane under {SHELL.coexistFrom}px,
-        disallowed).
-      </Text>
-      <ShellMatrix />
-    </Box>
-  </Level>
-);
 
 export const ShellConfigsLevel = () => (
   <Level

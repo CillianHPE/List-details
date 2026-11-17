@@ -28,7 +28,6 @@ import {
   BreakpointsLevel,
   RegionsLevel,
   DrillInLevel,
-  ShellLevel,
   ShellConfigsLevel,
 } from './ResponsiveLevels';
 import {
@@ -610,12 +609,6 @@ export const PAGES = {
     title: 'Drill-in',
     subtitle: 'Below the narrow breakpoint the 2 zones become 2 screens.',
     Content: DrillInLevel,
-  },
-  'responsive/shell': {
-    title: 'Shell configuration',
-    subtitle:
-      'How the app shell’s navigation state changes the width the surface receives.',
-    Content: ShellLevel,
   },
   'responsive/shell-configs': {
     title: 'Shell configurations',

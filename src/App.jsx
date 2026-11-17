@@ -20,6 +20,7 @@ const REDIRECTS = {
   'behaviour/responsive': 'responsive/breakpoints',
   'behaviour/states': 'states/loading',
   responsive: 'responsive/breakpoints',
+  'responsive/shell': 'responsive/shell-configs',
   states: 'states/loading',
 };
 const readVersion = () => {
