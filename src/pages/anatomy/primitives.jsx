@@ -164,7 +164,7 @@ export const Badge = ({
 );
 
 // Dashed, unfilled wireframe block
-export const Block = ({ region: r, showRole, children, ...rest }) => (
+export const Block = ({ region: r, showRole = false, children, ...rest }) => (
   <Box
     border={{ color: 'border', style: 'dashed', size: 'small' }}
     round="xsmall"
@@ -178,7 +178,13 @@ export const Block = ({ region: r, showRole, children, ...rest }) => (
 );
 
 // Solid, emphasised block used for the regions a level is focused on
-export const Focus = ({ region: r, label, showRole, children, ...rest }) => (
+export const Focus = ({
+  region: r,
+  label,
+  showRole = false,
+  children,
+  ...rest
+}) => (
   <Box
     border={{ color: 'brand', size: 'small' }}
     round="xsmall"

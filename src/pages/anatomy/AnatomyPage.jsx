@@ -117,7 +117,7 @@ const ZONE_VARIANTS = [
     listWidth: '34%',
     listLabel: '256–384px (size.small–size.medium)',
     detailLabel: 'flex',
-    note: "Alternative (the prototype's original behaviour). The list is clamped to a token range so row content stays legible; the detail zone absorbs all remaining width.",
+    note: "Alternative (the prototype's original behaviour). The list is clamped to a token range so item content stays legible; the detail zone absorbs all remaining width.",
   },
   {
     value: 'split',
@@ -125,7 +125,7 @@ const ZONE_VARIANTS = [
     listWidth: '40%',
     listLabel: '40% · min 256px (size.small)',
     detailLabel: '60%',
-    note: 'Current behaviour (Users prototype). Both zones scale with the surface, keeping a 2:3 ratio — Grid [40% in px, flex]. Suits lists with richer rows (status, meta) at the cost of a narrower detail column on small surfaces.',
+    note: 'Current behaviour (Users prototype). Both zones scale with the surface, keeping a 2:3 ratio — Grid [40% in px, flex]. Suits lists with richer items (status, meta) at the cost of a narrower detail column on small surfaces.',
   },
   {
     value: 'resizable',
@@ -166,7 +166,7 @@ const LIST = {
     '<search> · search',
     'Narrows the collection (search, filters) and adds to it, so the list stays usable at any size.',
     'Search input · Add users (collection action, trailing) · quick-filter toggle group · result count',
-    'Sits above the rows. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
+    'Sits above the list items. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
     see('scroll', 'data'),
     {
       why: [
@@ -179,13 +179,13 @@ const LIST = {
   rows: region(
     2,
     'List body',
-    '<ul role="listbox"> · option rows',
+    '<ul role="listbox"> · option items',
     'Presents the records as a scannable list and marks the one that is open.',
     'Rows (avatar, name, role) · ↑/↓ · Enter',
-    'Holds exactly one selection — highlighted and announced; first row selected by default.',
+    'Holds exactly one selection — highlighted and announced; first item selected by default.',
     {
       why: [
-        'Consistent row rhythm makes records easy to compare',
+        'Consistent item rhythm makes records easy to compare',
         'Selected state marks which record is open',
         'Users keep their place while reading the detail',
       ],
@@ -194,17 +194,17 @@ const LIST = {
   ),
   row: region(
     3,
-    'Row',
+    'List item',
     'role="option" · aria-selected',
     'Summarises one record with just enough to decide whether to open it.',
     'Click / Enter to select',
-    'Primary text + one line of secondary text. No per-row actions — those live in the detail zone.',
+    'Primary text + one line of secondary text. No per-item actions — those live in the detail zone.',
     see('actions'),
     {
       why: [
         'Just enough to answer “is this the one?”',
         'More slows scanning; less forces a click',
-        'Summary-only rows keep the list fast to read',
+        'Summary-only items keep the list fast to read',
       ],
     },
   ),

@@ -121,7 +121,7 @@ const Frame = ({ children, ...rest }) => (
 // Scroll & height
 
 // The page (Main) is the scroll container, so the surface can sit among other
-// page content: the list column is sticky and scrolls its own rows while the
+// page content: the list column is sticky and scrolls its own items while the
 // detail grows the page. Global header and viewport are app-shell concerns and
 // are deliberately out of scope here.
 const SCROLL = {
@@ -129,7 +129,7 @@ const SCROLL = {
     1,
     'List toolbar',
     'sticky',
-    'Keeps search and filters reachable while the rows scroll beneath it.',
+    'Keeps search and filters reachable while the items scroll beneath it.',
     'Search · filters · count',
     'Sticky within the list column; never scrolls out of view.',
   ),
@@ -137,9 +137,9 @@ const SCROLL = {
     2,
     'List body',
     'overflow auto',
-    'Scrolls the rows independently so browsing the list never moves the record beside it.',
+    'Scrolls the items independently so browsing the list never moves the record beside it.',
     'Wheel · ↑/↓ · PgUp/PgDn',
-    'Max height = visible page content − page header − toolbar. Selected row is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
+    'Max height = visible page content − page header − toolbar. Selected item is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
     {
       why: [
         'Scrolling the list never loses the place in the record',
@@ -280,12 +280,12 @@ const BREAKPOINTS = {
     'C',
     'Drill-in',
     '< 760px surface width',
-    'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once a row is chosen.',
+    'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once an item is chosen.',
     'Navigation in a drawer behind the header menu button',
     'A Back link in the page header parent slot ("All users") returns to the list; record actions live in an overflow menu; pairs stack.',
     {
       questions:
-        'Does selecting a row push a URL so Back in the browser also returns to the list?',
+        'Does selecting an item push a URL so Back in the browser also returns to the list?',
     },
   ),
 };
@@ -314,7 +314,7 @@ const RESPONSIVE = {
     'two columns → stacked',
     'The arrangement of the two zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns [40% in px, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after a row is chosen, with Back in the page header parent slot.',
+    'Grid columns [40% in px, flex] from 760px surface width. Below, only one zone is visible: the list by default, the detail after an item is chosen, with Back in the page header parent slot.',
     {
       at: {
         wide: 'Grid [40% in px, flex]; list 40% (400–576px at 1000–1440).',
