@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Grommet } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
-import { DefaultShell } from './shell/DefaultShell';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
@@ -55,9 +54,9 @@ const App = () => {
       )}
       {version === 'anatomy' &&
         (chrome ? (
-          <DefaultShell>
+          <V3Shell>
             <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
-          </DefaultShell>
+          </V3Shell>
         ) : (
           <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
         ))}
