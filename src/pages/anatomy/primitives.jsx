@@ -147,7 +147,7 @@ export const PopoverDot = ({ region: r, children }) => {
 export const Badge = ({
   region: r,
   size = 'medium',
-  showRole = true,
+  showRole = false,
   popover = false,
 }) => (
   <Box direction="row" gap="xsmall" align="center" wrap>

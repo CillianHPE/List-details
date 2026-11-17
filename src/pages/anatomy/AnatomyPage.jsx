@@ -1,3 +1,4 @@
+import { Search } from '@hpe-design/icons-grommet';
 import { useState } from 'react';
 import {
   Box,
@@ -464,11 +465,38 @@ const ListWireframe = () => (
   >
     <Box width="40%" flex={false} gap="small">
       <Focus region={LIST.toolbar}>
-        <Ghost height="36px" background="transparent" border />
         <Box direction="row" gap="xsmall">
-          <Ghost width="40px" height="24px" round="full" background="brand" />
-          <Ghost width="56px" height="24px" round="full" />
-          <Ghost width="60px" height="24px" round="full" />
+          <Box
+            flex
+            direction="row"
+            align="center"
+            gap="xsmall"
+            pad={{ horizontal: 'small' }}
+            height="36px"
+            border
+            round="xsmall"
+          >
+            <Search size="small" color="text-weak" />
+            <Ghost width="60px" height="8px" />
+          </Box>
+          <Ghost width="72px" height="36px" background="transparent" border />
+        </Box>
+        <Box direction="row" border round="xsmall" alignSelf="start">
+          {[{ w: '44px', active: true }, { w: '56px' }, { w: '60px' }].map(
+            ({ w, active }, i) => (
+              <Box
+                key={i}
+                width={w}
+                height="28px"
+                align="center"
+                justify="center"
+                background={active ? 'background-contrast' : undefined}
+                border={i ? { side: 'left', color: 'border' } : undefined}
+              >
+                <Ghost width="55%" height="6px" />
+              </Box>
+            ),
+          )}
         </Box>
         <Ghost width="60px" height="8px" />
       </Focus>
