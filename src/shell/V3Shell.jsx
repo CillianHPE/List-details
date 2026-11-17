@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  Collapsible,
   DropButton,
   Image,
   Menu,
@@ -14,6 +15,7 @@ import {
   AIGenFill,
   Catalog,
   Down,
+  Up,
   Help,
   Menu as MenuIcon,
   Notification,
@@ -199,18 +201,69 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
   </Button>
 );
 
+// Group header: toggles its items. Groups start open; the group holding the
+// current page is re-opened whenever the route moves into it.
+const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
+  <Box>
+    <Button
+      plain
+      onClick={onToggle}
+      aria-expanded={open}
+      hoverIndicator="background-contrast"
+      style={{ borderRadius: 8 }}
+    >
+      <Box
+        direction="row"
+        align="center"
+        justify="between"
+        pad={{ left: '18px', right: 'xsmall', vertical: 'xsmall' }}
+        height={{ min: '36px' }}
+      >
+        <Text size="xsmall" weight={500}>
+          {group}
+        </Text>
+        {open ? <Up size="small" /> : <Down size="small" />}
+      </Box>
+    </Button>
+    <Collapsible open={open}>
+      <Box gap="4xsmall" pad={{ top: '4xsmall' }}>
+        {items.map((item) => (
+          <NavItemV3
+            key={item.key}
+            item={item}
+            selected={selected.key === item.key}
+            onSelect={onSelect}
+          />
+        ))}
+      </Box>
+    </Collapsible>
+  </Box>
+);
+
+const groupOf = (items, selected) =>
+  Object.entries(items).find(
+    ([, v]) => Array.isArray(v) && v.some((i) => i.key === selected.key),
+  )?.[0];
+
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() =>
     activeNavItem(navItems.Anatomy[0]),
   );
+  const [expanded, setExpanded] = useState(() => Object.keys(items));
   // Keep selection in step with in-page links that change the route.
   useEffect(() => {
     const onHash = () => setSelected((s) => activeNavItem(s));
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
+  useEffect(() => {
+    const g = groupOf(items, selected);
+    if (g) setExpanded((e) => (e.includes(g) ? e : [...e, g]));
+  }, [items, selected]);
   const onSelect = (item) => selectNavItem(item, setSelected);
+  const toggle = (g) =>
+    setExpanded((e) => (e.includes(g) ? e.filter((i) => i !== g) : [...e, g]));
   return (
     <Box
       as="nav"
@@ -252,28 +305,15 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
         <Nav gap="xsmall" pad={{ bottom: 'small' }} overflow="auto">
           {Object.entries(items).map(([group, value]) =>
             Array.isArray(value) ? (
-              <Box key={group} gap="4xsmall">
-                <Box
-                  pad={{
-                    left: '18px',
-                    right: 'xsmall',
-                    top: 'xsmall',
-                    bottom: '4xsmall',
-                  }}
-                >
-                  <Text size="xsmall" weight={500}>
-                    {group}
-                  </Text>
-                </Box>
-                {value.map((item) => (
-                  <NavItemV3
-                    key={item.key}
-                    item={item}
-                    selected={selected.key === item.key}
-                    onSelect={onSelect}
-                  />
-                ))}
-              </Box>
+              <NavGroupV3
+                key={group}
+                group={group}
+                items={value}
+                open={expanded.includes(group)}
+                onToggle={() => toggle(group)}
+                selected={selected}
+                onSelect={onSelect}
+              />
             ) : (
               <NavItemV3
                 key={value.key}
