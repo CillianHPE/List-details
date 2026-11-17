@@ -2,6 +2,7 @@ import { createContext, useContext, useRef, useState } from 'react';
 import {
   Anchor,
   Box,
+  Button,
   Drop,
   Heading,
   NameValueList,
@@ -16,38 +17,40 @@ export const AnatomyNav = createContext(() => {});
 // read the same as the legend beneath them.
 const LegendLabels = createContext({});
 
-// Behaviour pages are addressed by key so links survive reordering or hiding.
-// `hidden` keeps a page's content in the codebase but out of the UI (and out of
-// any "See Behaviour →" links) until it is ready to present.
-export const BEHAVIOUR_TABS = [
-  { key: 'scroll', label: 'Scroll & height' },
-  { key: 'responsive', label: 'Responsive' },
-  { key: 'states', label: 'States' },
-  { key: 'data', label: 'Data & performance', hidden: true },
-  { key: 'actions', label: 'Actions & ownership' },
+// Cross-link targets are addressed by key so links survive pages being
+// reorganised. `hidden` keeps a page's content in the codebase but out of the
+// UI (and out of any "See also →" links) until it is ready to present.
+export const SEE_TARGETS = [
+  { key: 'scroll', label: 'Scroll & height', route: 'behaviour/scroll' },
+  { key: 'responsive', label: 'Responsive', route: 'responsive/breakpoints' },
+  { key: 'states', label: 'States', route: 'states/loading' },
+  {
+    key: 'data',
+    label: 'Data & performance',
+    route: 'behaviour/data',
+    hidden: true,
+  },
+  { key: 'actions', label: 'Actions & ownership', route: 'behaviour/actions' },
 ];
-export const VISIBLE_BEHAVIOUR_TABS = BEHAVIOUR_TABS.filter((t) => !t.hidden);
-const tabByKey = (key) => BEHAVIOUR_TABS.find((t) => t.key === key);
+const targetByKey = (key) => SEE_TARGETS.find((t) => t.key === key);
 
-// Cross-reference from a Structure legend entry to a Behaviour tab
-export const see = (...keys) => ({
-  see: keys.map((key) => ({ group: 'behaviour', tab: key })),
-});
+// Cross-reference from a Structure legend entry to another page
+export const see = (...keys) => ({ see: keys });
 
 const SeeAlso = ({ links }) => {
   const go = useContext(AnatomyNav);
-  const visible = links.filter((l) => !tabByKey(l.tab)?.hidden);
+  const visible = links.filter((key) => !targetByKey(key)?.hidden);
   if (!visible.length) return null;
   return (
     <Text size="small" color="text-weak">
-      See Behaviour →{' '}
-      {visible.map((l, i) => (
-        <Text key={l.tab} size="small">
+      See also →{' '}
+      {visible.map((key, i) => (
+        <Text key={key} size="small">
           {i > 0 && ' · '}
           <Anchor
             size="small"
-            label={tabByKey(l.tab).label}
-            onClick={() => go(l.group, l.tab)}
+            label={targetByKey(key).label}
+            onClick={() => go(targetByKey(key).route)}
           />
         </Text>
       ))}
@@ -356,5 +359,76 @@ export const Level = ({
         </>
       )}
     </LegendLabels.Provider>
+  </Box>
+);
+
+// Shared lo-fi helpers used across the Behaviour, Responsive and States pages.
+export const Mono = ({ children, color = 'brand' }) => (
+  <Text
+    size="small"
+    color={color}
+    weight={500}
+    style={{ fontFamily: 'monospace' }}
+  >
+    {children}
+  </Text>
+);
+
+// Small callout chip placed inside a wireframe block
+export const Tag = ({ children, color = 'brand', ...rest }) => (
+  <Box
+    background={color}
+    round="xsmall"
+    pad={{ horizontal: 'xsmall', vertical: '4xsmall' }}
+    alignSelf="start"
+    flex={false}
+    {...rest}
+  >
+    <Text
+      size="xsmall"
+      weight={500}
+      color="#ffffff"
+      style={{ fontFamily: 'monospace' }}
+    >
+      {children}
+    </Text>
+  </Box>
+);
+
+export const Frame = ({ children, ...rest }) => (
+  <Box
+    border={{ color: 'border-weak' }}
+    background="background-back"
+    round="small"
+    pad="small"
+    gap="small"
+    {...rest}
+  >
+    {children}
+  </Box>
+);
+
+// Left-hand picker shared by the States and Responsive explorers
+export const Picker = ({ items, value, onChange }) => (
+  <Box as="nav" gap="xxsmall" width={{ min: 'medium' }} flex={false}>
+    {Object.entries(items).map(([key, r]) => {
+      const active = key === value;
+      return (
+        <Button key={key} plain onClick={() => onChange(key)} fill="horizontal">
+          <Box
+            pad={{ vertical: 'xsmall', horizontal: 'small' }}
+            round="xsmall"
+            background={active ? 'background-contrast' : undefined}
+            border={{
+              side: 'left',
+              size: 'medium',
+              color: active ? 'brand' : 'transparent',
+            }}
+          >
+            <Badge region={r} size="small" />
+          </Box>
+        </Button>
+      );
+    })}
   </Box>
 );

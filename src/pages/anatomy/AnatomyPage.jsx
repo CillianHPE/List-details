@@ -23,21 +23,20 @@ import {
   GhostRows,
   Level,
 } from './primitives';
+import { ScrollLevel, DataLevel, ActionsLevel } from './BehaviourLevels';
 import {
-  ScrollLevel,
-  ResponsiveLevel,
-  StatesLevel,
-  DataLevel,
-  ActionsLevel,
-} from './BehaviourLevels';
-
-const BEHAVIOUR_CONTENT = {
-  scroll: ScrollLevel,
-  responsive: ResponsiveLevel,
-  states: StatesLevel,
-  data: DataLevel,
-  actions: ActionsLevel,
-};
+  BreakpointsLevel,
+  RegionsLevel,
+  DrillInLevel,
+  ShellLevel,
+} from './ResponsiveLevels';
+import {
+  LoadingLevel,
+  EmptyLevel,
+  NoSelectionLevel,
+  ErrorLevel,
+  ReadOnlyLevel,
+} from './StatesLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -571,68 +570,104 @@ const DetailWireframe = () => (
   </Box>
 );
 
-// Structure (#/anatomy) and each Behaviour level (#/behaviour/<key>) are
-// separate pages; all render through this component so cross-links work.
-const SECTIONS = {
-  structure: {
-    hash: 'anatomy',
+// Every page under Anatomy / Behaviour / Responsive / States is addressed by
+// its route and rendered through this component so cross-links work.
+export const PAGES = {
+  anatomy: {
     title: 'Structure',
     subtitle:
       'Zoom from the page down into each zone. Every level names its regions, their roles and what they own.',
   },
-  scroll: {
-    hash: 'behaviour/scroll',
+  'behaviour/scroll': {
     title: 'Scroll & height',
     subtitle:
       'Which part of the surface owns each scrollbar, what is pinned, and how heights are derived.',
+    Content: ScrollLevel,
   },
-  responsive: {
-    hash: 'behaviour/responsive',
-    title: 'Responsive',
-    subtitle:
-      'How the shell, the surface and the detail zone re-flow by width.',
-  },
-  states: {
-    hash: 'behaviour/states',
-    title: 'States',
-    subtitle: 'Where each state renders and what control it offers.',
-  },
-  data: {
-    hash: 'behaviour/data',
+  'behaviour/data': {
     title: 'Data & performance',
     subtitle: 'What loads when, and how the surface stays responsive.',
+    Content: DataLevel,
   },
-  actions: {
-    hash: 'behaviour/actions',
+  'behaviour/actions': {
     title: 'Actions & ownership',
     subtitle:
       'Every action lives in exactly one scope with one home on the page.',
+    Content: ActionsLevel,
+  },
+  'responsive/breakpoints': {
+    title: 'Breakpoints',
+    subtitle:
+      'The three width tiers the surface responds to, and how width is shared between the zones in each.',
+    Content: BreakpointsLevel,
+  },
+  'responsive/regions': {
+    title: 'Regions by width',
+    subtitle: 'What each region does differently in each tier.',
+    Content: RegionsLevel,
+  },
+  'responsive/drill-in': {
+    title: 'Drill-in',
+    subtitle: 'Below the narrow breakpoint the two zones become two screens.',
+    Content: DrillInLevel,
+  },
+  'responsive/shell': {
+    title: 'Shell configuration',
+    subtitle:
+      'How the app shell’s navigation state changes the width the surface receives.',
+    Content: ShellLevel,
+  },
+  'states/loading': {
+    title: 'Loading',
+    subtitle: 'Skeletons in place; the rest keeps working.',
+    Content: LoadingLevel,
+  },
+  'states/empty': {
+    title: 'Empty',
+    subtitle: 'No records yet, or no results for a query.',
+    Content: EmptyLevel,
+  },
+  'states/no-selection': {
+    title: 'No selection',
+    subtitle:
+      'First item selected by default; a prompt when the selection is lost.',
+    Content: NoSelectionLevel,
+  },
+  'states/error': {
+    title: 'Error',
+    subtitle:
+      'Inline for loading, toast for actions, Retry beside the message.',
+    Content: ErrorLevel,
+  },
+  'states/read-only': {
+    title: 'Read-only',
+    subtitle: 'About the controls, not the content.',
+    Content: ReadOnlyLevel,
   },
 };
 
 export const AnatomyPage = ({
-  section = 'structure',
+  route = 'anatomy',
   chrome = true,
   onChromeChange,
 }) => {
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
-  const go = (g, tab) => {
-    const key = g === 'behaviour' ? tab : 'structure';
-    if (!SECTIONS[key]) return;
-    if (key === 'structure') setLevel(tab);
-    window.location.hash = `/${SECTIONS[key].hash}`;
+  const go = (target, tab) => {
+    if (!PAGES[target]) return;
+    if (target === 'anatomy' && tab !== undefined) setLevel(tab);
+    window.location.hash = `/${target}`;
     window.scrollTo({ top: 0 });
   };
-  const group = SECTIONS[section] ? section : 'structure';
-  const Behaviour = BEHAVIOUR_CONTENT[group];
+  const page = PAGES[route] || PAGES.anatomy;
+  const Content = page.Content;
   return (
     <AnatomyNav.Provider value={go}>
       <Page pad={{ bottom: 'xlarge' }}>
         <PageContent gap="medium">
           <PageHeader
-            title={SECTIONS[group].title}
-            subtitle={SECTIONS[group].subtitle}
+            title={page.title}
+            subtitle={page.subtitle}
             actions={
               onChromeChange && (
                 <CheckBox
@@ -644,8 +679,8 @@ export const AnatomyPage = ({
               )
             }
           />
-          {Behaviour && <Behaviour />}
-          {group === 'structure' && (
+          {Content && <Content />}
+          {!Content && (
             <Tabs activeIndex={level} onActive={setLevel} justify="start">
               <Tab title="Page">
                 <Level

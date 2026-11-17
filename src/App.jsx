@@ -4,20 +4,28 @@ import { hpe } from 'grommet-theme-hpe';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
-import { AnatomyPage } from './pages/anatomy/AnatomyPage';
+import { AnatomyPage, PAGES } from './pages/anatomy/AnatomyPage';
 import { sparseUsers } from './data/users';
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/anatomy  → Structure: lo-fi region/role map of the pattern
-//   #/behaviour/<key> → Behaviour pages: scroll · responsive · states · actions
+//   #/behaviour/<key>, #/responsive/<key>, #/states/<key> → documentation pages
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
 //   #/v3-sparse → four users, little data yet (empty states, unavailable values)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
 const VERSIONS = ['anatomy', 'v3', 'v3-sparse', 'accounts-cockpit'];
+// Old and group-level routes land on each group's first page
+const REDIRECTS = {
+  behaviour: 'behaviour/scroll',
+  'behaviour/responsive': 'responsive/breakpoints',
+  'behaviour/states': 'states/loading',
+  responsive: 'responsive/breakpoints',
+  states: 'states/loading',
+};
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
-  if (v === 'behaviour') return 'behaviour/scroll';
-  if (/^behaviour\/\w+$/.test(v)) return v;
+  if (REDIRECTS[v]) return REDIRECTS[v];
+  if (PAGES[v]) return v;
   return VERSIONS.includes(v) ? v : 'v3';
 };
 
@@ -55,18 +63,18 @@ const App = () => {
           <CockpitPage />
         </V3Shell>
       )}
-      {(version === 'anatomy' || version.startsWith('behaviour/')) &&
+      {PAGES[version] &&
         (chrome ? (
           <V3Shell>
             <AnatomyPage
-              section={version === 'anatomy' ? 'structure' : version.slice(10)}
+              route={version}
               chrome={chrome}
               onChromeChange={setChrome}
             />
           </V3Shell>
         ) : (
           <AnatomyPage
-            section={version === 'anatomy' ? 'structure' : version.slice(10)}
+            route={version}
             chrome={chrome}
             onChromeChange={setChrome}
           />

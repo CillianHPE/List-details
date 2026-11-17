@@ -26,22 +26,68 @@ export const navItems = {
       href: '#/behaviour/scroll',
     },
     {
-      key: 'proto-behaviour-responsive',
-      label: 'Responsive',
-      description: 'How the surface re-flows',
-      href: '#/behaviour/responsive',
-    },
-    {
-      key: 'proto-behaviour-states',
-      label: 'States',
-      description: 'Empty, loading, error, selected',
-      href: '#/behaviour/states',
-    },
-    {
       key: 'proto-behaviour-actions',
       label: 'Actions & ownership',
       description: 'Where each action lives',
       href: '#/behaviour/actions',
+    },
+  ],
+  Responsive: [
+    {
+      key: 'proto-responsive-breakpoints',
+      label: 'Breakpoints',
+      description: 'Three width tiers',
+      href: '#/responsive/breakpoints',
+    },
+    {
+      key: 'proto-responsive-regions',
+      label: 'Regions by width',
+      description: 'What each region does per tier',
+      href: '#/responsive/regions',
+    },
+    {
+      key: 'proto-responsive-drill-in',
+      label: 'Drill-in',
+      description: 'Two zones become two screens',
+      href: '#/responsive/drill-in',
+    },
+    {
+      key: 'proto-responsive-shell',
+      label: 'Shell configuration',
+      description: 'Nav state and available width',
+      href: '#/responsive/shell',
+    },
+  ],
+  States: [
+    {
+      key: 'proto-states-loading',
+      label: 'Loading',
+      description: 'List and detail load independently',
+      href: '#/states/loading',
+    },
+    {
+      key: 'proto-states-empty',
+      label: 'Empty',
+      description: 'Nothing yet, or nothing matched',
+      href: '#/states/empty',
+    },
+    {
+      key: 'proto-states-no-selection',
+      label: 'No selection',
+      description: 'Auto-select or prompt',
+      href: '#/states/no-selection',
+    },
+    {
+      key: 'proto-states-error',
+      label: 'Error',
+      description: 'Scoped to the zone that failed',
+      href: '#/states/error',
+    },
+    {
+      key: 'proto-states-read-only',
+      label: 'Read-only',
+      description: 'Hide or disable actions',
+      href: '#/states/read-only',
     },
   ],
   Examples: [
