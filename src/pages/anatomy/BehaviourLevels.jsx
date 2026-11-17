@@ -282,7 +282,7 @@ const BREAKPOINTS = {
     '< 760px surface width',
     'Stacked. Only one zone is visible: the list by default, the detail as a drill-in screen once an item is chosen.',
     'Navigation in a drawer behind the header menu button',
-    'A Back link in the page header parent slot ("All users") returns to the list; record actions live in an overflow menu; pairs stack.',
+    'A Back link in the page header parent slot ("All <collection>") returns to the list; record actions live in an overflow menu; pairs stack.',
     {
       questions:
         'Does selecting an item push a URL so Back in the browser also returns to the list?',
@@ -363,8 +363,7 @@ const RESPONSIVE = {
     '←/→ scroll arrows',
     'Tabs never wrap to two lines; the tablist scrolls horizontally with arrows when it overflows (Grommet Tabs does this natively).',
     {
-      questions:
-        'Shorten labels at narrow widths (e.g. "Groups") or allow scrolling only?',
+      questions: 'Shorten labels at narrow widths or allow scrolling only?',
       at: {
         wide: 'Single row, all labels visible.',
         medium: 'Single row; scroll arrows appear when it overflows.',
@@ -513,7 +512,7 @@ const ResponsiveFrame = ({ bp }) => {
             <Ghost width="20px" height="20px" round="full" />
             <Ghost width="60px" height="10px" />
           </Box>
-          <Dim label="Page header · ← All users" pad="xsmall" />
+          <Dim label="Page header · ← All items" pad="xsmall" />
           <Box
             flex
             border={{ color: 'border', style: 'dashed' }}
@@ -613,7 +612,7 @@ const SHELL = {
   coexistFrom: 1536, // nav + context may be open together from here
 };
 
-// What the surface needs to stay two-column — shared with the Users prototype
+// What the surface needs to stay two-column — shared with the prototype
 // (src/pattern/listDetail.js) so documentation and implementation agree.
 
 const BROWSER_WIDTHS = [1920, 1536, 1366, 1024, 768, 414];
@@ -1022,8 +1021,8 @@ const STATES = {
     2,
     'Empty collection',
     'list zone · full surface',
-    'No users exist yet.',
-    'Primary call to action (Add users)',
+    'The collection has no records yet.',
+    'Primary call to action (create or import the first record)',
     'Detail zone is hidden; the empty state owns the whole surface.',
   ),
   noResults: region(
@@ -1108,7 +1107,7 @@ const STATE_FRAMES = {
   ),
   emptyCollection: (
     <Hot flex>
-      <Msg action="Add users">No users yet</Msg>
+      <Msg action="Add item">No items yet</Msg>
     </Hot>
   ),
   noResults: (
@@ -1198,7 +1197,7 @@ const DATA = {
   list: region(
     1,
     'List fetch',
-    'GET /users?page=…',
+    'GET /items?page=…',
     'The collection, on page load.',
     'Page size · sort',
     'Paged (e.g. 50) and virtualised when long. First page renders before the detail request starts.',
@@ -1210,7 +1209,7 @@ const DATA = {
   search: region(
     2,
     'Search & filter',
-    'GET /users?q=…&status=…',
+    'GET /items?q=…&filter=…',
     'Narrowing the collection.',
     'Debounce ≈300ms · cancel in-flight',
     'Server-side when the collection is paged; client-side only for small, fully loaded sets. Count comes from the response.',
@@ -1218,16 +1217,16 @@ const DATA = {
   detail: region(
     3,
     'Detail fetch',
-    'GET /users/:id',
-    'Full record for the selected row.',
+    'GET /items/:id',
+    'Full record for the selected item.',
     '—',
     'Fired on selection; cached per id so revisiting is instant. Header renders from list data immediately, body waits for the fetch.',
   ),
   tabs: region(
     4,
     'Tab lazy-load',
-    'GET /users/:id/roles · /groups',
-    'Membership facets.',
+    'GET /items/:id/<facet>',
+    'Secondary facets of the record.',
     '—',
     'Loaded on first visit to the tab, not with the record. Loading skeleton inside the tab panel only.',
     { questions: 'Prefetch the second tab on hover/focus?' },
@@ -1342,7 +1341,7 @@ const ACTIONS = {
     1,
     'Collection actions',
     'list toolbar · trailing, beside search',
-    'Creates or changes items in the collection the toolbar controls: Add users, import, bulk select.',
+    'Creates or changes items in the collection the toolbar controls: add, import, bulk select.',
     'One secondary button · overflow for the rest · icon-only below Comfortable',
     'Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.',
     {
@@ -1375,7 +1374,7 @@ const ACTIONS = {
     3,
     'Section actions',
     'content area · top trailing',
-    'Adds to the facet being viewed: Assign roles, Add to user groups.',
+    'Adds to the facet being viewed, e.g. assign or add to a related set.',
     'One secondary button per section',
     'Scoped to the visible tab. Opens a layer; on success the list in the section updates in place.',
     {

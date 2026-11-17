@@ -84,7 +84,7 @@ const ZONES = {
     },
     {
       why: [
-        'Users arrive with a vague target, not an ID',
+        'People arrive with a vague target, not an ID',
         'Search and filters narrow the set fast',
         'Stays visible so the chosen record keeps its context',
       ],
@@ -126,7 +126,7 @@ const ZONE_VARIANTS = [
     listWidth: '40%',
     listLabel: '40% · min 256px (size.small)',
     detailLabel: '60%',
-    note: 'Current behaviour (Users prototype). Both zones scale with the surface, keeping a 2:3 ratio — Grid [40% in px, flex]. Suits lists with richer items (status, meta) at the cost of a narrower detail column on small surfaces.',
+    note: 'Current behaviour. Both zones scale with the surface, keeping a 2:3 ratio — Grid [40% in px, flex]. Suits lists with richer items (status, meta) at the cost of a narrower detail column on small surfaces.',
   },
   {
     value: 'resizable',
@@ -166,7 +166,7 @@ const LIST = {
     'List toolbar',
     '<search> · search',
     'Narrows the collection (search, filters) and adds to it, so the list stays usable at any size.',
-    'Search input · Add users (collection action, trailing) · quick-filter toggle group · result count',
+    'Search input · collection action (trailing) · quick-filter toggle group · result count',
     'Sits above the list items. Filters apply instantly and update the count. Collection actions live here, not in the page header, because they act on the same set the filters shape.',
     see('scroll', 'data'),
     {
@@ -188,7 +188,7 @@ const LIST = {
       why: [
         'Consistent item rhythm makes records easy to compare',
         'Selected state marks which record is open',
-        'Users keep their place while reading the detail',
+        'People keep their place while reading the detail',
       ],
       ...see('scroll', 'states'),
     },
@@ -249,12 +249,12 @@ const DETAIL = {
     2,
     'Detail tabs',
     'tablist · tab · tabpanel (optional)',
-    'Switches between the record’s facets (profile, roles, groups) when it has more than one.',
+    'Switches between the record’s facets when it has more than one.',
     'Tab per facet · ←/→',
     'Only present when the record has several facets. Otherwise the content area follows the header directly.',
     {
       why: [
-        'Jump straight to the facet needed (profile, roles, groups)',
+        'Jump straight to the facet needed',
         'Avoids one long scrolling page',
         'Scopes each facet’s content and actions',
       ],
