@@ -659,7 +659,7 @@ const SHELL_CONFIGS = [
 ];
 
 const ShellConfigSections = () => (
-  <Box gap="large">
+  <Box gap="xlarge">
     {SHELL_CONFIGS.map((c) => {
       const l = shellLayout(c.width, c.nav, !!c.context);
       const tier = TIERS[l.tier];
