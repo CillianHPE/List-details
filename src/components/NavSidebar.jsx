@@ -14,7 +14,6 @@ export const navItems = {
     {
       key: 'proto-anatomy',
       label: 'Structure',
-      description: 'Page, zones, list and detail',
       href: '#/anatomy',
     },
   ],
@@ -22,13 +21,11 @@ export const navItems = {
     {
       key: 'proto-behaviour-scroll',
       label: 'Scroll & height',
-      description: 'What scrolls, what sticks',
       href: '#/behaviour/scroll',
     },
     {
       key: 'proto-behaviour-actions',
       label: 'Actions & ownership',
-      description: 'Where each action lives',
       href: '#/behaviour/actions',
     },
   ],
@@ -36,25 +33,21 @@ export const navItems = {
     {
       key: 'proto-responsive-breakpoints',
       label: 'Breakpoints',
-      description: 'Three width tiers',
       href: '#/responsive/breakpoints',
     },
     {
       key: 'proto-responsive-regions',
       label: 'Regions by width',
-      description: 'What each region does per tier',
       href: '#/responsive/regions',
     },
     {
       key: 'proto-responsive-drill-in',
       label: 'Drill-in',
-      description: 'Two zones become two screens',
       href: '#/responsive/drill-in',
     },
     {
       key: 'proto-responsive-shell',
       label: 'Shell configuration',
-      description: 'Nav state and available width',
       href: '#/responsive/shell',
     },
   ],
@@ -62,31 +55,26 @@ export const navItems = {
     {
       key: 'proto-states-loading',
       label: 'Loading',
-      description: 'List and detail load independently',
       href: '#/states/loading',
     },
     {
       key: 'proto-states-empty',
       label: 'Empty',
-      description: 'Nothing yet, or nothing matched',
       href: '#/states/empty',
     },
     {
       key: 'proto-states-no-selection',
       label: 'No selection',
-      description: 'Auto-select or prompt',
       href: '#/states/no-selection',
     },
     {
       key: 'proto-states-error',
       label: 'Error',
-      description: 'Scoped to the zone that failed',
       href: '#/states/error',
     },
     {
       key: 'proto-states-read-only',
       label: 'Read-only',
-      description: 'Hide or disable actions',
       href: '#/states/read-only',
     },
   ],
@@ -94,19 +82,16 @@ export const navItems = {
     {
       key: 'proto-v3',
       label: 'Users',
-      description: 'Long list, tabbed detail',
       href: '#/v3',
     },
     {
       key: 'proto-v3-sparse',
-      label: 'Users',
-      description: 'Short amount of content',
+      label: 'Users (sparse)',
       href: '#/v3-sparse',
     },
     {
       key: 'proto-accounts-cockpit',
       label: 'Sales Cockpit',
-      description: 'Account health and engagement',
       href: '#/accounts-cockpit',
     },
   ],
@@ -167,14 +152,7 @@ const ExpandableMenuItem = ({
                   <Box width="24px" flex={false}>
                     {active && <LinkNext />}
                   </Box>
-                  <Box>
-                    <Text>{subItem.label}</Text>
-                    {subItem.description && (
-                      <Text size="xsmall" color="text-weak">
-                        {subItem.description}
-                      </Text>
-                    )}
-                  </Box>
+                  <Text>{subItem.label}</Text>
                 </Box>
                 {subItem.count !== undefined && <Text>{subItem.count}</Text>}
               </Box>

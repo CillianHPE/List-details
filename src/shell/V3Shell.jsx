@@ -202,11 +202,6 @@ const NavItemV3 = ({
       />
       <Box flex>
         <Text weight={selected ? 500 : undefined}>{item.label}</Text>
-        {item.description && (
-          <Text size="xsmall" color="text-weak">
-            {item.description}
-          </Text>
-        )}
       </Box>
       {actions}
     </Box>
