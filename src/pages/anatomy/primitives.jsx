@@ -275,7 +275,7 @@ export const Legend = ({ regions, labels }) => (
 // value; the legend lays them out as a two-column NameValueList.
 export const RegionDetails = ({ region: r, labels = {}, compact = false }) => {
   const l = {
-    owns: 'Owns',
+    owns: 'Role',
     controls: 'Controls',
     behaviour: 'Behaviour',
     ...labels,
