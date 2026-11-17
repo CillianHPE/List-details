@@ -29,6 +29,7 @@ import {
   RegionsLevel,
   DrillInLevel,
   ShellLevel,
+  ShellConfigsLevel,
 } from './ResponsiveLevels';
 import {
   LoadingLevel,
@@ -615,6 +616,12 @@ export const PAGES = {
     subtitle:
       'How the app shell’s navigation state changes the width the surface receives.',
     Content: ShellLevel,
+  },
+  'responsive/shell-configs': {
+    title: 'Shell configurations',
+    subtitle:
+      'The common shell configurations, each written out as its own section.',
+    Content: ShellConfigsLevel,
   },
   'states/loading': {
     title: 'Loading',

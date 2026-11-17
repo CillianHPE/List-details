@@ -50,6 +50,11 @@ export const navItems = {
       label: 'Shell configuration',
       href: '#/responsive/shell',
     },
+    {
+      key: 'proto-responsive-shell-configs',
+      label: 'Shell configurations',
+      href: '#/responsive/shell-configs',
+    },
   ],
   States: [
     {

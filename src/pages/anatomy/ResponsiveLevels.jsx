@@ -500,54 +500,13 @@ const Num = ({ label, value, note }) => (
   </Box>
 );
 
-const ShellConfigExplorer = () => {
-  const [width, setWidth] = useState(1366);
-  const [nav, setNav] = useState('expanded');
-  const [context, setContext] = useState(false);
+// Bar, numbers, tier and shell notes for one width × pane configuration.
+// Shared by the interactive explorer and the static per-configuration page.
+const ShellReadout = ({ width, nav, context }) => {
   const l = shellLayout(width, nav, context);
   const tier = TIERS[l.tier];
   return (
     <Box gap="medium">
-      <Box direction="row" gap="large" wrap align="center">
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Browser width
-          </Text>
-          <ToggleGroup
-            options={BROWSER_WIDTHS.map((w) => ({ label: `${w}`, value: w }))}
-            value={width}
-            onToggle={({ value }) => value && setWidth(value)}
-          />
-        </Box>
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Navigation
-          </Text>
-          <ToggleGroup
-            options={[
-              { label: `Expanded ${SHELL.nav}px`, value: 'expanded' },
-              { label: `Collapsed ${SHELL.navRail}px`, value: 'collapsed' },
-              { label: 'Hidden', value: 'hidden' },
-            ]}
-            value={nav}
-            onToggle={({ value }) => value && setNav(value)}
-          />
-        </Box>
-        <Box gap="xsmall">
-          <Text size="small" weight={500} color="text-weak">
-            Context pane
-          </Text>
-          <ToggleGroup
-            options={[
-              { label: `Open ${SHELL.context}px`, value: true },
-              { label: 'Closed', value: false },
-            ]}
-            value={context}
-            onToggle={({ value }) => value !== undefined && setContext(value)}
-          />
-        </Box>
-      </Box>
-
       <ShellBar width={width} nav={nav} context={context} layout={l} />
 
       <Box direction="row" gap="large" wrap>
@@ -613,6 +572,130 @@ const ShellConfigExplorer = () => {
     </Box>
   );
 };
+
+const ShellConfigExplorer = () => {
+  const [width, setWidth] = useState(1366);
+  const [nav, setNav] = useState('expanded');
+  const [context, setContext] = useState(false);
+  return (
+    <Box gap="medium">
+      <Box direction="row" gap="large" wrap align="center">
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Browser width
+          </Text>
+          <ToggleGroup
+            options={BROWSER_WIDTHS.map((w) => ({ label: `${w}`, value: w }))}
+            value={width}
+            onToggle={({ value }) => value && setWidth(value)}
+          />
+        </Box>
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Navigation
+          </Text>
+          <ToggleGroup
+            options={[
+              { label: `Expanded ${SHELL.nav}px`, value: 'expanded' },
+              { label: `Collapsed ${SHELL.navRail}px`, value: 'collapsed' },
+              { label: 'Hidden', value: 'hidden' },
+            ]}
+            value={nav}
+            onToggle={({ value }) => value && setNav(value)}
+          />
+        </Box>
+        <Box gap="xsmall">
+          <Text size="small" weight={500} color="text-weak">
+            Context pane
+          </Text>
+          <ToggleGroup
+            options={[
+              { label: `Open ${SHELL.context}px`, value: true },
+              { label: 'Closed', value: false },
+            ]}
+            value={context}
+            onToggle={({ value }) => value !== undefined && setContext(value)}
+          />
+        </Box>
+      </Box>
+
+      <ShellReadout width={width} nav={nav} context={context} />
+    </Box>
+  );
+};
+
+// The configurations that actually occur, one dedicated section each.
+// Static by design: this page is destined for Confluence, where there are
+// no toggles, so every common case is written out.
+const SHELL_CONFIGS = [
+  {
+    title: 'Large desktop · 1920px · nav expanded + context pane',
+    when: `Over ${SHELL.coexistFrom}px both panes may stay open. Even with everything on screen the surface keeps its comfortable 2-column layout.`,
+    width: 1920,
+    nav: 'expanded',
+    context: true,
+  },
+  {
+    title: `Desktop · ${SHELL.coexistFrom}px · nav expanded + context pane`,
+    when: `The smallest width at which the expanded navigation and the context pane are allowed to coexist. Treat this as the floor for the 'everything open' case.`,
+    width: SHELL.coexistFrom,
+    nav: 'expanded',
+    context: true,
+  },
+  {
+    title: 'Laptop · 1366px · nav expanded',
+    when: 'The default working state on a laptop: navigation expanded, no context pane. This is the configuration most people will see most of the time.',
+    width: 1366,
+    nav: 'expanded',
+    context: false,
+  },
+  {
+    title: 'Laptop · 1366px · rail + context pane',
+    when: `What happens when the context pane opens under ${SHELL.coexistFrom}px: the navigation collapses to its ${SHELL.navRail}px rail so the surface keeps 2 columns.`,
+    width: 1366,
+    nav: 'collapsed',
+    context: true,
+  },
+  {
+    title: 'Small laptop · 1024px · nav expanded',
+    when: `The last width at which panes sit inline. With the expanded navigation only ${shellLayout(1024, 'expanded', false).available}px is left, so the surface drills in; collapsing to the rail gives it ${shellLayout(1024, 'collapsed', false).available}px and 2 columns back.`,
+    width: 1024,
+    nav: 'expanded',
+    context: false,
+  },
+  {
+    title: 'Tablet · 768px · panes overlay',
+    when: `Under ${SHELL.overlayBelow}px the navigation and context pane float over the page, so the surface gets the full main pane regardless of what is open.`,
+    width: 768,
+    nav: 'expanded',
+    context: false,
+  },
+  {
+    title: 'Phone · 414px · panes overlay',
+    when: 'Only 1 zone fits. The surface is in the drill-in tier: list first, detail on selection with Back.',
+    width: 414,
+    nav: 'hidden',
+    context: false,
+  },
+];
+
+const ShellConfigSections = () => (
+  <Box gap="xlarge">
+    {SHELL_CONFIGS.map((c) => (
+      <Box key={c.title} gap="small">
+        <Box gap="xxsmall">
+          <Text size="large" weight={500}>
+            {c.title}
+          </Text>
+          <Text size="small" color="text-weak">
+            {c.when}
+          </Text>
+        </Box>
+        <ShellReadout width={c.width} nav={c.nav} context={c.context} />
+      </Box>
+    ))}
+  </Box>
+);
 
 // Every width × pane combination at a glance
 const ShellMatrix = () => {
@@ -1263,6 +1346,25 @@ export const ShellLevel = () => (
   >
     <ShellConfigExplorer />
     <Box gap="xsmall" margin={{ top: 'large' }}>
+      <Text size="large" weight={500}>
+        All configurations
+      </Text>
+      <Text size="small" color="text-weak">
+        Pixels available to the surface for every width and pane combination (✕
+        = expanded nav with context pane under {SHELL.coexistFrom}px,
+        disallowed).
+      </Text>
+      <ShellMatrix />
+    </Box>
+  </Level>
+);
+
+export const ShellConfigsLevel = () => (
+  <Level
+    intro={`The same shell arithmetic as the interactive page, written out as dedicated sections so it reads without controls. The navigation (${SHELL.nav}px expanded, ${SHELL.navRail}px rail) and the context pane (${SHELL.context}px) take width first; each section shows what is left for the surface and which tier it lands in.`}
+  >
+    <ShellConfigSections />
+    <Box gap="xsmall" margin={{ top: 'xlarge' }}>
       <Text size="large" weight={500}>
         All configurations
       </Text>
