@@ -485,7 +485,7 @@ const ListWireframe = () => (
             align="center"
             justify="center"
             border={{ color: 'brand', size: 'small' }}
-            round="full"
+            round="xsmall"
           >
             <Ghost width="44px" height="6px" background="brand" />
           </Box>
