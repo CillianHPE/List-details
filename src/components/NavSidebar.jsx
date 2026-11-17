@@ -10,7 +10,20 @@ import {
 // Mirrors hpe-design-system/sandbox/grommet-app NavSidebar + CollapsibleMenu:
 // title header with collapse toggle, divider, then plain or expandable text items.
 export const navItems = {
-  Anatomy: { key: 'proto-anatomy', label: 'Anatomy', href: '#/anatomy' },
+  Anatomy: [
+    {
+      key: 'proto-anatomy',
+      label: 'Structure',
+      description: 'Page, zones, list and detail',
+      href: '#/anatomy',
+    },
+    {
+      key: 'proto-behaviour',
+      label: 'Behaviour',
+      description: 'How the surface responds',
+      href: '#/behaviour',
+    },
+  ],
   Examples: [
     {
       key: 'proto-v3',
@@ -155,7 +168,7 @@ const SidebarHeader = ({ expanded, setExpanded, title }) => (
 export const NavSidebar = ({
   title = 'Workspace',
   items = navItems,
-  active = navItems.Anatomy,
+  active = navItems.Anatomy[0],
   sideBarOpen = true,
   ...rest
 }) => {

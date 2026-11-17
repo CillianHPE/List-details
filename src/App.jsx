@@ -8,11 +8,18 @@ import { AnatomyPage } from './pages/anatomy/AnatomyPage';
 import { sparseUsers } from './data/users';
 
 // Versions are addressed by URL hash so they can be linked directly:
-//   #/anatomy  → lo-fi region/role map of the pattern
+//   #/anatomy  → Structure: lo-fi region/role map of the pattern
+//   #/behaviour → Behaviour: how the surface responds
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
 //   #/v3-sparse → four users, little data yet (empty states, unavailable values)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
-const VERSIONS = ['anatomy', 'v3', 'v3-sparse', 'accounts-cockpit'];
+const VERSIONS = [
+  'anatomy',
+  'behaviour',
+  'v3',
+  'v3-sparse',
+  'accounts-cockpit',
+];
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');
   return VERSIONS.includes(v) ? v : 'v3';
@@ -52,13 +59,21 @@ const App = () => {
           <CockpitPage />
         </V3Shell>
       )}
-      {version === 'anatomy' &&
+      {(version === 'anatomy' || version === 'behaviour') &&
         (chrome ? (
           <V3Shell>
-            <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
+            <AnatomyPage
+              section={version === 'behaviour' ? 'behaviour' : 'structure'}
+              chrome={chrome}
+              onChromeChange={setChrome}
+            />
           </V3Shell>
         ) : (
-          <AnatomyPage chrome={chrome} onChromeChange={setChrome} />
+          <AnatomyPage
+            section={version === 'behaviour' ? 'behaviour' : 'structure'}
+            chrome={chrome}
+            onChromeChange={setChrome}
+          />
         ))}
     </Grommet>
   );

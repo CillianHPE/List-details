@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -202,8 +202,14 @@ const NavItemV3 = ({ item, selected, onSelect }) => (
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() =>
-    activeNavItem(navItems.Anatomy),
+    activeNavItem(navItems.Anatomy[0]),
   );
+  // Keep selection in step with in-page links that change the route.
+  useEffect(() => {
+    const onHash = () => setSelected((s) => activeNavItem(s));
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   const onSelect = (item) => selectNavItem(item, setSelected);
   return (
     <Box

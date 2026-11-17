@@ -290,12 +290,12 @@ const DETAIL = {
 // ---------------------------------------------------------------------------
 // Level 1 · Page — where the surface sits in the shell
 
-const PageWireframe = ({ variant }) => {
-  const v3 = variant === 'v3';
+// Drawn against App Shell V3 (page canvas + contained nav pane).
+const PageWireframe = () => {
   return (
     <Box
       border={{ color: 'border-weak' }}
-      background={v3 ? 'background' : 'background-back'}
+      background="background"
       round="small"
       overflow="hidden"
     >
@@ -321,19 +321,14 @@ const PageWireframe = ({ variant }) => {
         </Box>
       </Block>
 
-      <Box
-        direction="row"
-        gap={v3 ? 'xsmall' : 'none'}
-        pad={v3 ? 'xsmall' : 'none'}
-        align="stretch"
-      >
+      <Box direction="row" gap="xsmall" pad="xsmall" align="stretch">
         <Block
           showRole={false}
           region={PAGE.nav}
           width="220px"
           flex={false}
-          background={v3 ? 'background-back' : 'background-front'}
-          round={v3 ? 'large' : 'none'}
+          background="background-back"
+          round="large"
         >
           <Ghost width="60%" />
           <Ghost width="80%" height="28px" />
@@ -370,7 +365,7 @@ const PageWireframe = ({ variant }) => {
             showRole={false}
             region={PAGE.surface}
             label="fills remaining width"
-            round={v3 ? 'xsmall' : 'xlarge'}
+            round="xsmall"
             height={{ min: '260px' }}
           >
             <Box direction="row" gap="small" flex>
@@ -591,30 +586,48 @@ const DetailWireframe = () => (
   </Box>
 );
 
-export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
-  const [shell, setShell] = useState('default');
+// Structure and Behaviour are separate pages (#/anatomy, #/behaviour); both
+// render through this component so tab state survives cross-links between them.
+const SECTIONS = {
+  structure: {
+    hash: 'anatomy',
+    title: 'Structure',
+    subtitle:
+      'Zoom from the page down into each zone. Every level names its regions, their roles and what they own.',
+  },
+  behaviour: {
+    hash: 'behaviour',
+    title: 'Behaviour',
+    subtitle:
+      'How the surface responds: selection, navigation, scroll, responsive and more.',
+  },
+};
+
+export const AnatomyPage = ({
+  section = 'structure',
+  chrome = true,
+  onChromeChange,
+}) => {
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
-  const [group, setGroup] = useState('structure');
   const [behaviour, setBehaviour] = useState(0);
   const go = (g, tab) => {
     if (g === 'behaviour') {
       const i = VISIBLE_BEHAVIOUR_TABS.findIndex((t) => t.key === tab);
       if (i < 0) return;
-      tab = i;
-    }
-    setGroup(g);
-    if (g === 'behaviour') setBehaviour(tab);
-    else setLevel(tab);
+      setBehaviour(i);
+    } else setLevel(tab);
+    window.location.hash = `/${SECTIONS[g].hash}`;
     window.scrollTo({ top: 0 });
   };
+  const group = section;
   return (
     <AnatomyNav.Provider value={go}>
       <Page pad={{ bottom: 'xlarge' }}>
         <PageContent gap="medium">
           <PageHeader
-            title="List–detail anatomy"
-            subtitle="Zoom from the page down into each zone. Every level names its regions, their roles and what they own."
+            title={SECTIONS[group].title}
+            subtitle={SECTIONS[group].subtitle}
             actions={
               onChromeChange && (
                 <CheckBox
@@ -625,14 +638,6 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
                 />
               )
             }
-          />
-          <ToggleGroup
-            options={[
-              { label: 'Structure', value: 'structure' },
-              { label: 'Behaviour', value: 'behaviour' },
-            ]}
-            value={group}
-            onToggle={({ value }) => value && setGroup(value)}
           />
           {group === 'behaviour' && (
             <Tabs
@@ -656,17 +661,7 @@ export const AnatomyPage = ({ chrome = true, onChromeChange }) => {
                 <Level
                   title="Where the surface sits"
                   intro="Shell regions (1–3) are shared by every page. The page header carries page-level controls only; collection actions (Add users) sit in the list toolbar. The list–detail surface fills the rest of Main."
-                  control={
-                    <ToggleGroup
-                      options={[
-                        { label: 'Default shell', value: 'default' },
-                        { label: 'Shell v3', value: 'v3' },
-                      ]}
-                      value={shell}
-                      onToggle={({ value }) => value && setShell(value)}
-                    />
-                  }
-                  wireframe={<PageWireframe variant={shell} />}
+                  wireframe={<PageWireframe />}
                   regions={PAGE}
                   labels={{ behaviour: 'Layout' }}
                 />
