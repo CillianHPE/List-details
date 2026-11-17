@@ -144,20 +144,14 @@ const SCROLL = {
       'The column sticks below the global header (offset 24px, edgeSize.medium) so it stays put while the page scrolls.',
       'It stretches to match the detail height, so a short list never leaves the divider hanging mid-surface.',
       'Keyboard navigation scrolls the selected item into view.',
+      'Uses the native scrollbar so people can see that the list scrolls.',
+      'Jumps back to the top when the filter changes — a new filter is a new list.',
     ],
     {
       why: [
         'Scrolling the list never loses the place in the record',
         'Scrolling the record never loses the place in the list',
         'Switching records is one gesture',
-      ],
-    },
-    {
-      questions:
-        'Native vs hidden scrollbar? Keep scroll position when the filter changes?',
-      recommendation: [
-        'Native scrollbar. People need to see that the list scrolls; a hidden scrollbar hides content.',
-        'Jump to the top when the filter changes. A new filter is a new list, and keeping the old position can leave an empty gap.',
       ],
     },
   ),
@@ -175,13 +169,11 @@ const SCROLL = {
     'grows page',
     'Holds the record’s tabs and content; long content makes the page taller.',
     '—',
-    'Long content makes the page taller. Changing selection scrolls the page back to the top of the detail zone.',
-    {
-      questions:
-        'Reset scroll on selection change, or preserve when switching between records of the same type?',
-      recommendation:
-        'Reset to the top of the detail. Every record then starts the same way, with the header and first facet visible. If a tab is open, keep that tab but still scroll to the top.',
-    },
+    [
+      'Long content makes the page taller.',
+      'Changing selection scrolls the page back to the top of the detail, so every record starts with its header and first facet visible.',
+      'If a tab is open, the same tab stays selected for the new record.',
+    ],
   ),
 };
 
