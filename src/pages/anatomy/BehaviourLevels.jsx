@@ -129,8 +129,8 @@ const SCROLL = {
     1,
     'List toolbar',
     'sticky',
-    'Keeps search and filters reachable while the items scroll beneath it.',
-    'Search · filters · count',
+    'Keeps search, filters and collection actions reachable while the items scroll beneath it.',
+    'Search · filters · collection actions · count',
     'Sticky within the list column; never scrolls out of view.',
   ),
   listBody: region(
