@@ -552,7 +552,7 @@ const DetailWireframe = () => (
           </Block>
         </Box>
       </Focus>
-      <Focus region={DETAIL.content} label="pairs · list · table …" flex>
+      <Focus region={DETAIL.content} flex>
         <Block
           region={DETAIL.tabs}
           border={{ color: 'border', size: 'small', style: 'dashed' }}
