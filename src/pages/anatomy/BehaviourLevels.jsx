@@ -125,16 +125,8 @@ const Frame = ({ children, ...rest }) => (
 // detail grows the page. Global header and viewport are app-shell concerns and
 // are deliberately out of scope here.
 const SCROLL = {
-  main: region(
-    1,
-    'Main',
-    'overflow auto',
-    'Owns the single page-level scrollbar. The page header scrolls away with the content.',
-    '—',
-    'Scrollbar appears on the right edge of Main. Height is whatever the shell gives it; the surface never sets its own.',
-  ),
   toolbar: region(
-    2,
+    1,
     'List toolbar',
     'sticky',
     'Keeps search and filters reachable while the rows scroll beneath it.',
@@ -142,12 +134,12 @@ const SCROLL = {
     'Sticky within the list column; never scrolls out of view.',
   ),
   listBody: region(
-    3,
+    2,
     'List body',
     'overflow auto',
     'Scrolls the rows independently so browsing the list never moves the record beside it.',
     'Wheel · ↑/↓ · PgUp/PgDn',
-    'Max height = visible Main − page header − toolbar. Selected row is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
+    'Max height = visible page content − page header − toolbar. Selected row is scrolled into view on keyboard navigation. The column is sticky below the shell header (offset by edgeSize.medium) so it stays put while the page scrolls, and stretches to the detail height so a short list never leaves the divider hanging mid-surface.',
     {
       why: [
         'Scrolling the list never loses the place in the record',
@@ -161,7 +153,7 @@ const SCROLL = {
     },
   ),
   detailHeader: region(
-    4,
+    3,
     'Detail header',
     'static',
     'Names the open record and holds its actions; scrolls away with the page.',
@@ -169,7 +161,7 @@ const SCROLL = {
     'Scrolls away with the page like normal content.',
   ),
   detailContent: region(
-    5,
+    4,
     'Detail content',
     'grows page',
     'Holds the record’s tabs and content; long content makes the page taller.',
@@ -182,10 +174,17 @@ const SCROLL = {
   ),
 };
 
+// Page header and the page scrollbar are drawn as context only; the page
+// (Main) is the scroll container and the surface never sets its own height.
 const ScrollWireframe = () => {
   const R = SCROLL;
   return (
-    <Focus region={R.main} label="overflow auto" height="440px">
+    <Box
+      border={{ color: 'border-weak' }}
+      round="small"
+      pad="small"
+      height="440px"
+    >
       <Box direction="row" gap="small" flex>
         <Box flex gap="small">
           <Box direction="row" gap="small" align="center">
@@ -203,9 +202,11 @@ const ScrollWireframe = () => {
                 <Ghost height="24px" />
               </Focus>
               <Focus region={R.listBody} label="scrolls" pad="xsmall" flex>
-                <Box direction="row" gap="xsmall" flex>
+                <Box direction="row" gap="xsmall" flex overflow="hidden">
                   <Box flex overflow="hidden">
-                    <GhostRows count={7} />
+                    <Box flex={false}>
+                      <GhostRows count={7} />
+                    </Box>
                   </Box>
                   <ScrollTrack thumb="40%" />
                 </Box>
@@ -237,14 +238,14 @@ const ScrollWireframe = () => {
         </Box>
         <ScrollTrack thumb="55%" />
       </Box>
-    </Focus>
+    </Box>
   );
 };
 
 export const ScrollLevel = () => (
   <Level
     title="Scroll and height"
-    intro="Which element inside Main owns each scrollbar, what is pinned, and how heights are derived. The page scrolls; the list keeps its own scroll."
+    intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. The page scrolls; the list keeps its own scroll."
     wireframe={<ScrollWireframe />}
     regions={SCROLL}
   />
@@ -338,7 +339,7 @@ const RESPONSIVE = {
     },
   ),
   detailHeader: region(
-    4,
+    3,
     'Detail header',
     'row → wraps',
     'Heading and record actions.',
