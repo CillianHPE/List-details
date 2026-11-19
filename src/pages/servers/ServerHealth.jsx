@@ -22,7 +22,7 @@ export const SEVERITY_STATUS = {
   unknown: HEALTH_STATUS.Unknown,
 };
 
-export const ServerHealth = ({ health, iconOnly, label }) => {
+export const ServerHealth = ({ health, iconOnly, label, weight }) => {
   const { Icon, color } = HEALTH_STATUS[health] ?? HEALTH_STATUS.Unknown;
   return (
     <Box direction="row" align="center" gap="3xsmall" flex={false}>
@@ -32,18 +32,18 @@ export const ServerHealth = ({ health, iconOnly, label }) => {
         aria-label={iconOnly ? `Health: ${health}` : undefined}
         aria-hidden={!iconOnly}
       />
-      {!iconOnly && <Text>{label ?? health}</Text>}
+      {!iconOnly && <Text weight={weight}>{label ?? health}</Text>}
     </Box>
   );
 };
 
 // Status text for component / security rows: label with its severity icon
-export const StatusText = ({ severity, children }) => {
+export const StatusText = ({ severity, weight, children }) => {
   const { Icon, color } = SEVERITY_STATUS[severity] ?? SEVERITY_STATUS.unknown;
   return (
     <Box direction="row" align="center" gap="3xsmall" flex={false}>
       <Icon color={color} size="xsmall" aria-hidden />
-      <Text>{children}</Text>
+      <Text weight={weight}>{children}</Text>
     </Box>
   );
 };

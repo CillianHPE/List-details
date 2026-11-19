@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   DataTable,
+  Grid,
   Heading,
   List,
   Menu,
@@ -16,18 +17,110 @@ import {
 } from 'grommet';
 import { Download, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section, usePairDirection } from '../../pattern/detail';
+import { ListRow, Section } from '../../pattern/detail';
 import { ServerHealth, StatusText } from './ServerHealth';
 
 // Servers · Compute Ops Management. The COM detail page's facets, read side
 // by side with the list instead of on a separate page.
 
-// D · Detail header — name · "Model · Serial · Group" · health, with the
-// record-level Actions menu COM shows top-right of its detail page.
+// ------------------------------------------------------------- primitives
+
+// Contained card: groups related pairs so a facet reads as a few blocks
+// rather than one long list.
+const Card = ({ title, note, action, children }) => (
+  <Box
+    background="background-contrast"
+    round="medium"
+    pad="medium"
+    gap="medium"
+    flex={false}
+  >
+    {(title || action) && (
+      <Box direction="row" align="start" justify="between" gap="medium" wrap>
+        <Box gap="4xsmall">
+          <Heading level={4} size="small" margin="none">
+            {title}
+          </Heading>
+          {note && (
+            <Text size="small" color="text-weak">
+              {note}
+            </Text>
+          )}
+        </Box>
+        {action}
+      </Box>
+    )}
+    {children}
+  </Box>
+);
+
+// Stacked label-over-value pairs in a responsive grid: glanceable in a
+// card, and no name column to align across differing widths.
+const PairGrid = ({ pairs, size = 'small' }) => (
+  <NameValueList
+    layout="grid"
+    pairProps={{ direction: 'column' }}
+    valueProps={{ width: size }}
+    gap={{ row: 'small', column: 'medium' }}
+  >
+    {pairs.map(([name, value]) => (
+      <NameValuePair key={name} name={name}>
+        {typeof value === 'string' ? <Text>{value}</Text> : value}
+      </NameValuePair>
+    ))}
+  </NameValueList>
+);
+
+// Two-up card grid that collapses to one column when the detail is narrow
+// (2 cards need ≥ ~620px: 2 × 300px + gap)
+const CardGrid = ({ children }) => (
+  <Grid columns={{ count: 'fit', size: ['300px', 'flex'] }} gap="small">
+    {children}
+  </Grid>
+);
+
+const TableHeader = ({ title, note, action }) => (
+  <Box direction="row" align="end" justify="between" gap="medium" wrap>
+    <Box gap="4xsmall">
+      <Heading level={4} size="small" margin="none">
+        {title}
+      </Heading>
+      {note && (
+        <Text size="small" color="text-weak">
+          {note}
+        </Text>
+      )}
+    </Box>
+    {action}
+  </Box>
+);
+
+const Facet = ({ children }) => (
+  <Box gap="medium" pad={{ top: 'medium' }}>
+    {children}
+  </Box>
+);
+
+// ----------------------------------------------------------------- header
+
+// Key facts at one type scale, so health doesn't outweigh connection/power
+const Fact = ({ label, children }) => (
+  <Box gap="4xsmall" flex={false}>
+    <Text size="small" color="text-weak">
+      {label}
+    </Text>
+    <Box direction="row" align="center" height={{ min: '24px' }}>
+      {typeof children === 'string' ? <Text weight={500}>{children}</Text> : children}
+    </Box>
+  </Box>
+);
+
+// D · Detail header — name and Model · Serial, record-level Actions menu
+// (as COM shows top-right of its detail page), then a strip of key facts.
 const DetailHeader = ({ server }) => {
   const connected = server.state === 'Connected';
   return (
-    <Box flex={false} gap="small">
+    <Box flex={false} gap="medium">
       <Box direction="row" align="start" justify="between" gap="small" wrap>
         <Box gap="xxsmall">
           <Heading level={2} margin="none">
@@ -55,178 +148,175 @@ const DetailHeader = ({ server }) => {
           ]}
         />
       </Box>
-      <Box direction="row" align="center" gap="medium" wrap>
-        <ServerHealth health={server.health} />
-        <Text size="small" color="text-weak">
-          {connected ? `Connected · Power ${server.power.toLowerCase()}` : 'Not connected'}
-          {' · '}
-          {server.group}
-        </Text>
+      <Box
+        direction="row"
+        gap="large"
+        wrap
+        pad={{ vertical: 'small' }}
+        border={{ side: 'horizontal', color: 'border-weak' }}
+      >
+        <Fact label="Health">
+          <ServerHealth health={server.health} weight={500} />
+        </Fact>
+        <Fact label="Connection">
+          <StatusText severity={connected ? 'ok' : 'unknown'} weight={500}>
+            {server.state}
+          </StatusText>
+        </Fact>
+        <Fact label="Power">{connected ? server.power : 'Unknown'}</Fact>
+        <Fact label="Group">
+          <Anchor label={server.group} href="#" weight={500} />
+        </Fact>
+        <Fact label="Alerts">{`${server.alerts}`}</Fact>
       </Box>
     </Box>
   );
 };
 
-// Groups of name/value pairs, divided so the facet doesn't read as one list
-const PairGroups = ({ groups }) => {
-  const [ref, direction] = usePairDirection();
-  return (
-    <Box ref={ref}>
-      {groups.map((group, index) => (
-        <Box
-          key={group.title}
-          gap="small"
-          pad={{ vertical: 'medium' }}
-          border={
-            index < groups.length - 1
-              ? { side: 'bottom', color: 'border-weak' }
-              : false
-          }
-        >
-          <Heading level={4} size="medium" margin="none">
-            {group.title}
-          </Heading>
-          <NameValueList
-            pairProps={{ direction }}
-            nameProps={{ width: 'small' }}
-          >
-            {group.pairs.map(([name, value]) => (
-              <NameValuePair key={name} name={name}>
-                {typeof value === 'string' ? <Text>{value}</Text> : value}
-              </NameValuePair>
-            ))}
-          </NameValueList>
-        </Box>
-      ))}
-    </Box>
-  );
-};
-
-const SubHeading = ({ title, note }) => (
-  <Box gap="4xsmall">
-    <Heading level={4} size="medium" margin="none">
-      {title}
-    </Heading>
-    {note && (
-      <Text size="small" color="text-weak">
-        {note}
-      </Text>
-    )}
-  </Box>
-);
-
 // ---------------------------------------------------------------- Summary
 const SECURITY_SEVERITY = { OK: 'ok', 'At risk': 'critical', 'Ignore risk': 'warning' };
 
 const Summary = ({ server }) => (
-  <PairGroups
-    groups={[
-      {
-        title: 'Details',
-        pairs: [
-          ['State', server.state],
-          ['Alerts', `${server.alerts}`],
-          ['Group', <Anchor label={server.group} href="#" />],
-          ['Connection type', server.connectionType],
-          ['Manufacturer', server.manufacturer],
-          ['Model', server.model],
-          ['Serial number', server.serial],
-          [
-            'iLO security status',
-            <StatusText severity={SECURITY_SEVERITY[server.iloSecurity]}>
-              {server.iloSecurity}
-            </StatusText>,
-          ],
-          ['UUID', server.uuid],
-          ['iLO IP address', <Anchor label={server.iloIp} href="#" />],
-          ['iLO hostname', <Anchor label={server.iloHostname} href="#" />],
-          ['Baseline', server.baseline],
-          ['Product ID', server.productId],
-          ['Power', server.power],
-          ['UID indicator', server.uidIndicator],
+  <Facet>
+    <CardGrid>
+      <Card title="Identity">
+        <PairGrid
+          pairs={[
+            ['Manufacturer', server.manufacturer],
+            ['Model', server.model],
+            ['Serial number', server.serial],
+            ['Product ID', server.productId],
+            ['Platform', server.platform],
+            ['UUID', <Text wordBreak="break-all">{server.uuid}</Text>],
+          ]}
+        />
+      </Card>
+      <Card title="iLO and connectivity">
+        <PairGrid
+          pairs={[
+            ['Connection type', server.connectionType],
+            [
+              'iLO security status',
+              <StatusText severity={SECURITY_SEVERITY[server.iloSecurity]}>
+                {server.iloSecurity}
+              </StatusText>,
+            ],
+            ['iLO IP address', <Anchor label={server.iloIp} href="#" />],
+            [
+              'iLO hostname',
+              <Anchor label={server.iloHostname} href="#" wordBreak="break-all" />,
+            ],
+            ['Auto iLO firmware update', server.autoIloUpdate],
+          ]}
+        />
+      </Card>
+    </CardGrid>
+    <Card title="Operations">
+      <PairGrid
+        pairs={[
           ['Operating system', server.os],
+          ['Baseline', server.baseline],
+          ['UID indicator', server.uidIndicator],
           ['Subscription', server.subscription],
-          ['Platform', server.platform],
-          ['Auto iLO firmware update', server.autoIloUpdate],
-        ],
-      },
-      {
-        title: 'Location',
-        pairs: [
-          ['Name', server.location.name],
-          ['Address', server.location.address],
-        ],
-      },
-      {
-        title: 'Email notifications',
-        pairs: [
-          [
-            'Issues',
-            server.notifications.issues
-              ? 'Subscribed to service event, critical and warning issues'
-              : 'Not subscribed',
-          ],
-          [
-            'Power state change',
-            server.notifications.powerState ? 'Subscribed' : 'Not subscribed',
-          ],
-          [
-            'Disconnect or not monitored',
-            server.notifications.disconnect ? 'Subscribed' : 'Not subscribed',
-          ],
-          [
-            'Daily summary',
-            server.notifications.dailySummary
-              ? 'Subscribed to a daily health and recommendations email'
-              : 'Not subscribed',
-          ],
-        ],
-      },
-    ]}
-  />
+        ]}
+        size="medium"
+      />
+    </Card>
+    <CardGrid>
+      <Card title="Location" action={<Button label="Edit" size="small" />}>
+        <PairGrid
+          pairs={[
+            ['Name', server.location.name],
+            ['Address', server.location.address],
+          ]}
+          size="medium"
+        />
+      </Card>
+      <Card
+        title="Email notifications"
+        action={<Button label="Edit" size="small" />}
+      >
+        <List
+          data={[
+            ['Issues', server.notifications.issues],
+            ['Power state change', server.notifications.powerState],
+            ['Disconnect or not monitored', server.notifications.disconnect],
+            ['Daily summary', server.notifications.dailySummary],
+          ]}
+          pad="none"
+        >
+          {([label, on], index) => (
+            <ListRow index={index} count={4}>
+              <Text>{label}</Text>
+              <Text color={on ? undefined : 'text-weak'}>
+                {on ? 'Subscribed' : 'Off'}
+              </Text>
+            </ListRow>
+          )}
+        </List>
+      </Card>
+    </CardGrid>
+  </Facet>
 );
 
 // ----------------------------------------------------------------- Health
-const Health = ({ server }) => (
-  <Box gap="medium" pad={{ top: 'medium' }}>
-    <Box gap="small">
-      <SubHeading title="General" />
-      <NameValueList nameProps={{ width: 'small' }}>
-        <NameValuePair name="Overall health">
-          <ServerHealth health={server.health} />
-        </NameValuePair>
-      </NameValueList>
-    </Box>
-    <Box gap="small">
-      <SubHeading title="Component health" />
-      <List data={server.componentHealth} pad="none">
-        {(c, index) => (
-          <ListRow index={index} count={server.componentHealth.length}>
-            <Text>{c.name}</Text>
-            <StatusText severity={c.severity}>{c.status}</StatusText>
-          </ListRow>
-        )}
-      </List>
-    </Box>
-  </Box>
-);
+const Health = ({ server }) => {
+  const counts = server.componentHealth.reduce((acc, c) => {
+    acc[c.severity] = (acc[c.severity] ?? 0) + 1;
+    return acc;
+  }, {});
+  const note = ['critical', 'warning']
+    .filter((s) => counts[s])
+    .map((s) => `${counts[s]} ${s}`)
+    .join(' · ');
+  return (
+    <Facet>
+      <Card title="Overall health">
+        <Box direction="row" gap="large" wrap>
+          <Fact label="Status">
+            <ServerHealth health={server.health} weight={500} />
+          </Fact>
+          <Fact label="Components">
+            {`${server.componentHealth.length} monitored${note ? ` · ${note}` : ''}`}
+          </Fact>
+        </Box>
+      </Card>
+      <Box gap="small">
+        <TableHeader title="Component health" />
+        <List data={server.componentHealth} pad="none">
+          {(c, index) => (
+            <ListRow index={index} count={server.componentHealth.length}>
+              <Text>{c.name}</Text>
+              <StatusText severity={c.severity}>{c.status}</StatusText>
+            </ListRow>
+          )}
+        </List>
+      </Box>
+    </Facet>
+  );
+};
 
 // --------------------------------------------------------------- Firmware
-const Firmware = ({ server }) => (
-  <Box gap="medium" pad={{ top: 'medium' }}>
+const Firmware = ({ server, connected }) => (
+  <Facet>
+    <Card
+      title="Firmware baseline"
+      action={<Button label="Update firmware" size="small" disabled={!connected} />}
+    >
+      <PairGrid
+        pairs={[
+          ['Baseline', <Anchor label={server.baselineName} href="#" />],
+          ['Compliance', server.baseline],
+          ['Last operation', server.lastFirmwareOperation],
+        ]}
+        size="medium"
+      />
+    </Card>
     <Box gap="small">
-      <SubHeading title="General" />
-      <NameValueList nameProps={{ width: 'small' }}>
-        <NameValuePair name="Last operation">
-          <Text>{server.lastFirmwareOperation}</Text>
-        </NameValuePair>
-        <NameValuePair name="Baseline">
-          <Anchor label={server.baselineName} href="#" />
-        </NameValuePair>
-      </NameValueList>
-    </Box>
-    <Box gap="small">
-      <SubHeading title="Firmware" note={`${server.firmware.length} components`} />
+      <TableHeader
+        title="Firmware"
+        note={`${server.firmware.length} components`}
+      />
       <Box overflow="auto">
         <DataTable
           columns={[
@@ -244,7 +334,7 @@ const Firmware = ({ server }) => (
       </Box>
     </Box>
     <Box gap="small">
-      <SubHeading title="HPE drivers and software" />
+      <TableHeader title="HPE drivers and software" />
       <Box overflow="auto">
         <DataTable
           columns={[
@@ -260,7 +350,7 @@ const Firmware = ({ server }) => (
         />
       </Box>
     </Box>
-  </Box>
+  </Facet>
 );
 
 // --------------------------------------------------------------- Hardware
@@ -268,39 +358,32 @@ const Hardware = ({ server }) => {
   const hw = server.hardware;
   const [slots, filled] = hw.memorySlots;
   return (
-    <Box gap="medium" pad={{ top: 'medium' }}>
-      <Box gap="small">
-        <SubHeading title="Hardware inventory" />
-        <NameValueList nameProps={{ width: 'small' }}>
-          <NameValuePair name="Last collection">
-            <Box direction="row" align="center" gap="xsmall">
-              <Text>{hw.lastCollection}</Text>
-              <Button icon={<Refresh />} size="small" a11yTitle="Collect now" />
-              <Button
-                icon={<Download />}
-                size="small"
-                a11yTitle="Download inventory"
-              />
-            </Box>
-          </NameValuePair>
-        </NameValueList>
-      </Box>
-      <Box gap="small">
-        <SubHeading title="Platform" />
-        <NameValueList nameProps={{ width: 'small' }}>
-          <NameValuePair name="Form factor">
-            <Text>{hw.formFactor}</Text>
-          </NameValuePair>
-          <NameValuePair name="Chassis type">
-            <Text>{hw.chassisType}</Text>
-          </NameValuePair>
-        </NameValueList>
-      </Box>
-      <Box gap="small">
-        <SubHeading
-          title="Processors"
-          note={`${hw.processors.length} of ${hw.processors.length} total sockets`}
+    <Facet>
+      <Card
+        title="Hardware inventory"
+        note={`Last collected ${hw.lastCollection}`}
+        action={
+          <Box direction="row" gap="xsmall">
+            <Button icon={<Refresh />} size="small" a11yTitle="Collect now" />
+            <Button
+              icon={<Download />}
+              size="small"
+              a11yTitle="Download inventory"
+            />
+          </Box>
+        }
+      >
+        <PairGrid
+          pairs={[
+            ['Form factor', hw.formFactor],
+            ['Chassis type', hw.chassisType],
+            ['Processors', `${hw.processors.length} of ${hw.processors.length} sockets`],
+            ['Memory', `${filled} of ${slots} slots`],
+          ]}
         />
+      </Card>
+      <Box gap="small">
+        <TableHeader title="Processors" />
         <Box overflow="auto">
           <DataTable
             columns={[
@@ -315,15 +398,25 @@ const Hardware = ({ server }) => {
         </Box>
       </Box>
       <Box gap="small">
-        <SubHeading title="Memory" note={`${filled} of ${slots} total slots`} />
+        <TableHeader title="Memory" note={`${filled} of ${slots} slots filled`} />
         <Box overflow="auto">
           <DataTable
             columns={[
-              { property: 'location', header: 'Location', primary: true },
-              { property: 'type', header: 'Type' },
+              {
+                property: 'location',
+                header: 'Location',
+                primary: true,
+                render: (m) => (
+                  <Box>
+                    <Text weight={500}>{m.location}</Text>
+                    <Text size="small" color="text-weak">
+                      {m.type} · {m.technology}
+                    </Text>
+                  </Box>
+                ),
+              },
               { property: 'size', header: 'Size' },
-              { property: 'speed', header: 'Operating speed' },
-              { property: 'technology', header: 'Technology' },
+              { property: 'speed', header: 'Speed' },
               { property: 'serial', header: 'Serial number' },
               { property: 'part', header: 'Part number' },
             ]}
@@ -332,26 +425,26 @@ const Hardware = ({ server }) => {
         </Box>
       </Box>
       <Box gap="small">
-        <SubHeading
+        <TableHeader
           title="Network adapters"
-          note={`${hw.networkAdapters.length} network adapters`}
+          note={`${hw.networkAdapters.length} adapters`}
         />
-        {hw.networkAdapters.map((adapter) => (
-          <Box key={adapter.name} gap="xsmall">
-            <Text size="small" color="text-weak">
-              {adapter.name}
-            </Text>
-            <DataTable
-              columns={[
-                { property: 'port', header: 'Port', primary: true },
-                { property: 'address', header: 'Address' },
-              ]}
-              data={adapter.ports}
-            />
-          </Box>
-        ))}
+        <CardGrid>
+          {hw.networkAdapters.map((adapter) => (
+            <Card key={adapter.name} title={adapter.name}>
+              <List data={adapter.ports} pad="none">
+                {(p, index) => (
+                  <ListRow index={index} count={adapter.ports.length}>
+                    <Text>{p.port}</Text>
+                    <Text color="text-weak">{p.address}</Text>
+                  </ListRow>
+                )}
+              </List>
+            </Card>
+          ))}
+        </CardGrid>
       </Box>
-    </Box>
+    </Facet>
   );
 };
 
@@ -363,20 +456,20 @@ const Storage = ({ server }) => {
   }, {});
   const controllers = Object.entries(byController);
   return (
-    <Box gap="medium" pad={{ top: 'medium' }}>
-      <SubHeading title="Internal storage volumes" />
+    <Facet>
       {controllers.length ? (
         controllers.map(([controller, volumes]) => (
-          <Box key={controller} gap="xsmall">
-            <Text size="small" color="text-weak">
-              {controller}
-            </Text>
+          <Box key={controller} gap="small">
+            <TableHeader
+              title={controller}
+              note={`${volumes.length} ${volumes.length === 1 ? 'volume' : 'volumes'}`}
+            />
             <Box overflow="auto">
               <DataTable
                 columns={[
                   {
                     property: 'name',
-                    header: 'Volume name',
+                    header: 'Volume',
                     primary: true,
                     render: (v) => (
                       <Text weight={500} truncate>
@@ -384,9 +477,17 @@ const Storage = ({ server }) => {
                       </Text>
                     ),
                   },
-                  { property: 'state', header: 'State' },
+                  {
+                    property: 'state',
+                    header: 'State',
+                    render: (v) => (
+                      <StatusText severity={v.state === 'OK' ? 'ok' : 'warning'}>
+                        {v.state}
+                      </StatusText>
+                    ),
+                  },
                   { property: 'capacity', header: 'Capacity' },
-                  { property: 'raid', header: 'RAID type' },
+                  { property: 'raid', header: 'RAID' },
                   { property: 'drives', header: 'Drives', align: 'end' },
                   { property: 'spares', header: 'Spares', align: 'end' },
                 ]}
@@ -402,7 +503,7 @@ const Storage = ({ server }) => {
           description="Volumes configured on this server's storage controllers will be listed here."
         />
       )}
-    </Box>
+    </Facet>
   );
 };
 
@@ -411,28 +512,31 @@ const Support = ({ server }) => {
   const { support } = server;
   const expired = support.status === 'Expired';
   return (
-    <Box gap="medium" pad={{ top: 'medium' }}>
+    <Facet>
+      <Card
+        title="Support contract"
+        action={expired && <Button label="Renew" size="small" />}
+      >
+        <PairGrid
+          pairs={[
+            [
+              'Status',
+              <StatusText severity={expired ? 'critical' : 'ok'}>
+                {support.status}
+              </StatusText>,
+            ],
+            [expired ? 'Expired on' : 'Expires on', support.expires],
+            ['Serial number', server.serial],
+            ['Product ID', server.productId],
+          ]}
+        />
+      </Card>
       <Box gap="small">
-        <SubHeading title="Support contract" />
-        <NameValueList nameProps={{ width: 'small' }}>
-          <NameValuePair name="Status">
-            <StatusText severity={expired ? 'critical' : 'ok'}>
-              {support.status}
-            </StatusText>
-          </NameValuePair>
-          <NameValuePair name={expired ? 'Expired on' : 'Expires on'}>
-            <Text>{support.expires}</Text>
-          </NameValuePair>
-          <NameValuePair name="Serial number">
-            <Text>{server.serial}</Text>
-          </NameValuePair>
-          <NameValuePair name="Product ID">
-            <Text>{server.productId}</Text>
-          </NameValuePair>
-        </NameValueList>
-      </Box>
-      <Box gap="small">
-        <SubHeading title="Support cases" />
+        <TableHeader
+          title="Support cases"
+          note={`${support.cases} open`}
+          action={<Button label="Open a case" size="small" />}
+        />
         {support.cases ? (
           <List
             data={Array.from({ length: support.cases }, (_, i) => ({
@@ -459,11 +563,10 @@ const Support = ({ server }) => {
             level={4}
             title="No open cases"
             description="Support cases opened for this server will be listed here."
-            actions={<Button label="Open a case" secondary />}
           />
         )}
       </Box>
-    </Box>
+    </Facet>
   );
 };
 
@@ -478,7 +581,7 @@ export const ServerDetail = ({ server }) => {
         <Box margin={{ top: 'medium' }} flex={false}>
           <Notification
             status="info"
-            message={`The iLO for this server has been disconnected since ${server.disconnectedSince}. Details and health information may not be current, and some actions are unavailable.`}
+            message={`iLO disconnected since ${server.disconnectedSince}. Details and health may not be current, and some actions are unavailable.`}
             actions={[{ label: 'Learn more', href: '#' }]}
           />
         </Box>
@@ -501,14 +604,8 @@ export const ServerDetail = ({ server }) => {
           </Section>
         </Tab>
         <Tab title="Firmware">
-          <Section
-            title="Firmware"
-            hideTitle
-            action={
-              <Button label="Update firmware" secondary disabled={!connected} />
-            }
-          >
-            <Firmware server={server} />
+          <Section title="Firmware" hideTitle>
+            <Firmware server={server} connected={connected} />
           </Section>
         </Tab>
         <Tab title="Hardware">
