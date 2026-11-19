@@ -1,4 +1,11 @@
-import { forwardRef, useLayoutEffect, useMemo, useState } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Anchor,
   Box,
@@ -7,6 +14,7 @@ import {
   Page,
   PageContent,
   PageHeader,
+  Select,
   Text,
   TextInput,
   ToggleGroup,
@@ -30,6 +38,55 @@ const ContentPane = forwardRef((props, ref) => (
     {...props}
   />
 ));
+
+// Quick filters: a ToggleGroup while the list column can hold every option
+// on one line; otherwise a Select, so nothing scrolls or clips. The group's
+// natural width is measured once (the options do not change), then compared
+// with the column on every resize.
+const QuickFilters = ({ options, value, onChange }) => {
+  const wrapRef = useRef(null);
+  const groupRef = useRef(null);
+  const [naturalWidth, setNaturalWidth] = useState(null);
+  const [available, setAvailable] = useState(Infinity);
+  useLayoutEffect(() => {
+    if (groupRef.current && naturalWidth === null) {
+      setNaturalWidth(groupRef.current.scrollWidth);
+    }
+  }, [naturalWidth]);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return undefined;
+    const observer = new ResizeObserver(([entry]) =>
+      setAvailable(entry.contentRect.width),
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const collapse = naturalWidth !== null && naturalWidth > available;
+  return (
+    <Box ref={wrapRef} flex={false}>
+      {collapse ? (
+        <Select
+          options={options}
+          labelKey="label"
+          valueKey={{ key: 'value', reduce: true }}
+          value={value}
+          onChange={({ value: next }) => onChange(next)}
+          icon
+          a11yTitle="Quick filter"
+        />
+      ) : (
+        <Box ref={groupRef} alignSelf="start" style={{ whiteSpace: 'nowrap' }}>
+          <ToggleGroup
+            options={options}
+            value={value}
+            onToggle={({ value: next }) => next && onChange(next)}
+          />
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 // The list–detail page, independent of what the records are. Zones:
 //   A page header (page-level actions) · B list toolbar (collection actions)
@@ -99,6 +156,12 @@ export const ListDetailPage = ({
       (item) => filter.test(item) && (!q || matches(item, q)),
     );
   }, [items, query, quickFilter, quickFilters, matches]);
+
+  const quickFilterOptions = useMemo(
+    () =>
+      quickFilters.map(({ label, value, icon }) => ({ label, value, icon })),
+    [quickFilters],
+  );
 
   const selected = items.find((i) => i.id === selectedId) ?? null;
   const listVisible = !stacked || !showDetail;
@@ -269,25 +332,11 @@ export const ListDetailPage = ({
                         </Box>
                         {collectionButton}
                       </Box>
-                      <Box
-                        overflow={{ horizontal: 'auto' }}
-                        flex={false}
-                        style={{ whiteSpace: 'nowrap' }}
-                      >
-                        <ToggleGroup
-                          options={quickFilters.map(
-                            ({ label, value, icon }) => ({
-                              label,
-                              value,
-                              icon,
-                            }),
-                          )}
-                          value={quickFilter}
-                          onToggle={({ value }) =>
-                            value && setQuickFilter(value)
-                          }
-                        />
-                      </Box>
+                      <QuickFilters
+                        options={quickFilterOptions}
+                        value={quickFilter}
+                        onChange={setQuickFilter}
+                      />
                       <Text size="small" color="text-weak">
                         {visible.length} items
                       </Text>
