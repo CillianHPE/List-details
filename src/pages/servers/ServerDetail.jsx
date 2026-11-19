@@ -3,6 +3,7 @@ import {
   Anchor,
   Box,
   Button,
+  CheckBox,
   Heading,
   List,
   Menu,
@@ -13,7 +14,7 @@ import {
   Tabs,
   Text,
 } from 'grommet';
-import { Download, Refresh } from '@hpe-design/icons-grommet';
+import { Download, Edit, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
   ListPrimary,
@@ -183,6 +184,36 @@ const Status = ({ server }) => {
   );
 };
 
+// Each notification is switched in place rather than through an Edit flow
+const NOTIFICATIONS = [
+  ['issues', 'Issues'],
+  ['powerState', 'Power state change'],
+  ['disconnect', 'Disconnect or not monitored'],
+  ['dailySummary', 'Daily summary'],
+];
+
+const EmailNotifications = ({ server }) => {
+  const [prefs, setPrefs] = useState(server.notifications);
+  return (
+    <Card title="Email notifications">
+      <List data={NOTIFICATIONS} pad="none">
+        {([key, label], index) => (
+          <ListRow index={index} count={NOTIFICATIONS.length}>
+            <ListPrimary>{label}</ListPrimary>
+            <CheckBox
+              toggle
+              reverse
+              a11yTitle={`${label} notifications`}
+              checked={!!prefs[key]}
+              onChange={(e) => setPrefs({ ...prefs, [key]: e.target.checked })}
+            />
+          </ListRow>
+        )}
+      </List>
+    </Card>
+  );
+};
+
 // Summary keeps what you need to recognise, reach and be told about the
 // server. Hardware identity (manufacturer, platform, UUID, UID light) lives
 // in Hardware; baseline detail in Firmware.
@@ -223,7 +254,10 @@ const Summary = ({ server }) => (
         ]}
       />
     </Card>
-    <Card title="Location" action={<Button label="Edit" size="small" />}>
+    <Card
+      title="Location"
+      action={<Button icon={<Edit />} a11yTitle="Edit location" />}
+    >
       <Pairs
         pairs={[
           ['Name', server.location.name],
@@ -231,29 +265,7 @@ const Summary = ({ server }) => (
         ]}
       />
     </Card>
-    <Card
-      title="Email notifications"
-      action={<Button label="Edit" size="small" />}
-    >
-      <List
-        data={[
-          ['Issues', server.notifications.issues],
-          ['Power state change', server.notifications.powerState],
-          ['Disconnect or not monitored', server.notifications.disconnect],
-          ['Daily summary', server.notifications.dailySummary],
-        ]}
-        pad="none"
-      >
-        {([label, on], index) => (
-          <ListRow index={index} count={4}>
-            <Text>{label}</Text>
-            <Text color={on ? undefined : 'text-weak'}>
-              {on ? 'Subscribed' : 'Off'}
-            </Text>
-          </ListRow>
-        )}
-      </List>
-    </Card>
+    <EmailNotifications server={server} />
   </Facet>
 );
 
@@ -284,7 +296,7 @@ const Health = ({ server }) => {
         <List data={server.componentHealth} pad="none">
           {(c, index) => (
             <ListRow index={index} count={server.componentHealth.length}>
-              <Text>{c.name}</Text>
+              <ListPrimary>{c.name}</ListPrimary>
               <StatusText severity={c.severity}>{c.status}</StatusText>
             </ListRow>
           )}
