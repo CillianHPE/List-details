@@ -45,6 +45,6 @@ export const ServersPage = () => (
     )}
     renderDetail={(server) => <ServerDetail key={server.id} server={server} />}
     noResultsText="No servers match your search or filter."
-    noSelectionText="Select a server to see its summary, health, firmware and hardware."
+    noSelectionText="Select a server to see its overview, health, firmware and hardware."
   />
 );

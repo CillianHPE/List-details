@@ -56,7 +56,7 @@ const Fact = ({ label, children }) => (
 );
 
 // D · Detail header — name and Model · Serial, record-level Actions menu
-// (as COM shows top-right of its detail page). Key facts live in Summary.
+// (as COM shows top-right of its detail page). Key facts live in Overview.
 const DetailHeader = ({ server, children }) => {
   const connected = server.state === 'Connected';
   return (
@@ -139,7 +139,7 @@ const SECURITY_SEVERITY = {
 };
 
 // Status: the at-a-glance facts (health, connection, power, group, alerts),
-// first in Summary so they are the first thing read in the details area.
+// first in Overview so they are the first thing read in the details area.
 const Status = ({ server }) => {
   const connected = server.state === 'Connected';
   return (
@@ -642,8 +642,8 @@ export const ServerDetail = ({ server }) => {
         flex={false}
         margin={{ top: 'small' }}
       >
-        <Tab title="Summary">
-          <Section title="Summary" hideTitle>
+        <Tab title="Overview">
+          <Section title="Overview" hideTitle>
             <Summary server={server} />
           </Section>
         </Tab>

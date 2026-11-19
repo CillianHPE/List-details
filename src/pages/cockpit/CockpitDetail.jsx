@@ -653,8 +653,8 @@ export const CockpitDetail = ({ account }) => {
         flex={false}
         margin={{ top: 'small' }}
       >
-        <Tab title="Summary">
-          <Section title="Summary" hideTitle>
+        <Tab title="Overview">
+          <Section title="Overview" hideTitle>
             <Summary account={account} />
           </Section>
         </Tab>

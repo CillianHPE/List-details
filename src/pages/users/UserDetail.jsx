@@ -310,8 +310,8 @@ const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
     flex={false}
     margin={{ top: 'small' }}
   >
-    <Tab title="Details">
-      <Section title="Details" hideTitle>
+    <Tab title="Overview">
+      <Section title="Overview" hideTitle>
         <Properties user={user} groups={groups} />
       </Section>
     </Tab>
@@ -359,7 +359,7 @@ export const UserDetail = ({ user, variant = 'full' }) => {
     <Box>
       <DetailHeader user={user} name={name} onRename={setName} />
       {variant === 'short' ? (
-        <Section title="Details" hideTitle>
+        <Section title="Overview" hideTitle>
           <Properties user={user} groups={DETAIL_GROUPS.slice(0, 1)} />
         </Section>
       ) : (

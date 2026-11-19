@@ -403,7 +403,7 @@ const Subscriptions = ({ account }) => {
 };
 
 // E · Detail body — tabs mirror the redesigned account page's tab bar
-// (Summary · User engagement · Adoption · Configuration · Subscriptions).
+// (Overview · User engagement · Adoption · Configuration · Subscriptions).
 export const AccountDetail = ({ account }) => {
   const [tab, setTab] = useState(0);
   return (
@@ -416,8 +416,8 @@ export const AccountDetail = ({ account }) => {
         flex={false}
         margin={{ top: 'small' }}
       >
-        <Tab title="Summary">
-          <Section title="Summary" hideTitle>
+        <Tab title="Overview">
+          <Section title="Overview" hideTitle>
             <Summary account={account} />
           </Section>
         </Tab>
