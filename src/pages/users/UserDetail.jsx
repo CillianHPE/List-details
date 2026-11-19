@@ -36,12 +36,12 @@ const STATUS_MAP = {
   Suspended: { Icon: StatusCritical, color: 'status-critical' },
 };
 
-const StatusIndicator = ({ status }) => {
+export const StatusIndicator = ({ status, size }) => {
   const { Icon, color } = STATUS_MAP[status] ?? STATUS_MAP.Invited;
   return (
-    <Box direction="row" align="center" gap="3xsmall">
+    <Box direction="row" align="center" gap="3xsmall" flex={false}>
       <Icon color={color} size="xsmall" aria-hidden />
-      <Text>{status}</Text>
+      <Text size={size}>{status}</Text>
     </Box>
   );
 };

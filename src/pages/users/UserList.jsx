@@ -1,4 +1,5 @@
 import { Avatar, Box, List, Text } from 'grommet';
+import { StatusIndicator } from './UserDetail';
 
 const UserRow = ({ user }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
@@ -15,6 +16,8 @@ const UserRow = ({ user }) => (
         {user.role}
       </Text>
     </Box>
+    {/* Trailing: account status as the HPE DS status indicator */}
+    <StatusIndicator status={user.status} size="small" />
   </Box>
 );
 
