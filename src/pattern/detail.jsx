@@ -38,6 +38,38 @@ export const DetailTabs = (props) => (
   />
 );
 
+// Detail header title block. Mirrors the Content header component (Components
+// › Content header): heading in text-heading, 2px to the small supporting
+// text, 2px block padding, xsmall gap to trailing controls. `status` renders
+// its icon inline at the start of the supporting text so the status reads as
+// part of the description rather than a badge beside the name.
+export const DetailHeading = ({ heading, status, description, trailing }) => (
+  <Box direction="row" align="center" gap="xsmall" responsive={false}>
+    <Box flex gap="2px" style={{ minWidth: 0, paddingBlock: 2 }}>
+      <Heading
+        level={2}
+        color="text-heading"
+        margin="none"
+        overflowWrap="anywhere"
+        responsive={false}
+      >
+        {heading}
+      </Heading>
+      {(status || description) && (
+        <Box direction="row" align="center" gap="3xsmall">
+          {status && (
+            <status.Icon color={status.color} size="xsmall" aria-hidden />
+          )}
+          <Text as="p" size="small" margin="none">
+            {description}
+          </Text>
+        </Box>
+      )}
+    </Box>
+    {trailing && <Box flex={false}>{trailing}</Box>}
+  </Box>
+);
+
 // Keeps a heading in the document outline without rendering it visibly
 const visuallyHidden = {
   position: 'absolute',

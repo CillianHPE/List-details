@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   CheckBox,
-  Heading,
   List,
   Menu,
   Notification,
@@ -22,9 +21,10 @@ import {
   Pairs,
   Section,
   Table,
+  DetailHeading,
   DetailTabs,
 } from '../../pattern/detail';
-import { ServerHealth, StatusText } from './ServerHealth';
+import { HEALTH_STATUS, ServerHealth, StatusText } from './ServerHealth';
 
 // Servers · Compute Ops Management. The COM detail page's facets, read side
 // by side with the list instead of on a separate page.
@@ -61,33 +61,30 @@ const DetailHeader = ({ server, children }) => {
   const connected = server.state === 'Connected';
   return (
     <Box flex={false} gap="small">
-      <Box direction="row" align="start" justify="between" gap="small" wrap>
-        <Box gap="xxsmall">
-          <Heading level={2} margin="none">
-            {server.name}
-          </Heading>
-          <Text color="text-weak">
-            {server.health} · {server.model} · {server.serial}
-          </Text>
-        </Box>
-        <Menu
-          label="Actions"
-          dropProps={{ align: { top: 'bottom', right: 'right' } }}
-          items={[
-            [
-              {
-                label: server.power === 'On' ? 'Power off' : 'Power on',
-                disabled: !connected,
-              },
-              { label: 'Launch remote console', disabled: !connected },
-              { label: 'Update firmware', disabled: !connected },
-              { label: 'Run inventory collection', disabled: !connected },
-            ],
-            [{ label: 'Assign to group' }, { label: 'Edit location' }],
-            [{ label: 'Remove server' }],
-          ]}
-        />
-      </Box>
+      <DetailHeading
+        heading={server.name}
+        status={HEALTH_STATUS[server.health]}
+        description={`${server.health} · ${server.model} · ${server.serial}`}
+        trailing={
+          <Menu
+            label="Actions"
+            dropProps={{ align: { top: 'bottom', right: 'right' } }}
+            items={[
+              [
+                {
+                  label: server.power === 'On' ? 'Power off' : 'Power on',
+                  disabled: !connected,
+                },
+                { label: 'Launch remote console', disabled: !connected },
+                { label: 'Update firmware', disabled: !connected },
+                { label: 'Run inventory collection', disabled: !connected },
+              ],
+              [{ label: 'Assign to group' }, { label: 'Edit location' }],
+              [{ label: 'Remove server' }],
+            ]}
+          />
+        }
+      />
       {children}
     </Box>
   );

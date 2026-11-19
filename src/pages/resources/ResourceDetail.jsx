@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Anchor, Box, Heading, List, Menu, Tab, Tag, Text } from 'grommet';
+import { Anchor, Box, List, Menu, Tab, Tag, Text } from 'grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
   Card,
@@ -8,10 +8,15 @@ import {
   ListStatus,
   Pairs,
   Section,
+  DetailHeading,
   DetailTabs,
 } from '../../pattern/detail';
 import { relatedResources } from '../../data/resources';
-import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
+import {
+  ALERT_STATUS,
+  AVAILABILITY_STATUS,
+  ResourceStatus,
+} from './ResourceStatus';
 
 // Kubernetes · OpsRamp resource. The preview's "Resource Details" card, read
 // beside the list: identity in the header, alert counts directly under it,
@@ -19,32 +24,29 @@ import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
 
 // ----------------------------------------------------------------- header
 
-// D · Detail header — name with availability, IP underneath, record actions
+// D · Detail header — name, availability + IP · model underneath, record actions
 const DetailHeader = ({ resource, children }) => (
   <Box flex={false} gap="small">
-    <Box direction="row" align="start" justify="between" gap="small" wrap>
-      <Box gap="xxsmall">
-        <Heading level={2} margin="none">
-          {resource.name}
-        </Heading>
-        <Text color="text-weak">
-          {resource.availability} · {resource.ip} · {resource.model}
-        </Text>
-      </Box>
-      <Menu
-        label="Actions"
-        dropProps={{ align: { top: 'bottom', right: 'right' } }}
-        items={[
-          [
-            { label: 'Run discovery' },
-            { label: 'Open remote console' },
-            { label: 'Create ticket' },
-          ],
-          [{ label: 'Edit custom attributes' }, { label: 'Manage traits' }],
-          [{ label: 'Decommission resource' }],
-        ]}
-      />
-    </Box>
+    <DetailHeading
+      heading={resource.name}
+      status={AVAILABILITY_STATUS[resource.availability]}
+      description={`${resource.availability} · ${resource.ip} · ${resource.model}`}
+      trailing={
+        <Menu
+          label="Actions"
+          dropProps={{ align: { top: 'bottom', right: 'right' } }}
+          items={[
+            [
+              { label: 'Run discovery' },
+              { label: 'Open remote console' },
+              { label: 'Create ticket' },
+            ],
+            [{ label: 'Edit custom attributes' }, { label: 'Manage traits' }],
+            [{ label: 'Decommission resource' }],
+          ]}
+        />
+      }
+    />
     {children}
   </Box>
 );
