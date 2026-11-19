@@ -382,23 +382,14 @@ const UserEngagement = ({ account }) => {
             detail
           />
         ) : (
-          <Table
-            size="small"
-            columns={[
-              {
-                property: 'day',
-                header: 'Days ago',
-                render: (d) => 30 - d.day,
-              },
-              {
-                property: 'value',
-                header: 'Logins',
-                align: 'end',
-                render: (d) => `${d.value}%`,
-              },
-            ]}
-            data={account.loginActivity}
-          />
+          <List data={account.loginActivity} pad="none">
+            {(d, index) => (
+              <ListRow index={index} count={account.loginActivity.length}>
+                <Text>{30 - d.day} days ago</Text>
+                <Text weight={500}>{d.value}%</Text>
+              </ListRow>
+            )}
+          </List>
         )}
         <Text size="xsmall" color="text-weak">
           Counts are platform access events from customer users history and may
@@ -500,30 +491,27 @@ const Adoption = ({ account }) => {
               <Text weight={500}>Low adoption score</Text>
             </Box>
           )}
-          <Table
-            columns={[
-              {
-                property: 'name',
-                header: 'Check',
-                primary: true,
-                render: (c) => <Anchor label={c.name} href="#" />,
-              },
-              { property: 'result', header: 'Result' },
-              {
-                property: 'gaps',
-                header: 'Status',
-                render: (c) =>
-                  c.gaps == null ? (
+          <List data={account.adoptionChecks} pad="none">
+            {(c, index) => (
+              <ListRow index={index} count={account.adoptionChecks.length}>
+                <Box>
+                  <Anchor label={c.name} href="#" />
+                  <Text size="small" color="text-weak">
+                    {c.result}
+                  </Text>
+                </Box>
+                <Box flex={false}>
+                  {c.gaps == null ? (
                     <StatusText severity="na">Not applicable</StatusText>
                   ) : c.gaps === 0 ? (
                     <StatusText severity="ok">Complete</StatusText>
                   ) : (
                     <StatusText severity="critical">{`${c.gaps} gap${c.gaps > 1 ? 's' : ''}`}</StatusText>
-                  ),
-              },
-            ]}
-            data={account.adoptionChecks}
-          />
+                  )}
+                </Box>
+              </ListRow>
+            )}
+          </List>
         </Card>
         <Card title="Provisioned apps">
           <List data={account.provisionedApps} pad="none">

@@ -310,34 +310,30 @@ const Firmware = ({ server, connected }) => (
         title="Firmware"
         note={`${server.firmware.length} components`}
       />
-      <Table
-        columns={[
-          {
-            property: 'name',
-            header: 'Component',
-            primary: true,
-            render: (f) => <Text weight={500}>{f.name}</Text>,
-          },
-          { property: 'location', header: 'Location' },
-          { property: 'version', header: 'Version' },
-        ]}
-        data={server.firmware}
-      />
+      <List data={server.firmware} pad="none">
+        {(f, index) => (
+          <ListRow index={index} count={server.firmware.length}>
+            <Box>
+              <Text weight={500}>{f.name}</Text>
+              <Text size="small" color="text-weak">
+                {f.location}
+              </Text>
+            </Box>
+            <Text flex={false}>{f.version}</Text>
+          </ListRow>
+        )}
+      </List>
     </Box>
     <Box gap="small">
       <TableHeader title="HPE drivers and software" />
-      <Table
-        columns={[
-          {
-            property: 'name',
-            header: 'Driver',
-            primary: true,
-            render: (d) => <Text weight={500}>{d.name}</Text>,
-          },
-          { property: 'version', header: 'Version' },
-        ]}
-        data={server.drivers}
-      />
+      <List data={server.drivers} pad="none">
+        {(d, index) => (
+          <ListRow index={index} count={server.drivers.length}>
+            <Text weight={500}>{d.name}</Text>
+            <Text flex={false}>{d.version}</Text>
+          </ListRow>
+        )}
+      </List>
     </Box>
   </Facet>
 );
@@ -375,16 +371,21 @@ const Hardware = ({ server }) => {
       </Card>
       <Box gap="small">
         <TableHeader title="Processors" />
-        <Table
-          columns={[
-            { property: 'name', header: 'Name', primary: true },
-            { property: 'max', header: 'Max speed' },
-            { property: 'rated', header: 'Rated speed' },
-            { property: 'cores', header: 'Cores', align: 'end' },
-            { property: 'threads', header: 'Threads', align: 'end' },
-          ]}
-          data={hw.processors.map((p, i) => ({ ...p, id: i }))}
-        />
+        <List data={hw.processors} pad="none">
+          {(p, index) => (
+            <ListRow index={index} count={hw.processors.length}>
+              <Box>
+                <Text weight={500}>{p.name}</Text>
+                <Text size="small" color="text-weak">
+                  {p.max} max · {p.rated} rated
+                </Text>
+              </Box>
+              <Text flex={false}>
+                {p.cores} cores · {p.threads} threads
+              </Text>
+            </ListRow>
+          )}
+        </List>
       </Box>
       <Box gap="small">
         <TableHeader
