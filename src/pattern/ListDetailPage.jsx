@@ -134,11 +134,10 @@ export const ListDetailPage = ({
   const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
     <Box
       direction="row"
-      wrap
-      gap="small"
-      justify="end"
+      gap="medium"
       align="center"
-      style={{ whiteSpace: 'nowrap', rowGap: 8 }}
+      flex={false}
+      style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
     >
       <CheckBox
         toggle
@@ -200,6 +199,9 @@ export const ListDetailPage = ({
             ) : undefined
           }
           actions={headerActions}
+          // Title track floors at size.small (256px) instead of the theme's
+          // default so 3 toggles fit on one line beside it
+          gridProps={{ columns: [['small', 'flex'], 'auto'] }}
         />
 
         {/* Page context describes the collection, so it steps aside while a
