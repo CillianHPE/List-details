@@ -119,10 +119,11 @@ export const ListDetailPage = ({
   const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
     <Box
       direction="row"
-      gap="medium"
+      wrap
+      gap="small"
+      justify="end"
       align="center"
-      flex={false}
-      style={{ whiteSpace: 'nowrap' }}
+      style={{ whiteSpace: 'nowrap', rowGap: 8 }}
     >
       <CheckBox
         toggle
