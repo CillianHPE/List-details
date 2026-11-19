@@ -115,11 +115,11 @@ const Fact = ({ label, children }) => (
 );
 
 // D · Detail header — name and Model · Serial, record-level Actions menu
-// (as COM shows top-right of its detail page), then a strip of key facts.
+// (as COM shows top-right of its detail page). Key facts live in Summary.
 const DetailHeader = ({ server }) => {
   const connected = server.state === 'Connected';
   return (
-    <Box flex={false} gap="medium">
+    <Box flex={false}>
       <Box direction="row" align="start" justify="between" gap="small" wrap>
         <Box gap="xxsmall">
           <Heading level={2} margin="none">
@@ -147,13 +147,24 @@ const DetailHeader = ({ server }) => {
           ]}
         />
       </Box>
-      <Box
-        direction="row"
-        gap="large"
-        wrap
-        pad={{ vertical: 'small' }}
-        border={{ side: 'horizontal', color: 'border-weak' }}
-      >
+    </Box>
+  );
+};
+
+// ---------------------------------------------------------------- Summary
+const SECURITY_SEVERITY = {
+  OK: 'ok',
+  'At risk': 'critical',
+  'Ignore risk': 'warning',
+};
+
+// Status: the at-a-glance facts (health, connection, power, group, alerts),
+// first in Summary so they are the first thing read in the details area.
+const Status = ({ server }) => {
+  const connected = server.state === 'Connected';
+  return (
+    <Card title="Status">
+      <Box direction="row" gap="large" wrap>
         <Fact label="Health">
           <ServerHealth health={server.health} weight={500} />
         </Fact>
@@ -168,15 +179,8 @@ const DetailHeader = ({ server }) => {
         </Fact>
         <Fact label="Alerts">{`${server.alerts}`}</Fact>
       </Box>
-    </Box>
+    </Card>
   );
-};
-
-// ---------------------------------------------------------------- Summary
-const SECURITY_SEVERITY = {
-  OK: 'ok',
-  'At risk': 'critical',
-  'Ignore risk': 'warning',
 };
 
 // Summary keeps what you need to recognise, reach and be told about the
@@ -184,6 +188,7 @@ const SECURITY_SEVERITY = {
 // in Hardware; baseline detail in Firmware.
 const Summary = ({ server }) => (
   <Facet>
+    <Status server={server} />
     <Card title="Server">
       <Pairs
         pairs={[
