@@ -1,19 +1,24 @@
 import { Refresh } from '@hpe-design/icons-grommet';
-import { AVAILABILITIES, countBy, resources } from '../../data/resources';
+import { AVAILABILITIES, resources } from '../../data/resources';
 import { ListDetailPage } from '../../pattern/ListDetailPage';
 import { ResourceDetail } from './ResourceDetail';
 import { ResourceList } from './ResourceList';
+import { AVAILABILITY_STATUS } from './ResourceStatus';
 
 // Kubernetes · OpsRamp resources. The preview page's availability count
-// cards become quick filters (count in the label); its Refresh page action
-// becomes the toolbar's collection action.
-const counts = countBy(resources, 'availability');
+// cards become quick filters carrying the status icon; its Refresh page
+// action becomes the toolbar's collection action.
+const statusIcon = (a) => {
+  const { Icon, color } = AVAILABILITY_STATUS[a];
+  return <Icon color={color} size="xsmall" aria-hidden />;
+};
 
 const QUICK_FILTERS = [
   { label: 'All', value: 'all', test: () => true },
   ...AVAILABILITIES.map((a) => ({
-    label: `${a} ${counts[a] ?? 0}`,
+    label: a,
     value: a.toLowerCase(),
+    icon: statusIcon(a),
     test: (r) => r.availability === a,
   })),
 ];

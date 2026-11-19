@@ -43,7 +43,7 @@ const ContentPane = forwardRef((props, ref) => (
 // Pages supply the data and the record-specific renderers:
 //   items            records; each needs a stable `id`
 //   matches(item,q)  free-text search predicate (q already lower-cased)
-//   quickFilters     [{ label, value, test(item) }], first is the default
+//   quickFilters     [{ label, value, icon?, test(item) }], first is the default
 //   renderList       ({ items, selectedId, onSelect }) → list body
 //   renderDetail     (item) → detail column content
 //   collectionAction { label, icon } — trailing in the toolbar, beside search
@@ -299,10 +299,13 @@ export const ListDetailPage = ({
                         style={{ whiteSpace: 'nowrap' }}
                       >
                         <ToggleGroup
-                          options={quickFilters.map(({ label, value }) => ({
-                            label,
-                            value,
-                          }))}
+                          options={quickFilters.map(
+                            ({ label, value, icon }) => ({
+                              label,
+                              value,
+                              icon,
+                            }),
+                          )}
                           value={quickFilter}
                           onToggle={({ value }) =>
                             value && setQuickFilter(value)
