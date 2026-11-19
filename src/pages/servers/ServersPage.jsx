@@ -40,7 +40,6 @@ export const ServersPage = () => (
     quickFilters={QUICK_FILTERS}
     searchPlaceholder="Search server attributes"
     collectionAction={{ label: 'Add server', icon: <Add /> }}
-    dividerControl={false}
     renderList={({ items, selectedId, onSelect }) => (
       <ServerList servers={items} selectedId={selectedId} onSelect={onSelect} />
     )}
