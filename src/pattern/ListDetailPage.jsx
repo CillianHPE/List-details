@@ -77,6 +77,8 @@ export const ListDetailPage = ({
   const [divider, setDivider] = useState(true);
   // Prototype control: draw the whole list zone on a contained surface.
   const [contained, setContained] = useState(false);
+  // Prototype control: list zone always fills the available view height.
+  const [fullHeight, setFullHeight] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
 
   const visible = useMemo(() => {
@@ -110,8 +112,18 @@ export const ListDetailPage = ({
     label: contained ? 'Plain list' : 'Contained list',
     onClick: () => setContained((c) => !c),
   };
+  const fullHeightItem = {
+    label: fullHeight ? 'Natural height' : 'Full height',
+    onClick: () => setFullHeight((f) => !f),
+  };
   const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
-    <Box direction="row" gap="medium" align="center">
+    <Box
+      direction="row"
+      gap="medium"
+      align="center"
+      flex={false}
+      style={{ whiteSpace: 'nowrap' }}
+    >
       <CheckBox
         toggle
         label="Divider"
@@ -124,13 +136,19 @@ export const ListDetailPage = ({
         checked={contained}
         onChange={(e) => setContained(e.target.checked)}
       />
+      <CheckBox
+        toggle
+        label="Full height"
+        checked={fullHeight}
+        onChange={(e) => setFullHeight(e.target.checked)}
+      />
     </Box>
   ) : (
     <Menu
       icon={<More />}
       a11yTitle="More actions"
       dropAlign={{ top: 'bottom', right: 'right' }}
-      items={[dividerItem, containedItem]}
+      items={[dividerItem, containedItem, fullHeightItem]}
     />
   );
 
@@ -243,7 +261,9 @@ export const ListDetailPage = ({
                     height={
                       stacked
                         ? undefined
-                        : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
+                        : fullHeight
+                          ? `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)`
+                          : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
                     }
                   >
                     <Box gap="xsmall" flex={false}>
