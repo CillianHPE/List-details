@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   DataChart,
-  DataTable,
   Grid,
   Heading,
   List,
@@ -28,7 +27,7 @@ import {
   Table as TableIcon,
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section } from '../../pattern/detail';
+import { ListRow, Section, Table } from '../../pattern/detail';
 import { hpe } from 'grommet-theme-hpe';
 import { SERVICES, TIERS } from '../../data/cockpit';
 import {
@@ -383,7 +382,7 @@ const UserEngagement = ({ account }) => {
             detail
           />
         ) : (
-          <DataTable
+          <Table
             size="small"
             columns={[
               {
@@ -414,7 +413,7 @@ const UserEngagement = ({ account }) => {
         />
         {account.mostActiveUsers.length ? (
           <Box overflow="auto">
-            <DataTable
+            <Table
               columns={[
                 {
                   property: 'handle',
@@ -501,7 +500,7 @@ const Adoption = ({ account }) => {
               <Text weight={500}>Low adoption score</Text>
             </Box>
           )}
-          <DataTable
+          <Table
             columns={[
               {
                 property: 'name',
@@ -585,7 +584,7 @@ const Adoption = ({ account }) => {
 
       <Box gap="small">
         <SectionHeader title="Amplitude app engagement" />
-        <DataTable
+        <Table
           columns={[
             {
               property: 'handle',
@@ -624,7 +623,7 @@ const Configuration = ({ account }) => (
 // ---------------------------------------------------------- Subscriptions
 const Subscriptions = ({ account }) => (
   <Box overflow="auto">
-    <DataTable
+    <Table
       columns={[
         {
           property: 'name',

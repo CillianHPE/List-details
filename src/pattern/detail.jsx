@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Heading } from 'grommet';
+import { Box, DataTable, Heading } from 'grommet';
 
 // Building blocks for the detail zone's content area, shared by every record
 // type (Anatomy › Detail zone › Content area).
@@ -84,5 +84,14 @@ export const ListRow = ({ index, count, children }) => (
     }
   >
     {children}
+  </Box>
+);
+
+// Data table for detail content. Rows align to the top so that when a cell
+// wraps, every cell in the row still starts on one visual line. Scrolls
+// horizontally rather than squeezing columns when the detail is narrow.
+export const Table = (props) => (
+  <Box overflow="auto">
+    <DataTable verticalAlign="top" {...props} />
   </Box>
 );

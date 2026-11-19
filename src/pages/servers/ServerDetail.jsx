@@ -3,8 +3,6 @@ import {
   Anchor,
   Box,
   Button,
-  DataTable,
-  Grid,
   Heading,
   List,
   Menu,
@@ -17,7 +15,12 @@ import {
 } from 'grommet';
 import { Download, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section } from '../../pattern/detail';
+import {
+  ListRow,
+  Section,
+  Table,
+  usePairDirection,
+} from '../../pattern/detail';
 import { ServerHealth, StatusText } from './ServerHealth';
 
 // Servers · Compute Ops Management. The COM detail page's facets, read side
@@ -54,30 +57,21 @@ const Card = ({ title, note, action, children }) => (
   </Box>
 );
 
-// Stacked label-over-value pairs in a responsive grid: glanceable in a
-// card, and no name column to align across differing widths.
-const PairGrid = ({ pairs, size = 'small' }) => (
-  <NameValueList
-    layout="grid"
-    pairProps={{ direction: 'column' }}
-    valueProps={{ width: size }}
-    gap={{ row: 'small', column: 'medium' }}
-  >
-    {pairs.map(([name, value]) => (
-      <NameValuePair key={name} name={name}>
-        {typeof value === 'string' ? <Text>{value}</Text> : value}
-      </NameValuePair>
-    ))}
-  </NameValueList>
-);
-
-// Two-up card grid that collapses to one column when the detail is narrow
-// (2 cards need ≥ ~620px: 2 × 300px + gap)
-const CardGrid = ({ children }) => (
-  <Grid columns={{ count: 'fit', size: ['300px', 'flex'] }} gap="small">
-    {children}
-  </Grid>
-);
+// Name beside value in one column; stacks when the card gets too narrow
+const Pairs = ({ pairs }) => {
+  const [ref, direction] = usePairDirection();
+  return (
+    <Box ref={ref}>
+      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
+        {pairs.map(([name, value]) => (
+          <NameValuePair key={name} name={name}>
+            {typeof value === 'string' ? <Text>{value}</Text> : value}
+          </NameValuePair>
+        ))}
+      </NameValueList>
+    </Box>
+  );
+};
 
 const TableHeader = ({ title, note, action }) => (
   <Box direction="row" align="end" justify="between" gap="medium" wrap>
@@ -110,7 +104,11 @@ const Fact = ({ label, children }) => (
       {label}
     </Text>
     <Box direction="row" align="center" height={{ min: '24px' }}>
-      {typeof children === 'string' ? <Text weight={500}>{children}</Text> : children}
+      {typeof children === 'string' ? (
+        <Text weight={500}>{children}</Text>
+      ) : (
+        children
+      )}
     </Box>
   </Box>
 );
@@ -174,88 +172,82 @@ const DetailHeader = ({ server }) => {
 };
 
 // ---------------------------------------------------------------- Summary
-const SECURITY_SEVERITY = { OK: 'ok', 'At risk': 'critical', 'Ignore risk': 'warning' };
+const SECURITY_SEVERITY = {
+  OK: 'ok',
+  'At risk': 'critical',
+  'Ignore risk': 'warning',
+};
 
+// Summary keeps what you need to recognise, reach and be told about the
+// server. Hardware identity (manufacturer, platform, UUID, UID light) lives
+// in Hardware; baseline detail in Firmware.
 const Summary = ({ server }) => (
   <Facet>
-    <CardGrid>
-      <Card title="Identity">
-        <PairGrid
-          pairs={[
-            ['Manufacturer', server.manufacturer],
-            ['Model', server.model],
-            ['Serial number', server.serial],
-            ['Product ID', server.productId],
-            ['Platform', server.platform],
-            ['UUID', <Text wordBreak="break-all">{server.uuid}</Text>],
-          ]}
-        />
-      </Card>
-      <Card title="iLO and connectivity">
-        <PairGrid
-          pairs={[
-            ['Connection type', server.connectionType],
-            [
-              'iLO security status',
-              <StatusText severity={SECURITY_SEVERITY[server.iloSecurity]}>
-                {server.iloSecurity}
-              </StatusText>,
-            ],
-            ['iLO IP address', <Anchor label={server.iloIp} href="#" />],
-            [
-              'iLO hostname',
-              <Anchor label={server.iloHostname} href="#" wordBreak="break-all" />,
-            ],
-            ['Auto iLO firmware update', server.autoIloUpdate],
-          ]}
-        />
-      </Card>
-    </CardGrid>
-    <Card title="Operations">
-      <PairGrid
+    <Card title="Server">
+      <Pairs
         pairs={[
+          ['Model', server.model],
+          ['Serial number', server.serial],
+          ['Product ID', server.productId],
           ['Operating system', server.os],
-          ['Baseline', server.baseline],
-          ['UID indicator', server.uidIndicator],
           ['Subscription', server.subscription],
         ]}
-        size="medium"
       />
     </Card>
-    <CardGrid>
-      <Card title="Location" action={<Button label="Edit" size="small" />}>
-        <PairGrid
-          pairs={[
-            ['Name', server.location.name],
-            ['Address', server.location.address],
-          ]}
-          size="medium"
-        />
-      </Card>
-      <Card
-        title="Email notifications"
-        action={<Button label="Edit" size="small" />}
+    <Card title="iLO">
+      <Pairs
+        pairs={[
+          ['IP address', <Anchor label={server.iloIp} href="#" />],
+          [
+            'Hostname',
+            <Anchor
+              label={server.iloHostname}
+              href="#"
+              wordBreak="break-all"
+            />,
+          ],
+          ['Connection type', server.connectionType],
+          [
+            'Security status',
+            <StatusText severity={SECURITY_SEVERITY[server.iloSecurity]}>
+              {server.iloSecurity}
+            </StatusText>,
+          ],
+          ['Auto firmware update', server.autoIloUpdate],
+        ]}
+      />
+    </Card>
+    <Card title="Location" action={<Button label="Edit" size="small" />}>
+      <Pairs
+        pairs={[
+          ['Name', server.location.name],
+          ['Address', server.location.address],
+        ]}
+      />
+    </Card>
+    <Card
+      title="Email notifications"
+      action={<Button label="Edit" size="small" />}
+    >
+      <List
+        data={[
+          ['Issues', server.notifications.issues],
+          ['Power state change', server.notifications.powerState],
+          ['Disconnect or not monitored', server.notifications.disconnect],
+          ['Daily summary', server.notifications.dailySummary],
+        ]}
+        pad="none"
       >
-        <List
-          data={[
-            ['Issues', server.notifications.issues],
-            ['Power state change', server.notifications.powerState],
-            ['Disconnect or not monitored', server.notifications.disconnect],
-            ['Daily summary', server.notifications.dailySummary],
-          ]}
-          pad="none"
-        >
-          {([label, on], index) => (
-            <ListRow index={index} count={4}>
-              <Text>{label}</Text>
-              <Text color={on ? undefined : 'text-weak'}>
-                {on ? 'Subscribed' : 'Off'}
-              </Text>
-            </ListRow>
-          )}
-        </List>
-      </Card>
-    </CardGrid>
+        {([label, on], index) => (
+          <ListRow index={index} count={4}>
+            <Text>{label}</Text>
+            <Text color={on ? undefined : 'text-weak'}>
+              {on ? 'Subscribed' : 'Off'}
+            </Text>
+          </ListRow>
+        )}
+      </List>
+    </Card>
   </Facet>
 );
 
@@ -301,15 +293,16 @@ const Firmware = ({ server, connected }) => (
   <Facet>
     <Card
       title="Firmware baseline"
-      action={<Button label="Update firmware" size="small" disabled={!connected} />}
+      action={
+        <Button label="Update firmware" size="small" disabled={!connected} />
+      }
     >
-      <PairGrid
+      <Pairs
         pairs={[
           ['Baseline', <Anchor label={server.baselineName} href="#" />],
           ['Compliance', server.baseline],
           ['Last operation', server.lastFirmwareOperation],
         ]}
-        size="medium"
       />
     </Card>
     <Box gap="small">
@@ -317,38 +310,34 @@ const Firmware = ({ server, connected }) => (
         title="Firmware"
         note={`${server.firmware.length} components`}
       />
-      <Box overflow="auto">
-        <DataTable
-          columns={[
-            {
-              property: 'name',
-              header: 'Component',
-              primary: true,
-              render: (f) => <Text weight={500}>{f.name}</Text>,
-            },
-            { property: 'location', header: 'Location' },
-            { property: 'version', header: 'Version' },
-          ]}
-          data={server.firmware}
-        />
-      </Box>
+      <Table
+        columns={[
+          {
+            property: 'name',
+            header: 'Component',
+            primary: true,
+            render: (f) => <Text weight={500}>{f.name}</Text>,
+          },
+          { property: 'location', header: 'Location' },
+          { property: 'version', header: 'Version' },
+        ]}
+        data={server.firmware}
+      />
     </Box>
     <Box gap="small">
       <TableHeader title="HPE drivers and software" />
-      <Box overflow="auto">
-        <DataTable
-          columns={[
-            {
-              property: 'name',
-              header: 'Driver',
-              primary: true,
-              render: (d) => <Text weight={500}>{d.name}</Text>,
-            },
-            { property: 'version', header: 'Version' },
-          ]}
-          data={server.drivers}
-        />
-      </Box>
+      <Table
+        columns={[
+          {
+            property: 'name',
+            header: 'Driver',
+            primary: true,
+            render: (d) => <Text weight={500}>{d.name}</Text>,
+          },
+          { property: 'version', header: 'Version' },
+        ]}
+        data={server.drivers}
+      />
     </Box>
   </Facet>
 );
@@ -373,63 +362,64 @@ const Hardware = ({ server }) => {
           </Box>
         }
       >
-        <PairGrid
+        <Pairs
           pairs={[
+            ['Manufacturer', server.manufacturer],
+            ['Platform', server.platform],
             ['Form factor', hw.formFactor],
             ['Chassis type', hw.chassisType],
-            ['Processors', `${hw.processors.length} of ${hw.processors.length} sockets`],
-            ['Memory', `${filled} of ${slots} slots`],
+            ['UID indicator', server.uidIndicator],
+            ['UUID', <Text wordBreak="break-all">{server.uuid}</Text>],
           ]}
         />
       </Card>
       <Box gap="small">
         <TableHeader title="Processors" />
-        <Box overflow="auto">
-          <DataTable
-            columns={[
-              { property: 'name', header: 'Name', primary: true },
-              { property: 'max', header: 'Max speed' },
-              { property: 'rated', header: 'Rated speed' },
-              { property: 'cores', header: 'Cores', align: 'end' },
-              { property: 'threads', header: 'Threads', align: 'end' },
-            ]}
-            data={hw.processors.map((p, i) => ({ ...p, id: i }))}
-          />
-        </Box>
+        <Table
+          columns={[
+            { property: 'name', header: 'Name', primary: true },
+            { property: 'max', header: 'Max speed' },
+            { property: 'rated', header: 'Rated speed' },
+            { property: 'cores', header: 'Cores', align: 'end' },
+            { property: 'threads', header: 'Threads', align: 'end' },
+          ]}
+          data={hw.processors.map((p, i) => ({ ...p, id: i }))}
+        />
       </Box>
       <Box gap="small">
-        <TableHeader title="Memory" note={`${filled} of ${slots} slots filled`} />
-        <Box overflow="auto">
-          <DataTable
-            columns={[
-              {
-                property: 'location',
-                header: 'Location',
-                primary: true,
-                render: (m) => (
-                  <Box>
-                    <Text weight={500}>{m.location}</Text>
-                    <Text size="small" color="text-weak">
-                      {m.type} · {m.technology}
-                    </Text>
-                  </Box>
-                ),
-              },
-              { property: 'size', header: 'Size' },
-              { property: 'speed', header: 'Speed' },
-              { property: 'serial', header: 'Serial number' },
-              { property: 'part', header: 'Part number' },
-            ]}
-            data={hw.memory}
-          />
-        </Box>
+        <TableHeader
+          title="Memory"
+          note={`${filled} of ${slots} slots filled`}
+        />
+        <Table
+          columns={[
+            {
+              property: 'location',
+              header: 'Location',
+              primary: true,
+              render: (m) => (
+                <Box>
+                  <Text weight={500}>{m.location}</Text>
+                  <Text size="small" color="text-weak">
+                    {m.type} · {m.technology}
+                  </Text>
+                </Box>
+              ),
+            },
+            { property: 'size', header: 'Size' },
+            { property: 'speed', header: 'Speed' },
+            { property: 'serial', header: 'Serial number' },
+            { property: 'part', header: 'Part number' },
+          ]}
+          data={hw.memory}
+        />
       </Box>
       <Box gap="small">
         <TableHeader
           title="Network adapters"
           note={`${hw.networkAdapters.length} adapters`}
         />
-        <CardGrid>
+        <Box gap="small">
           {hw.networkAdapters.map((adapter) => (
             <Card key={adapter.name} title={adapter.name}>
               <List data={adapter.ports} pad="none">
@@ -442,7 +432,7 @@ const Hardware = ({ server }) => {
               </List>
             </Card>
           ))}
-        </CardGrid>
+        </Box>
       </Box>
     </Facet>
   );
@@ -464,36 +454,34 @@ const Storage = ({ server }) => {
               title={controller}
               note={`${volumes.length} ${volumes.length === 1 ? 'volume' : 'volumes'}`}
             />
-            <Box overflow="auto">
-              <DataTable
-                columns={[
-                  {
-                    property: 'name',
-                    header: 'Volume',
-                    primary: true,
-                    render: (v) => (
-                      <Text weight={500} truncate>
-                        {v.name}
-                      </Text>
-                    ),
-                  },
-                  {
-                    property: 'state',
-                    header: 'State',
-                    render: (v) => (
-                      <StatusText severity={v.state === 'OK' ? 'ok' : 'warning'}>
-                        {v.state}
-                      </StatusText>
-                    ),
-                  },
-                  { property: 'capacity', header: 'Capacity' },
-                  { property: 'raid', header: 'RAID' },
-                  { property: 'drives', header: 'Drives', align: 'end' },
-                  { property: 'spares', header: 'Spares', align: 'end' },
-                ]}
-                data={volumes}
-              />
-            </Box>
+            <Table
+              columns={[
+                {
+                  property: 'name',
+                  header: 'Volume',
+                  primary: true,
+                  render: (v) => (
+                    <Text weight={500} truncate>
+                      {v.name}
+                    </Text>
+                  ),
+                },
+                {
+                  property: 'state',
+                  header: 'State',
+                  render: (v) => (
+                    <StatusText severity={v.state === 'OK' ? 'ok' : 'warning'}>
+                      {v.state}
+                    </StatusText>
+                  ),
+                },
+                { property: 'capacity', header: 'Capacity' },
+                { property: 'raid', header: 'RAID' },
+                { property: 'drives', header: 'Drives', align: 'end' },
+                { property: 'spares', header: 'Spares', align: 'end' },
+              ]}
+              data={volumes}
+            />
           </Box>
         ))
       ) : (
@@ -517,7 +505,7 @@ const Support = ({ server }) => {
         title="Support contract"
         action={expired && <Button label="Renew" size="small" />}
       >
-        <PairGrid
+        <Pairs
           pairs={[
             [
               'Status',
