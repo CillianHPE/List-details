@@ -32,7 +32,7 @@ import { ServerHealth, StatusText } from './ServerHealth';
 // ------------------------------------------------------------- primitives
 
 const Facet = ({ children }) => (
-  <Box gap="medium" pad={{ top: 'medium' }}>
+  <Box gap="medium">
     {children}
   </Box>
 );
