@@ -1,5 +1,4 @@
 import { Avatar, Box, List, Text } from 'grommet';
-import { StatusIndicator } from './UserDetail';
 
 const UserRow = ({ user }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
@@ -12,15 +11,9 @@ const UserRow = ({ user }) => (
       <Text weight={500} truncate>
         {user.name}
       </Text>
-      {/* Status leads the secondary line so it aligns left with the name
-          and avoids a ragged trailing column */}
-      <Box direction="row" align="center" gap="3xsmall">
-        <StatusIndicator status={user.status} size="small" />
-        <Text size="small" color="text-weak" truncate>
-          {' · '}
-          {user.role}
-        </Text>
-      </Box>
+      <Text size="small" color="text-weak" truncate>
+        {user.role} · {user.status}
+      </Text>
     </Box>
   </Box>
 );
