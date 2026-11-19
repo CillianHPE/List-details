@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useState } from 'react';
+import { forwardRef, useLayoutEffect, useMemo, useState } from 'react';
 import {
   Anchor,
   Box,
@@ -80,6 +80,21 @@ export const ListDetailPage = ({
   // Prototype control: list zone always fills the available view height.
   const [fullHeight, setFullHeight] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  // Full height: distance from the document top to the surface, so the
+  // surface can be sized to end level with the side nav (12px above the
+  // viewport edge) without the page needing to scroll.
+  const [surfaceTop, setSurfaceTop] = useState(0);
+  useLayoutEffect(() => {
+    if (!fullHeight || !surfaceRef.current) return undefined;
+    const measure = () => {
+      const r = surfaceRef.current.getBoundingClientRect();
+      setSurfaceTop(Math.ceil(r.top + window.scrollY));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [fullHeight, surfaceRef, stacked, showDetail]);
+  const fillHeight = fullHeight && !stacked;
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -169,7 +184,7 @@ export const ListDetailPage = ({
     ));
 
   return (
-    <Page pad={{ bottom: 'xlarge' }}>
+    <Page pad={fillHeight ? undefined : { bottom: 'xlarge' }}>
       <PageContent>
         {/* A · Page header — Grommet PageHeader (title / parent / actions slots) */}
         <PageHeader
@@ -210,6 +225,10 @@ export const ListDetailPage = ({
             // the full height of the surface beside a long detail
             // (Anatomy › Scroll & height).
             align="stretch"
+            height={
+              fillHeight ? `calc(100vh - ${surfaceTop + 12}px)` : undefined
+            }
+            style={fillHeight ? { minHeight: 0 } : undefined}
           >
             {/* B + C · List pane */}
             {listVisible && (
@@ -243,7 +262,14 @@ export const ListDetailPage = ({
                             : { horizontal: 'medium' }
                     }
                     gap="xsmall"
-                    style={stacked ? undefined : stickyBelowHeader(24)}
+                    style={
+                      stacked
+                        ? undefined
+                        : fillHeight
+                          ? { minHeight: 0 }
+                          : stickyBelowHeader(24)
+                    }
+                    flex={fillHeight ? true : undefined}
                     // Contained: the whole list zone (toolbar, filters, count,
                     // rows) sits on a background-contrast surface, same
                     // treatment as the detail cards
@@ -262,8 +288,8 @@ export const ListDetailPage = ({
                     height={
                       stacked
                         ? undefined
-                        : fullHeight
-                          ? `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)`
+                        : fillHeight
+                          ? undefined
                           : { max: `calc(100vh - ${APP_HEADER_HEIGHT + 96}px)` }
                     }
                   >
@@ -333,6 +359,8 @@ export const ListDetailPage = ({
                 pad={
                   bare ? (stacked ? undefined : { left: 'medium' }) : 'medium'
                 }
+                overflow={fillHeight ? 'auto' : undefined}
+                style={fillHeight ? { minHeight: 0 } : undefined}
               >
                 {selected ? (
                   renderDetail(selected)
