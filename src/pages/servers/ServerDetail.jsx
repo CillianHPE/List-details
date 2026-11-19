@@ -20,6 +20,7 @@ import { EmptyState } from '../../components/EmptyState';
 import {
   ListPrimary,
   ListRow,
+  ListStatus,
   Section,
   Table,
   usePairDirection,
@@ -76,22 +77,6 @@ const Pairs = ({ pairs }) => {
   );
 };
 
-const TableHeader = ({ title, note, action }) => (
-  <Box direction="row" align="end" justify="between" gap="medium" wrap>
-    <Box gap="4xsmall">
-      <Heading level={4} size="small" margin="none">
-        {title}
-      </Heading>
-      {note && (
-        <Text size="small" color="text-weak">
-          {note}
-        </Text>
-      )}
-    </Box>
-    {action}
-  </Box>
-);
-
 const Facet = ({ children }) => (
   <Box gap="medium" pad={{ top: 'medium' }}>
     {children}
@@ -124,9 +109,12 @@ const DetailHeader = ({ server }) => {
     <Box flex={false}>
       <Box direction="row" align="start" justify="between" gap="small" wrap>
         <Box gap="xxsmall">
-          <Heading level={2} margin="none">
-            {server.name}
-          </Heading>
+          <Box direction="row" align="center" gap="small" wrap>
+            <Heading level={2} margin="none">
+              {server.name}
+            </Heading>
+            <ServerHealth health={server.health} />
+          </Box>
           <Text color="text-weak">
             {server.model} · {server.serial}
           </Text>
@@ -220,10 +208,14 @@ const SmallSwitch = (props) => (
 
 // Each notification is switched in place rather than through an Edit flow
 const NOTIFICATIONS = [
-  ['issues', 'Issues'],
-  ['powerState', 'Power state change'],
-  ['disconnect', 'Disconnect or not monitored'],
-  ['dailySummary', 'Daily summary'],
+  ['issues', 'Issues', 'When a health issue is raised or resolved'],
+  ['powerState', 'Power state change', 'When the server powers on or off'],
+  [
+    'disconnect',
+    'Disconnect or not monitored',
+    'When iLO loses its connection to Compute Ops Management',
+  ],
+  ['dailySummary', 'Daily summary', 'One digest of health and activity a day'],
 ];
 
 const EmailNotifications = ({ server }) => {
@@ -231,9 +223,14 @@ const EmailNotifications = ({ server }) => {
   return (
     <Card title="Email notifications">
       <List data={NOTIFICATIONS} pad="none">
-        {([key, label], index) => (
+        {([key, label, description], index) => (
           <ListRow index={index} count={NOTIFICATIONS.length}>
-            <ListPrimary>{label}</ListPrimary>
+            <Box>
+              <ListPrimary>{label}</ListPrimary>
+              <Text size="small" color="text-weak">
+                {description}
+              </Text>
+            </Box>
             <SmallSwitch
               reverse
               a11yTitle={`${label} notifications`}
@@ -303,6 +300,8 @@ const Summary = ({ server }) => (
 );
 
 // ----------------------------------------------------------------- Health
+const SEVERITY_ORDER = { critical: 0, warning: 1, unknown: 2, ok: 3 };
+
 const Health = ({ server }) => {
   const counts = server.componentHealth.reduce((acc, c) => {
     acc[c.severity] = (acc[c.severity] ?? 0) + 1;
@@ -312,6 +311,9 @@ const Health = ({ server }) => {
     .filter((s) => counts[s])
     .map((s) => `${counts[s]} ${s}`)
     .join(' · ');
+  const components = [...server.componentHealth].sort(
+    (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity],
+  );
   return (
     <Facet>
       <Card title="Overall health">
@@ -324,17 +326,23 @@ const Health = ({ server }) => {
           </Fact>
         </Box>
       </Card>
-      <Box gap="small">
-        <TableHeader title="Component health" />
-        <List data={server.componentHealth} pad="none">
+      <Card
+        title="Component health"
+        note={
+          note ? 'Components needing attention are listed first' : undefined
+        }
+      >
+        <List data={components} pad="none">
           {(c, index) => (
-            <ListRow index={index} count={server.componentHealth.length}>
+            <ListRow index={index} count={components.length}>
               <ListPrimary>{c.name}</ListPrimary>
-              <StatusText severity={c.severity}>{c.status}</StatusText>
+              <ListStatus>
+                <StatusText severity={c.severity}>{c.status}</StatusText>
+              </ListStatus>
             </ListRow>
           )}
         </List>
-      </Box>
+      </Card>
     </Facet>
   );
 };
@@ -356,11 +364,7 @@ const Firmware = ({ server, connected }) => (
         ]}
       />
     </Card>
-    <Box gap="small">
-      <TableHeader
-        title="Firmware"
-        note={`${server.firmware.length} components`}
-      />
+    <Card title="Firmware" note={`${server.firmware.length} components`}>
       <List data={server.firmware} pad="none">
         {(f, index) => (
           <ListRow index={index} count={server.firmware.length}>
@@ -370,22 +374,28 @@ const Firmware = ({ server, connected }) => (
                 {f.location}
               </Text>
             </Box>
-            <Text flex={false}>{f.version}</Text>
+            <ListStatus>
+              <Text>{f.version}</Text>
+            </ListStatus>
           </ListRow>
         )}
       </List>
-    </Box>
-    <Box gap="small">
-      <TableHeader title="HPE drivers and software" />
+    </Card>
+    <Card
+      title="HPE drivers and software"
+      note={`${server.drivers.length} installed`}
+    >
       <List data={server.drivers} pad="none">
         {(d, index) => (
           <ListRow index={index} count={server.drivers.length}>
             <ListPrimary>{d.name}</ListPrimary>
-            <Text flex={false}>{d.version}</Text>
+            <ListStatus width="medium">
+              <Text wordBreak="break-all">{d.version}</Text>
+            </ListStatus>
           </ListRow>
         )}
       </List>
-    </Box>
+    </Card>
   </Facet>
 );
 
@@ -420,8 +430,7 @@ const Hardware = ({ server }) => {
           ]}
         />
       </Card>
-      <Box gap="small">
-        <TableHeader title="Processors" />
+      <Card title="Processors" note={`${hw.processors.length} sockets`}>
         <List data={hw.processors} pad="none">
           {(p, index) => (
             <ListRow index={index} count={hw.processors.length}>
@@ -431,18 +440,16 @@ const Hardware = ({ server }) => {
                   {p.max} max · {p.rated} rated
                 </Text>
               </Box>
-              <Text flex={false}>
-                {p.cores} cores · {p.threads} threads
-              </Text>
+              <ListStatus>
+                <Text>
+                  {p.cores} cores · {p.threads} threads
+                </Text>
+              </ListStatus>
             </ListRow>
           )}
         </List>
-      </Box>
-      <Box gap="small">
-        <TableHeader
-          title="Memory"
-          note={`${filled} of ${slots} slots filled`}
-        />
+      </Card>
+      <Card title="Memory" note={`${filled} of ${slots} slots filled`}>
         <Table
           columns={[
             {
@@ -453,39 +460,48 @@ const Hardware = ({ server }) => {
                 <Box>
                   <Text weight={500}>{m.location}</Text>
                   <Text size="small" color="text-weak">
-                    {m.type} · {m.technology}
+                    {m.type} · {m.technology} · {m.part}
                   </Text>
                 </Box>
               ),
             },
-            { property: 'size', header: 'Size' },
-            { property: 'speed', header: 'Speed' },
+            {
+              property: 'size',
+              header: 'Size',
+              render: (m) => (
+                <Text style={{ whiteSpace: 'nowrap' }}>{m.size}</Text>
+              ),
+            },
+            {
+              property: 'speed',
+              header: 'Speed',
+              render: (m) => (
+                <Text style={{ whiteSpace: 'nowrap' }}>{m.speed}</Text>
+              ),
+            },
             { property: 'serial', header: 'Serial number' },
-            { property: 'part', header: 'Part number' },
           ]}
           data={hw.memory}
         />
-      </Box>
-      <Box gap="small">
-        <TableHeader
-          title="Network adapters"
-          note={`${hw.networkAdapters.length} adapters`}
-        />
-        <Box gap="small">
-          {hw.networkAdapters.map((adapter) => (
-            <Card key={adapter.name} title={adapter.name}>
-              <List data={adapter.ports} pad="none">
-                {(p, index) => (
-                  <ListRow index={index} count={adapter.ports.length}>
-                    <Text>{p.port}</Text>
-                    <Text color="text-weak">{p.address}</Text>
-                  </ListRow>
-                )}
-              </List>
-            </Card>
-          ))}
-        </Box>
-      </Box>
+      </Card>
+      {hw.networkAdapters.map((adapter) => (
+        <Card
+          key={adapter.name}
+          title={adapter.name}
+          note={`Network adapter · ${adapter.ports.length} ports`}
+        >
+          <List data={adapter.ports} pad="none">
+            {(p, index) => (
+              <ListRow index={index} count={adapter.ports.length}>
+                <ListPrimary>{p.port}</ListPrimary>
+                <ListStatus>
+                  <Text>{p.address}</Text>
+                </ListStatus>
+              </ListRow>
+            )}
+          </List>
+        </Card>
+      ))}
     </Facet>
   );
 };
@@ -501,11 +517,11 @@ const Storage = ({ server }) => {
     <Facet>
       {controllers.length ? (
         controllers.map(([controller, volumes]) => (
-          <Box key={controller} gap="small">
-            <TableHeader
-              title={controller}
-              note={`${volumes.length} ${volumes.length === 1 ? 'volume' : 'volumes'}`}
-            />
+          <Card
+            key={controller}
+            title={controller}
+            note={`${volumes.length} ${volumes.length === 1 ? 'volume' : 'volumes'}`}
+          >
             <Table
               columns={[
                 {
@@ -534,7 +550,7 @@ const Storage = ({ server }) => {
               ]}
               data={volumes}
             />
-          </Box>
+          </Card>
         ))
       ) : (
         <EmptyState
@@ -571,12 +587,11 @@ const Support = ({ server }) => {
           ]}
         />
       </Card>
-      <Box gap="small">
-        <TableHeader
-          title="Support cases"
-          note={`${support.cases} open`}
-          action={<Button label="Open a case" size="small" />}
-        />
+      <Card
+        title="Support cases"
+        note={`${support.cases} open`}
+        action={<Button label="Open a case" size="small" />}
+      >
         {support.cases ? (
           <List
             data={Array.from({ length: support.cases }, (_, i) => ({
@@ -594,7 +609,9 @@ const Support = ({ server }) => {
                     {c.title} · Opened {c.opened}
                   </Text>
                 </Box>
-                <StatusText severity="warning">Open</StatusText>
+                <ListStatus>
+                  <StatusText severity="warning">Open</StatusText>
+                </ListStatus>
               </ListRow>
             )}
           </List>
@@ -605,7 +622,7 @@ const Support = ({ server }) => {
             description="Support cases opened for this server will be listed here."
           />
         )}
-      </Box>
+      </Card>
     </Facet>
   );
 };
@@ -614,9 +631,22 @@ const Support = ({ server }) => {
 export const ServerDetail = ({ server }) => {
   const [tab, setTab] = useState(0);
   const connected = server.state === 'Connected';
+  const failing = server.componentHealth.filter(
+    (c) => c.severity === 'critical',
+  );
   return (
     <Box>
       <DetailHeader server={server} />
+      {server.health === 'Critical' && (
+        <Box margin={{ top: 'medium' }} flex={false}>
+          <Notification
+            status="critical"
+            title="Server health is critical"
+            message={`${failing.map((c) => `${c.name}: ${c.status.toLowerCase()}`).join(' · ')}. Review component health and open a support case if needed.`}
+            actions={[{ label: 'View health', onClick: () => setTab(1) }]}
+          />
+        </Box>
+      )}
       {!connected && (
         <Box margin={{ top: 'medium' }} flex={false}>
           <Notification

@@ -2,7 +2,7 @@ import { Box, List, Text } from 'grommet';
 import { ServerHealth } from './ServerHealth';
 
 // C · List body — one server per row: health + name leading, model and serial
-// underneath, power state trailing. Just enough to choose; the record's
+// underneath, nothing trailing. Just enough to choose; the record's
 // facets live in the detail zone.
 const ServerRow = ({ server }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
@@ -15,9 +15,6 @@ const ServerRow = ({ server }) => (
         {server.model} · {server.serial}
       </Text>
     </Box>
-    <Text size="small" color="text-weak" flex={false}>
-      {server.state === 'Connected' ? server.power : 'Not connected'}
-    </Text>
   </Box>
 );
 
