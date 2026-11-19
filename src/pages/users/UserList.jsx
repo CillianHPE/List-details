@@ -12,12 +12,16 @@ const UserRow = ({ user }) => (
       <Text weight={500} truncate>
         {user.name}
       </Text>
-      <Text size="small" color="text-weak" truncate>
-        {user.role}
-      </Text>
+      {/* Status leads the secondary line so it aligns left with the name
+          and avoids a ragged trailing column */}
+      <Box direction="row" align="center" gap="3xsmall">
+        <StatusIndicator status={user.status} size="small" />
+        <Text size="small" color="text-weak" truncate>
+          {' · '}
+          {user.role}
+        </Text>
+      </Box>
     </Box>
-    {/* Trailing: account status as the HPE DS status indicator */}
-    <StatusIndicator status={user.status} size="small" />
   </Box>
 );
 
