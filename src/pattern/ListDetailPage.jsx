@@ -3,9 +3,7 @@ import {
   Anchor,
   Box,
   Button,
-  CheckBox,
   Grid,
-  Menu,
   Page,
   PageContent,
   PageHeader,
@@ -13,11 +11,12 @@ import {
   TextInput,
   ToggleGroup,
 } from 'grommet';
-import { Add, LinkPrev, More, Search } from '@hpe-design/icons-grommet';
+import { Add, LinkPrev, Search } from '@hpe-design/icons-grommet';
 import { listWidthFor, useSurfaceTier } from './listDetail';
 import {
   APP_HEADER_HEIGHT,
   stickyBelowHeader,
+  usePrototype,
   useShell,
 } from '../shell/ShellContext';
 
@@ -48,7 +47,6 @@ const ContentPane = forwardRef((props, ref) => (
 //   renderDetail     (item) → detail column content
 //   collectionAction { label, icon } — trailing in the toolbar, beside search
 //   pageAction       { label, icon } — page-level action in the page header
-//   dividerControl   show the prototype-only divider toggle in the page header
 export const ListDetailPage = ({
   title,
   subtitle,
@@ -59,7 +57,6 @@ export const ListDetailPage = ({
   searchPlaceholder = 'Search',
   collectionAction,
   pageAction,
-  dividerControl = true,
   renderList,
   renderDetail,
   noResultsText = 'Nothing matches your search.',
@@ -75,10 +72,8 @@ export const ListDetailPage = ({
   const [query, setQuery] = useState('');
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
-  // Prototype control: show/hide the divider between list and detail.
-  const [divider, setDivider] = useState(true);
-  // Prototype control: draw the whole list zone on a contained surface.
-  const [contained, setContained] = useState(false);
+  // Prototype controls (divider, contained list) live in the global header.
+  const { divider, contained } = usePrototype();
   const [showDetail, setShowDetail] = useState(false);
   // The surface always fills the available view height: measure its distance
   // from the document top so it can end level with the side nav (12px above
@@ -120,14 +115,6 @@ export const ListDetailPage = ({
 
   // Page header carries page-level controls only (things that act on the
   // surface, not the data). Collection actions live in the list toolbar.
-  const dividerItem = {
-    label: divider ? 'Hide divider' : 'Show divider',
-    onClick: () => setDivider((d) => !d),
-  };
-  const containedItem = {
-    label: contained ? 'Plain list' : 'Contained list',
-    onClick: () => setContained((c) => !c),
-  };
   const pageActionButton =
     pageAction &&
     (tier === 'comfortable' ? (
@@ -140,42 +127,11 @@ export const ListDetailPage = ({
         secondary
       />
     ));
-  const prototypeControls = !dividerControl ? null : tier === 'comfortable' ? (
-    <>
-      <CheckBox
-        toggle
-        label="Divider"
-        checked={divider}
-        onChange={(e) => setDivider(e.target.checked)}
-      />
-      <CheckBox
-        toggle
-        label="Contained list"
-        checked={contained}
-        onChange={(e) => setContained(e.target.checked)}
-      />
-    </>
-  ) : (
-    <Menu
-      icon={<More />}
-      a11yTitle="More actions"
-      dropAlign={{ top: 'bottom', right: 'right' }}
-      items={[dividerItem, containedItem]}
-    />
-  );
-  const headerActions =
-    pageActionButton || prototypeControls ? (
-      <Box
-        direction="row"
-        gap="medium"
-        align="center"
-        flex={false}
-        style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
-      >
-        {prototypeControls}
-        {pageActionButton}
-      </Box>
-    ) : undefined;
+  const headerActions = pageActionButton ? (
+    <Box flex={false} style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}>
+      {pageActionButton}
+    </Box>
+  ) : undefined;
 
   // Collection action: adds to the set the toolbar controls, so it sits
   // trailing in the toolbar beside search. Labelled when comfortable,

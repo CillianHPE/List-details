@@ -1,8 +1,8 @@
 import { Box, List, Text } from 'grommet';
 import { ResourceStatus } from './ResourceStatus';
 
-// C · List body — availability icon + name leading; secondary line ordered by
-// importance: availability (what's wrong), IP (how to reach it), then model.
+// C · List body — availability icon + name leading; the platform (model) is
+// the one secondary fact worth a glance here. IP and more live in the detail.
 const ResourceRow = ({ resource }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
     <ResourceStatus availability={resource.availability} iconOnly />
@@ -11,7 +11,7 @@ const ResourceRow = ({ resource }) => (
         {resource.name}
       </Text>
       <Text size="small" color="text-weak" truncate>
-        {resource.availability} · {resource.ip} · {resource.model}
+        {resource.model}
       </Text>
     </Box>
   </Box>

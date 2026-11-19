@@ -1,7 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
+  CheckBox,
   Collapsible,
   DropButton,
   Image,
@@ -18,6 +19,7 @@ import {
   Up,
   Help,
   Menu as MenuIcon,
+  More,
   Notification,
   Search,
   Sidebar as SidebarIcon,
@@ -29,7 +31,61 @@ import {
   selectNavItem,
   usePersistedState,
 } from '../components/NavSidebar';
-import { ShellContext, stickyBelowHeader } from './ShellContext';
+import {
+  PrototypeContext,
+  ShellContext,
+  stickyBelowHeader,
+  usePrototype,
+} from './ShellContext';
+
+// Prototype switches for the list–detail surface, shown in the global header
+// (compact breakpoints collapse them into a menu).
+const PrototypeSwitches = ({ compact }) => {
+  const { divider, contained, setDivider, setContained } = usePrototype();
+  if (compact) {
+    return (
+      <Menu
+        icon={<More />}
+        size="small"
+        a11yTitle="Prototype options"
+        dropAlign={{ top: 'bottom', right: 'right' }}
+        items={[
+          {
+            label: divider ? 'Hide divider' : 'Show divider',
+            onClick: () => setDivider(!divider),
+          },
+          {
+            label: contained ? 'Plain list' : 'Contained list',
+            onClick: () => setContained(!contained),
+          },
+        ]}
+      />
+    );
+  }
+  return (
+    <Box
+      direction="row"
+      align="center"
+      gap="medium"
+      flex={false}
+      pad={{ right: 'small' }}
+      style={{ whiteSpace: 'nowrap' }}
+    >
+      <CheckBox
+        toggle
+        label="Divider"
+        checked={divider}
+        onChange={(e) => setDivider(e.target.checked)}
+      />
+      <CheckBox
+        toggle
+        label="Contained list"
+        checked={contained}
+        onChange={(e) => setContained(e.target.checked)}
+      />
+    </Box>
+  );
+};
 
 // App Shell V3.1 (Figma: Landmark Surface examples → 3250:15494).
 // White canvas · 60px bordered global header · 12px wrapper holding a rounded
@@ -89,6 +145,7 @@ const GlobalHeaderV3 = () => {
         )}
       </Box>
       <Box direction="row" align="center" gap="3xsmall" flex={false}>
+        <PrototypeSwitches compact={compact} />
         <Button
           icon={<AIGenFill color="brand" />}
           size="small"
@@ -151,20 +208,23 @@ const GlobalHeaderApp = ({ appName }) => {
           <Text weight={600}>HPE</Text> {appName}
         </Text>
       </Box>
-      <DropButton
-        icon={<User />}
-        size="small"
-        a11yTitle="Account"
-        dropAlign={{ top: 'bottom', right: 'right' }}
-        dropContent={
-          <Box pad="medium" width="small">
-            <Text weight={500}>Alex Morgan</Text>
-            <Text size="small" color="text-weak">
-              alex.morgan@hpe.com
-            </Text>
-          </Box>
-        }
-      />
+      <Box direction="row" align="center" gap="3xsmall" flex={false}>
+        <PrototypeSwitches compact={compact} />
+        <DropButton
+          icon={<User />}
+          size="small"
+          a11yTitle="Account"
+          dropAlign={{ top: 'bottom', right: 'right' }}
+          dropContent={
+            <Box pad="medium" width="small">
+              <Text weight={500}>Alex Morgan</Text>
+              <Text size="small" color="text-weak">
+                alex.morgan@hpe.com
+              </Text>
+            </Box>
+          }
+        />
+      </Box>
     </Box>
   );
 };
@@ -336,16 +396,26 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
 };
 
 // `appName` swaps the GreenLake platform header for the application variant.
-export const V3Shell = ({ appName, children }) => (
-  <ShellContext.Provider value="v3">
-    <Box background="background" fill="vertical" flex>
-      {appName ? <GlobalHeaderApp appName={appName} /> : <GlobalHeaderV3 />}
-      <Box direction="row" gap="xsmall" pad="xsmall" align="start" flex>
-        <NavPaneV3 />
-        <Box as="main" flex style={{ minWidth: 0 }}>
-          {children}
+export const V3Shell = ({ appName, children }) => {
+  const [divider, setDivider] = useState(true);
+  const [contained, setContained] = useState(false);
+  const prototype = useMemo(
+    () => ({ divider, contained, setDivider, setContained }),
+    [divider, contained],
+  );
+  return (
+    <ShellContext.Provider value="v3">
+      <PrototypeContext.Provider value={prototype}>
+        <Box background="background" fill="vertical" flex>
+          {appName ? <GlobalHeaderApp appName={appName} /> : <GlobalHeaderV3 />}
+          <Box direction="row" gap="xsmall" pad="xsmall" align="start" flex>
+            <NavPaneV3 />
+            <Box as="main" flex style={{ minWidth: 0 }}>
+              {children}
+            </Box>
+          </Box>
         </Box>
-      </Box>
-    </Box>
-  </ShellContext.Provider>
-);
+      </PrototypeContext.Provider>
+    </ShellContext.Provider>
+  );
+};

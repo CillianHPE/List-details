@@ -24,7 +24,7 @@ import {
   DetailHeading,
   DetailTabs,
 } from '../../pattern/detail';
-import { HEALTH_STATUS, ServerHealth, StatusText } from './ServerHealth';
+import { ServerHealth, StatusText } from './ServerHealth';
 
 // Servers · Compute Ops Management. The COM detail page's facets, read side
 // by side with the list instead of on a separate page.
@@ -63,7 +63,6 @@ const DetailHeader = ({ server, children }) => {
     <Box flex={false} gap="small">
       <DetailHeading
         heading={server.name}
-        status={HEALTH_STATUS[server.health]}
         description={`${server.health} · ${server.model} · ${server.serial}`}
         trailing={
           <Menu
