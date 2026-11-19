@@ -75,7 +75,7 @@ export const ListDetailPage = ({
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype control: show/hide the divider between list and detail.
   const [divider, setDivider] = useState(true);
-  // Prototype control: draw the list rows on a contained surface.
+  // Prototype control: draw the whole list zone on a contained surface.
   const [contained, setContained] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
 
@@ -213,16 +213,30 @@ export const ListDetailPage = ({
                 >
                   <Box
                     pad={
-                      bare
-                        ? stacked
-                          ? { vertical: 'medium' }
-                          : { right: 'medium' }
-                        : stacked
-                          ? 'medium'
-                          : { horizontal: 'medium' }
+                      contained
+                        ? 'medium'
+                        : bare
+                          ? stacked
+                            ? { vertical: 'medium' }
+                            : { right: 'medium' }
+                          : stacked
+                            ? 'medium'
+                            : { horizontal: 'medium' }
                     }
                     gap="xsmall"
                     style={stacked ? undefined : stickyBelowHeader(24)}
+                    // Contained: the whole list zone (toolbar, filters, count,
+                    // rows) sits on a background-contrast surface, same
+                    // treatment as the detail cards
+                    background={contained ? 'background-contrast' : undefined}
+                    round={contained ? 'medium' : undefined}
+                    margin={
+                      contained && !stacked
+                        ? bare
+                          ? { right: 'medium' }
+                          : { horizontal: 'medium' }
+                        : undefined
+                    }
                     // Pinned 24px below the sticky global header; max height leaves
                     // room for that gap plus the pane and page bottom padding (72px)
                     // so the column never slides under the header at full scroll.
@@ -268,11 +282,6 @@ export const ListDetailPage = ({
                       overflow="auto"
                       flex
                       style={{ scrollbarColor: 'auto' }}
-                      // Contained: rows sit on a background-contrast surface
-                      // (same treatment as detail cards)
-                      background={contained ? 'background-contrast' : undefined}
-                      round={contained ? 'medium' : undefined}
-                      pad={contained ? { horizontal: 'small' } : undefined}
                     >
                       {visible.length ? (
                         renderList({ items: visible, selectedId, onSelect })
