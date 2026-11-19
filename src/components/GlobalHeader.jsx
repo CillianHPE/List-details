@@ -41,7 +41,7 @@ export const GlobalHeader = (props) => {
             </Box>
             <Box height="32px" width="125px" align="start">
               <Image
-                src="/hpe_greenlake_grn_pos_rgb.svg"
+                src={`${import.meta.env.BASE_URL}hpe_greenlake_grn_pos_rgb.svg`}
                 fit="contain"
                 alt="HPE GreenLake"
               />

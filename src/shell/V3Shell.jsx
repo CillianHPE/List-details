@@ -59,7 +59,7 @@ const GlobalHeaderV3 = () => {
         />
         <Box height="24px" width="93px" flex={false}>
           <Image
-            src="/greenlake_by_hpe.svg"
+            src={`${import.meta.env.BASE_URL}greenlake_by_hpe.svg`}
             fit="contain"
             alt="GreenLake by HPE"
           />
@@ -141,7 +141,11 @@ const GlobalHeaderApp = ({ appName }) => {
     >
       <Box direction="row" align="center" gap="medium" flex={false}>
         <Box height="24px" width="48px" flex={false}>
-          <Image src="/hpe_logo.svg" fit="contain" alt="HPE" />
+          <Image
+            src={`${import.meta.env.BASE_URL}hpe_logo.svg`}
+            fit="contain"
+            alt="HPE"
+          />
         </Box>
         <Text>
           <Text weight={600}>HPE</Text> {appName}
