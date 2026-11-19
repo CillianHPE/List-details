@@ -11,7 +11,6 @@ import {
   Meter,
   Select,
   Tab,
-  Tabs,
   Text,
 } from 'grommet';
 import {
@@ -33,6 +32,7 @@ import {
   ListStatus,
   Section,
   Table,
+  DetailTabs,
 } from '../../pattern/detail';
 import { hpe } from 'grommet-theme-hpe';
 import { SERVICES, TIERS } from '../../data/cockpit';
@@ -646,13 +646,7 @@ export const CockpitDetail = ({ account }) => {
   return (
     <Box>
       <DetailHeader account={account} />
-      <Tabs
-        activeIndex={tab}
-        onActive={setTab}
-        justify="start"
-        flex={false}
-        margin={{ top: 'small' }}
-      >
+      <DetailTabs activeIndex={tab} onActive={setTab}>
         <Tab title="Overview">
           <Section title="Overview" hideTitle>
             <Summary account={account} />
@@ -682,7 +676,7 @@ export const CockpitDetail = ({ account }) => {
             <Subscriptions account={account} />
           </Section>
         </Tab>
-      </Tabs>
+      </DetailTabs>
     </Box>
   );
 };

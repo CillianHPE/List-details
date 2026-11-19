@@ -9,7 +9,6 @@ import {
   Menu,
   Notification,
   Tab,
-  Tabs,
   Text,
   ThemeContext,
 } from 'grommet';
@@ -23,6 +22,7 @@ import {
   Pairs,
   Section,
   Table,
+  DetailTabs,
 } from '../../pattern/detail';
 import { ServerHealth, StatusText } from './ServerHealth';
 
@@ -635,13 +635,7 @@ export const ServerDetail = ({ server }) => {
           />
         </Box>
       )}
-      <Tabs
-        activeIndex={tab}
-        onActive={setTab}
-        justify="start"
-        flex={false}
-        margin={{ top: 'small' }}
-      >
+      <DetailTabs activeIndex={tab} onActive={setTab}>
         <Tab title="Overview">
           <Section title="Overview" hideTitle>
             <Summary server={server} />
@@ -672,7 +666,7 @@ export const ServerDetail = ({ server }) => {
             <Support server={server} />
           </Section>
         </Tab>
-      </Tabs>
+      </DetailTabs>
     </Box>
   );
 };

@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  Anchor,
-  Box,
-  Heading,
-  List,
-  Menu,
-  Tab,
-  Tabs,
-  Tag,
-  Text,
-} from 'grommet';
+import { Anchor, Box, Heading, List, Menu, Tab, Tag, Text } from 'grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
   Card,
@@ -18,6 +8,7 @@ import {
   ListStatus,
   Pairs,
   Section,
+  DetailTabs,
 } from '../../pattern/detail';
 import { relatedResources } from '../../data/resources';
 import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
@@ -210,13 +201,7 @@ export const ResourceDetail = ({ resource }) => {
       <DetailHeader resource={resource}>
         <ResourceAlerts resource={resource} />
       </DetailHeader>
-      <Tabs
-        activeIndex={tab}
-        onActive={setTab}
-        justify="start"
-        flex={false}
-        margin={{ top: 'small' }}
-      >
+      <DetailTabs activeIndex={tab} onActive={setTab}>
         <Tab title="Overview">
           <Section title="Overview" hideTitle>
             <Overview resource={resource} />
@@ -232,7 +217,7 @@ export const ResourceDetail = ({ resource }) => {
             <CustomAttributes resource={resource} />
           </Section>
         </Tab>
-      </Tabs>
+      </DetailTabs>
     </Box>
   );
 };

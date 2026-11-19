@@ -47,6 +47,7 @@ const ContentPane = forwardRef((props, ref) => (
 //   renderList       ({ items, selectedId, onSelect }) → list body
 //   renderDetail     (item) → detail column content
 //   collectionAction { label, icon } — trailing in the toolbar, beside search
+//   pageAction       { label, icon } — page-level action in the page header
 //   dividerControl   show the prototype-only divider toggle in the page header
 export const ListDetailPage = ({
   title,
@@ -57,6 +58,7 @@ export const ListDetailPage = ({
   quickFilters,
   searchPlaceholder = 'Search',
   collectionAction,
+  pageAction,
   dividerControl = true,
   renderList,
   renderDetail,
@@ -126,14 +128,20 @@ export const ListDetailPage = ({
     label: contained ? 'Plain list' : 'Contained list',
     onClick: () => setContained((c) => !c),
   };
-  const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
-    <Box
-      direction="row"
-      gap="medium"
-      align="center"
-      flex={false}
-      style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
-    >
+  const pageActionButton =
+    pageAction &&
+    (tier === 'comfortable' ? (
+      <Button label={pageAction.label} icon={pageAction.icon} secondary />
+    ) : (
+      <Button
+        icon={pageAction.icon}
+        a11yTitle={pageAction.label}
+        tip={pageAction.label}
+        secondary
+      />
+    ));
+  const prototypeControls = !dividerControl ? null : tier === 'comfortable' ? (
+    <>
       <CheckBox
         toggle
         label="Divider"
@@ -146,7 +154,7 @@ export const ListDetailPage = ({
         checked={contained}
         onChange={(e) => setContained(e.target.checked)}
       />
-    </Box>
+    </>
   ) : (
     <Menu
       icon={<More />}
@@ -155,6 +163,19 @@ export const ListDetailPage = ({
       items={[dividerItem, containedItem]}
     />
   );
+  const headerActions =
+    pageActionButton || prototypeControls ? (
+      <Box
+        direction="row"
+        gap="medium"
+        align="center"
+        flex={false}
+        style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
+      >
+        {prototypeControls}
+        {pageActionButton}
+      </Box>
+    ) : undefined;
 
   // Collection action: adds to the set the toolbar controls, so it sits
   // trailing in the toolbar beside search. Labelled when comfortable,

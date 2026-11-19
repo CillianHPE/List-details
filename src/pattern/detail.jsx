@@ -1,15 +1,42 @@
 import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 import {
   Box,
   DataTable,
   Heading,
   NameValueList,
   NameValuePair,
+  Tabs,
   Text,
 } from 'grommet';
 
 // Building blocks for the detail zone's content area, shared by every record
 // type (Anatomy › Detail zone › Content area).
+
+// Detail facets as tabs. Grommet swaps to a scrolling tablist with
+// previous/next arrows when the tabs overflow, but its check
+// (scrollWidth > offsetWidth) can stick on by a sub-pixel once the header has
+// been padded for scrolling. Real overflow always enables at least one arrow,
+// so when both are disabled there is nothing to scroll: hide the pair.
+const ArrowlessTabs = styled(Tabs)`
+  &
+    > div:has(
+      > button[aria-label='Previous Tab'][disabled]
+        ~ button[aria-label='Next Tab'][disabled]
+    )
+    > button {
+    display: none;
+  }
+`;
+
+export const DetailTabs = (props) => (
+  <ArrowlessTabs
+    justify="start"
+    flex={false}
+    margin={{ top: 'small' }}
+    {...props}
+  />
+);
 
 // Keeps a heading in the document outline without rendering it visibly
 const visuallyHidden = {

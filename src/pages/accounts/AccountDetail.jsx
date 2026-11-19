@@ -10,7 +10,6 @@ import {
   NameValueList,
   NameValuePair,
   Tab,
-  Tabs,
   Text,
 } from 'grommet';
 import {
@@ -24,7 +23,12 @@ import {
   StatusWarning,
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section, usePairDirection } from '../../pattern/detail';
+import {
+  ListRow,
+  Section,
+  usePairDirection,
+  DetailTabs,
+} from '../../pattern/detail';
 import { HealthIndicator } from './HealthIndicator';
 
 // D · Detail header — identity line mirrors the redesigned account page's
@@ -409,13 +413,7 @@ export const AccountDetail = ({ account }) => {
   return (
     <Box>
       <DetailHeader account={account} />
-      <Tabs
-        activeIndex={tab}
-        onActive={setTab}
-        justify="start"
-        flex={false}
-        margin={{ top: 'small' }}
-      >
+      <DetailTabs activeIndex={tab} onActive={setTab}>
         <Tab title="Overview">
           <Section title="Overview" hideTitle>
             <Summary account={account} />
@@ -453,7 +451,7 @@ export const AccountDetail = ({ account }) => {
             <Subscriptions account={account} />
           </Section>
         </Tab>
-      </Tabs>
+      </DetailTabs>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { Refresh } from '@hpe-design/icons-grommet';
+import { Add, Refresh } from '@hpe-design/icons-grommet';
 import { AVAILABILITIES, resources } from '../../data/resources';
 import { ListDetailPage } from '../../pattern/ListDetailPage';
 import { ResourceDetail } from './ResourceDetail';
@@ -6,8 +6,9 @@ import { ResourceList } from './ResourceList';
 import { AVAILABILITY_STATUS } from './ResourceStatus';
 
 // Kubernetes · OpsRamp resources. The preview page's availability count
-// cards become quick filters carrying the status icon; its Refresh page
-// action becomes the toolbar's collection action.
+// cards become quick filters carrying the status icon. Refresh acts on the
+// page, so it stays in the page header; adding a resource acts on the
+// collection, so it sits in the list toolbar beside search.
 const statusIcon = (a) => {
   const { Icon, color } = AVAILABILITY_STATUS[a];
   return <Icon color={color} size="xsmall" aria-hidden />;
@@ -36,7 +37,8 @@ export const ResourcesPage = () => (
     matches={matches}
     quickFilters={QUICK_FILTERS}
     searchPlaceholder="Search resources"
-    collectionAction={{ label: 'Refresh', icon: <Refresh /> }}
+    pageAction={{ label: 'Refresh', icon: <Refresh /> }}
+    collectionAction={{ label: 'Add resource', icon: <Add /> }}
     renderList={({ items, selectedId, onSelect }) => (
       <ResourceList
         resources={items}

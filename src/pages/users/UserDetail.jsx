@@ -9,7 +9,6 @@ import {
   NameValueList,
   NameValuePair,
   Tab,
-  Tabs,
   Text,
   TextInput,
 } from 'grommet';
@@ -26,7 +25,12 @@ import {
   Trash,
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section, usePairDirection } from '../../pattern/detail';
+import {
+  ListRow,
+  Section,
+  usePairDirection,
+  DetailTabs,
+} from '../../pattern/detail';
 
 // HPE DS status indicator template: semantic icon + visible label.
 // https://design-system.hpe.design/templates/status-indicator
@@ -303,13 +307,7 @@ const OrgWorkspaces = ({ user }) =>
 // Grommet's overflow check (scrollWidth > offsetWidth) misfires on fractional
 // widths, so the page keeps the grid columns in whole px (see listDetail.js).
 const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
-  <Tabs
-    activeIndex={tab}
-    onActive={setTab}
-    justify="start"
-    flex={false}
-    margin={{ top: 'small' }}
-  >
+  <DetailTabs activeIndex={tab} onActive={setTab}>
     <Tab title="Overview">
       <Section title="Overview" hideTitle>
         <Properties user={user} groups={groups} />
@@ -346,7 +344,7 @@ const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
         <OrgWorkspaces user={user} />
       </Section>
     </Tab>
-  </Tabs>
+  </DetailTabs>
 );
 
 // variant="short": a record with one facet — no tabs, identity only.
