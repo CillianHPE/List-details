@@ -6,6 +6,7 @@ import {
   Collapsible,
   DropButton,
   Image,
+  Layer,
   Menu,
   Nav,
   ResponsiveContext,
@@ -15,6 +16,7 @@ import {
 import {
   AIGenFill,
   Catalog,
+  Close,
   Down,
   Up,
   Help,
@@ -41,7 +43,14 @@ import {
 // Prototype switches for the list–detail surface, shown in the global header
 // (compact breakpoints collapse them into a menu).
 const PrototypeSwitches = ({ compact }) => {
-  const { divider, contained, setDivider, setContained } = usePrototype();
+  const {
+    divider,
+    contained,
+    contextPane,
+    setDivider,
+    setContained,
+    setContextPane,
+  } = usePrototype();
   if (compact) {
     return (
       <Menu
@@ -57,6 +66,10 @@ const PrototypeSwitches = ({ compact }) => {
           {
             label: contained ? 'Plain list' : 'Contained list',
             onClick: () => setContained(!contained),
+          },
+          {
+            label: contextPane ? 'Hide context pane' : 'Show context pane',
+            onClick: () => setContextPane(!contextPane),
           },
         ]}
       />
@@ -82,6 +95,12 @@ const PrototypeSwitches = ({ compact }) => {
         label="Contained list"
         checked={contained}
         onChange={(e) => setContained(e.target.checked)}
+      />
+      <CheckBox
+        toggle
+        label="Context pane"
+        checked={contextPane}
+        onChange={(e) => setContextPane(e.target.checked)}
       />
     </Box>
   );
@@ -395,13 +414,88 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   );
 };
 
+// Context pane (Figma: Slot builds → AppShell - V3 → ContextPane). At medium
+// and up it is a 425px sibling after main in the wrapper row, so it pushes
+// content rather than overlaying it; at small and xsmall it covers the shell
+// full-width, like the mobile navigation.
+export const CONTEXT_PANE_WIDTH = 425;
+
+const ContextPaneBody = ({ onClose, fill }) => (
+  <Box
+    as="aside"
+    aria-label="Context"
+    width={fill ? undefined : `${CONTEXT_PANE_WIDTH}px`}
+    fill={fill}
+    flex={false}
+    background="background-back"
+    round={fill ? undefined : 'large'}
+    style={
+      fill ? undefined : stickyBelowHeader(12, { alignSelf: 'flex-start' })
+    }
+    height={fill ? undefined : 'calc(100vh - 84px)'}
+  >
+    <Box
+      direction="row"
+      align="center"
+      justify="between"
+      gap="xxsmall"
+      pad={{ top: 'xsmall', bottom: 'xxsmall', horizontal: 'small' }}
+      height={{ min: '36px' }}
+      flex={false}
+    >
+      <Text size="large" weight={500} color="text-heading">
+        Context
+      </Text>
+      <Button
+        icon={<Close />}
+        secondary
+        a11yTitle="Close context pane"
+        onClick={onClose}
+      />
+    </Box>
+    <Box
+      pad={{ horizontal: 'small', bottom: 'small' }}
+      gap="small"
+      overflow="auto"
+    >
+      <Text size="small" color="text-weak">
+        Slot for contextual help, AI assistance or activity for the current
+        page.
+      </Text>
+    </Box>
+  </Box>
+);
+
+const ContextPaneV3 = () => {
+  const size = useContext(ResponsiveContext);
+  const { contextPane, setContextPane } = usePrototype();
+  if (!contextPane) return null;
+  const close = () => setContextPane(false);
+  if (['xsmall', 'small'].includes(size)) {
+    return (
+      <Layer full animation="fadeIn" onEsc={close}>
+        <ContextPaneBody fill onClose={close} />
+      </Layer>
+    );
+  }
+  return <ContextPaneBody onClose={close} />;
+};
+
 // `appName` swaps the GreenLake platform header for the application variant.
 export const V3Shell = ({ appName, children }) => {
   const [divider, setDivider] = useState(true);
   const [contained, setContained] = useState(false);
+  const [contextPane, setContextPane] = useState(false);
   const prototype = useMemo(
-    () => ({ divider, contained, setDivider, setContained }),
-    [divider, contained],
+    () => ({
+      divider,
+      contained,
+      contextPane,
+      setDivider,
+      setContained,
+      setContextPane,
+    }),
+    [divider, contained, contextPane],
   );
   return (
     <ShellContext.Provider value="v3">
@@ -413,6 +507,7 @@ export const V3Shell = ({ appName, children }) => {
             <Box as="main" flex style={{ minWidth: 0 }}>
               {children}
             </Box>
+            <ContextPaneV3 />
           </Box>
         </Box>
       </PrototypeContext.Provider>
