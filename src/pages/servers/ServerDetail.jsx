@@ -63,14 +63,11 @@ const DetailHeader = ({ server, children }) => {
     <Box flex={false} gap="small">
       <Box direction="row" align="start" justify="between" gap="small" wrap>
         <Box gap="xxsmall">
-          <Box direction="row" align="center" gap="small" wrap>
-            <Heading level={2} margin="none">
-              {server.name}
-            </Heading>
-            <ServerHealth health={server.health} />
-          </Box>
+          <Heading level={2} margin="none">
+            {server.name}
+          </Heading>
           <Text color="text-weak">
-            {server.model} · {server.serial}
+            {server.health} · {server.model} · {server.serial}
           </Text>
         </Box>
         <Menu

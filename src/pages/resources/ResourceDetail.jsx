@@ -24,14 +24,11 @@ const DetailHeader = ({ resource, children }) => (
   <Box flex={false} gap="small">
     <Box direction="row" align="start" justify="between" gap="small" wrap>
       <Box gap="xxsmall">
-        <Box direction="row" align="center" gap="small" wrap>
-          <Heading level={2} margin="none">
-            {resource.name}
-          </Heading>
-          <ResourceStatus availability={resource.availability} />
-        </Box>
+        <Heading level={2} margin="none">
+          {resource.name}
+        </Heading>
         <Text color="text-weak">
-          {resource.ip} · {resource.model}
+          {resource.availability} · {resource.ip} · {resource.model}
         </Text>
       </Box>
       <Menu

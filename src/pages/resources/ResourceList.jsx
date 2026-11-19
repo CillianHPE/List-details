@@ -1,9 +1,8 @@
 import { Box, List, Text } from 'grommet';
 import { ResourceStatus } from './ResourceStatus';
 
-// C · List body — availability + name leading, IP · model underneath. The
-// OpsRamp layout uses a 4-column table; here the row carries the same facts
-// so the list stays narrow beside the detail.
+// C · List body — availability icon + name leading; secondary line ordered by
+// importance: availability (what's wrong), IP (how to reach it), then model.
 const ResourceRow = ({ resource }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
     <ResourceStatus availability={resource.availability} iconOnly />
@@ -12,7 +11,7 @@ const ResourceRow = ({ resource }) => (
         {resource.name}
       </Text>
       <Text size="small" color="text-weak" truncate>
-        {resource.ip} · {resource.model}
+        {resource.availability} · {resource.ip} · {resource.model}
       </Text>
     </Box>
   </Box>
