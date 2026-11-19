@@ -1,4 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+// The sidebar remounts whenever the route switches shells, so its collapse
+// state lives in sessionStorage to stay in sync across views.
+export const usePersistedState = (key, initial) => {
+  const [value, setValue] = useState(() => {
+    try {
+      const raw = window.sessionStorage.getItem(key);
+      return raw === null ? initial : JSON.parse(raw);
+    } catch {
+      return initial;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // storage unavailable; keep in-memory state only
+    }
+  }, [key, value]);
+  return [value, setValue];
+};
 import { Box, Button, Collapsible, Nav, Sidebar, Text } from 'grommet';
 import {
   Down,
@@ -173,7 +194,10 @@ const ExpandableMenuItem = ({
 );
 
 const CollapsibleMenu = ({ items, selected, onSelect, ...rest }) => {
-  const [expanded, setExpanded] = useState(Object.keys(items));
+  const [expanded, setExpanded] = usePersistedState(
+    'nav.expanded',
+    Object.keys(items),
+  );
   return (
     <Box width={{ min: 'small', max: 'medium' }} {...rest}>
       {Object.entries(items).map(([item, value]) =>
@@ -221,7 +245,7 @@ export const NavSidebar = ({
   sideBarOpen = true,
   ...rest
 }) => {
-  const [open, setOpen] = useState(sideBarOpen);
+  const [open, setOpen] = usePersistedState('nav.open', sideBarOpen);
   const [selected, setSelected] = useState(() => activeNavItem(active));
   const onSelect = (item) => selectNavItem(item, setSelected);
 

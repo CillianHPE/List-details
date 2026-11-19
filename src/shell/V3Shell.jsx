@@ -27,6 +27,7 @@ import {
   activeNavItem,
   navItems,
   selectNavItem,
+  usePersistedState,
 } from '../components/NavSidebar';
 import { ShellContext, stickyBelowHeader } from './ShellContext';
 
@@ -244,11 +245,14 @@ const groupOf = (items, selected) =>
   )?.[0];
 
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = usePersistedState('nav.open', true);
   const [selected, setSelected] = useState(() =>
     activeNavItem(navItems.Anatomy[0]),
   );
-  const [expanded, setExpanded] = useState(() => Object.keys(items));
+  const [expanded, setExpanded] = usePersistedState(
+    'nav.expanded',
+    Object.keys(items),
+  );
   // Keep selection in step with in-page links that change the route.
   useEffect(() => {
     const onHash = () => setSelected((s) => activeNavItem(s));
