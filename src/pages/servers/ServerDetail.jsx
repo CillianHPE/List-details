@@ -103,10 +103,10 @@ const Fact = ({ label, children }) => (
 
 // D · Detail header — name and Model · Serial, record-level Actions menu
 // (as COM shows top-right of its detail page). Key facts live in Summary.
-const DetailHeader = ({ server }) => {
+const DetailHeader = ({ server, children }) => {
   const connected = server.state === 'Connected';
   return (
-    <Box flex={false}>
+    <Box flex={false} gap="small">
       <Box direction="row" align="start" justify="between" gap="small" wrap>
         <Box gap="xxsmall">
           <Box direction="row" align="center" gap="small" wrap>
@@ -137,7 +137,43 @@ const DetailHeader = ({ server }) => {
           ]}
         />
       </Box>
+      {children}
     </Box>
+  );
+};
+
+// Health notification — HPE DS inline Notification, non-dismissible, sits
+// directly under the name as header content so status reads with the record.
+const HEALTH_NOTICE = {
+  Critical: {
+    status: 'critical',
+    severity: 'critical',
+    title: 'Server health is critical',
+    advice: 'Review component health and open a support case if needed.',
+  },
+  Warning: {
+    status: 'warning',
+    severity: 'warning',
+    title: 'Server health needs attention',
+    advice: 'Review component health to avoid an outage.',
+  },
+};
+const HealthNotice = ({ server, onView }) => {
+  const notice = HEALTH_NOTICE[server.health];
+  if (!notice) return null;
+  const affected = server.componentHealth.filter(
+    (c) => c.severity === notice.severity,
+  );
+  const detail = affected
+    .map((c) => `${c.name}: ${c.status.toLowerCase()}`)
+    .join(' · ');
+  return (
+    <Notification
+      status={notice.status}
+      title={notice.title}
+      message={`${detail}. ${notice.advice}`}
+      actions={[{ label: 'View health', onClick: onView }]}
+    />
   );
 };
 
@@ -631,22 +667,11 @@ const Support = ({ server }) => {
 export const ServerDetail = ({ server }) => {
   const [tab, setTab] = useState(0);
   const connected = server.state === 'Connected';
-  const failing = server.componentHealth.filter(
-    (c) => c.severity === 'critical',
-  );
   return (
     <Box>
-      <DetailHeader server={server} />
-      {server.health === 'Critical' && (
-        <Box margin={{ top: 'medium' }} flex={false}>
-          <Notification
-            status="critical"
-            title="Server health is critical"
-            message={`${failing.map((c) => `${c.name}: ${c.status.toLowerCase()}`).join(' · ')}. Review component health and open a support case if needed.`}
-            actions={[{ label: 'View health', onClick: () => setTab(1) }]}
-          />
-        </Box>
-      )}
+      <DetailHeader server={server}>
+        <HealthNotice server={server} onView={() => setTab(1)} />
+      </DetailHeader>
       {!connected && (
         <Box margin={{ top: 'medium' }} flex={false}>
           <Notification

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Grommet } from 'grommet';
+import { deepMerge } from 'grommet/utils';
 import { hpe } from 'grommet-theme-hpe';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
@@ -7,6 +8,12 @@ import { CockpitPage } from './pages/cockpit/CockpitPage';
 import { ServersPage } from './pages/servers/ServersPage';
 import { AnatomyPage, PAGES } from './pages/anatomy/AnatomyPage';
 import { sparseUsers } from './data/users';
+
+// Figma Notification (HPE DS Components V2) stacks title and message with no
+// gap; grommet-theme-hpe 8.2 puts 'medium' between them, so align to Figma.
+const theme = deepMerge(hpe, {
+  notification: { textContainer: { gap: 'none' } },
+});
 
 // Versions are addressed by URL hash so they can be linked directly:
 //   #/anatomy  → Structure: lo-fi region/role map of the pattern
@@ -51,7 +58,7 @@ const App = () => {
 
   return (
     <Grommet
-      theme={hpe}
+      theme={theme}
       themeMode="light"
       background="background-back"
       full="min"
