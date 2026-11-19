@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, DataTable, Heading } from 'grommet';
+import { Box, DataTable, Heading, Text } from 'grommet';
 
 // Building blocks for the detail zone's content area, shared by every record
 // type (Anatomy › Detail zone › Content area).
@@ -93,5 +93,21 @@ export const ListRow = ({ index, count, children }) => (
 export const Table = (props) => (
   <Box overflow="auto">
     <DataTable verticalAlign="top" {...props} />
+  </Box>
+);
+
+// Primary text of a list row: the HPE list primaryKey style (weight 500,
+// text-strong) so the identifying label reads the same in every list.
+export const ListPrimary = ({ children, ...rest }) => (
+  <Text weight={500} color="text-strong" {...rest}>
+    {children}
+  </Text>
+);
+
+// Trailing cell of a list row. Fixed width and start-aligned so indicators
+// and labels line up in one column instead of ragging against the right edge.
+export const ListStatus = ({ width = 'small', children }) => (
+  <Box width={width} flex={false} align="start">
+    {children}
   </Box>
 );

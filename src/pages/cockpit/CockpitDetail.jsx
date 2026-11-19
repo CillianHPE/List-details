@@ -27,7 +27,13 @@ import {
   Table as TableIcon,
 } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
-import { ListRow, Section, Table } from '../../pattern/detail';
+import {
+  ListPrimary,
+  ListRow,
+  ListStatus,
+  Section,
+  Table,
+} from '../../pattern/detail';
 import { hpe } from 'grommet-theme-hpe';
 import { SERVICES, TIERS } from '../../data/cockpit';
 import {
@@ -87,12 +93,14 @@ const SEVERITY_ICON = {
   na: [StatusUnknown, 'status-unknown'],
 };
 
+// Status indicator: icon leads the label (HPE status indicator pattern) so
+// icons form one column when statuses stack in a list.
 const StatusText = ({ severity, children, size }) => {
   const [Icon, color] = SEVERITY_ICON[severity];
   return (
     <Box direction="row" align="center" gap="xsmall" flex={false}>
-      <Text size={size}>{children}</Text>
       <Icon color={color} size="small" aria-hidden />
+      <Text size={size}>{children}</Text>
     </Box>
   );
 };
@@ -500,15 +508,15 @@ const Adoption = ({ account }) => {
                     {c.result}
                   </Text>
                 </Box>
-                <Box flex={false}>
+                <ListStatus>
                   {c.gaps == null ? (
                     <StatusText severity="na">Not applicable</StatusText>
                   ) : c.gaps === 0 ? (
                     <StatusText severity="ok">Complete</StatusText>
                   ) : (
-                    <StatusText severity="critical">{`${c.gaps} gap${c.gaps > 1 ? 's' : ''}`}</StatusText>
+                    <StatusText severity="critical">{`${c.gaps} gap${c.gaps > 1 ? 's' : ''} to close`}</StatusText>
                   )}
-                </Box>
+                </ListStatus>
               </ListRow>
             )}
           </List>
@@ -518,7 +526,7 @@ const Adoption = ({ account }) => {
             {(app, index) => (
               <ListRow index={index} count={account.provisionedApps.length}>
                 <Box>
-                  <Text weight={500}>{app.name}</Text>
+                  <ListPrimary>{app.name}</ListPrimary>
                   <Text size="small" color="text-weak">
                     {app.description}
                   </Text>
@@ -597,12 +605,14 @@ const Configuration = ({ account }) => (
     {(c, index) => (
       <ListRow index={index} count={account.configChecks.length}>
         <Box>
-          <Text weight={500}>{c.name}</Text>
+          <ListPrimary>{c.name}</ListPrimary>
           <Text size="small" color="text-weak">
             {c.description}
           </Text>
         </Box>
-        <StatusText severity={c.severity}>{c.status}</StatusText>
+        <ListStatus>
+          <StatusText severity={c.severity}>{c.status}</StatusText>
+        </ListStatus>
       </ListRow>
     )}
   </List>

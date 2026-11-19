@@ -16,6 +16,7 @@ import {
 import { Download, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
+  ListPrimary,
   ListRow,
   Section,
   Table,
@@ -314,7 +315,7 @@ const Firmware = ({ server, connected }) => (
         {(f, index) => (
           <ListRow index={index} count={server.firmware.length}>
             <Box>
-              <Text weight={500}>{f.name}</Text>
+              <ListPrimary>{f.name}</ListPrimary>
               <Text size="small" color="text-weak">
                 {f.location}
               </Text>
@@ -329,7 +330,7 @@ const Firmware = ({ server, connected }) => (
       <List data={server.drivers} pad="none">
         {(d, index) => (
           <ListRow index={index} count={server.drivers.length}>
-            <Text weight={500}>{d.name}</Text>
+            <ListPrimary>{d.name}</ListPrimary>
             <Text flex={false}>{d.version}</Text>
           </ListRow>
         )}
@@ -375,7 +376,7 @@ const Hardware = ({ server }) => {
           {(p, index) => (
             <ListRow index={index} count={hw.processors.length}>
               <Box>
-                <Text weight={500}>{p.name}</Text>
+                <ListPrimary>{p.name}</ListPrimary>
                 <Text size="small" color="text-weak">
                   {p.max} max · {p.rated} rated
                 </Text>

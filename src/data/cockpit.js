@@ -87,7 +87,7 @@ const tierOf = (score) =>
   score > 60 ? 'Healthy' : score > 40 ? 'Neutral' : 'At risk';
 
 const configStatus = (ok, warn) =>
-  ok ? 'Configured' : warn ? 'Warning' : 'Not configured';
+  ok ? 'Configured' : warn ? 'Partially configured' : 'Not configured';
 
 const domainOf = (name) =>
   `${name
@@ -126,11 +126,12 @@ const buildAccount = (a, index) => {
     const r = rnd();
     const ok = a.health.tier === 'Healthy' ? r > 0.25 : r > 0.65;
     const critical = !ok && i < 2;
+    const partial = !ok && !critical && r > 0.3;
     return {
       name,
       description,
-      status: configStatus(ok, !critical && r > 0.3),
-      severity: ok ? 'ok' : critical ? 'critical' : 'warning',
+      status: configStatus(ok, partial),
+      severity: ok ? 'ok' : partial ? 'warning' : 'critical',
     };
   });
   const gaps = configResults.filter((c) => c.severity !== 'ok');
