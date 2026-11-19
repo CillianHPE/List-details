@@ -75,6 +75,8 @@ export const ListDetailPage = ({
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype control: show/hide the divider between list and detail.
   const [divider, setDivider] = useState(true);
+  // Prototype control: draw the list rows on a contained surface.
+  const [contained, setContained] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
 
   const visible = useMemo(() => {
@@ -104,19 +106,31 @@ export const ListDetailPage = ({
     label: divider ? 'Hide divider' : 'Show divider',
     onClick: () => setDivider((d) => !d),
   };
+  const containedItem = {
+    label: contained ? 'Plain list' : 'Contained list',
+    onClick: () => setContained((c) => !c),
+  };
   const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
-    <CheckBox
-      toggle
-      label="Divider"
-      checked={divider}
-      onChange={(e) => setDivider(e.target.checked)}
-    />
+    <Box direction="row" gap="medium" align="center">
+      <CheckBox
+        toggle
+        label="Divider"
+        checked={divider}
+        onChange={(e) => setDivider(e.target.checked)}
+      />
+      <CheckBox
+        toggle
+        label="Contained list"
+        checked={contained}
+        onChange={(e) => setContained(e.target.checked)}
+      />
+    </Box>
   ) : (
     <Menu
       icon={<More />}
       a11yTitle="More actions"
       dropAlign={{ top: 'bottom', right: 'right' }}
-      items={[dividerItem]}
+      items={[dividerItem, containedItem]}
     />
   );
 
@@ -254,6 +268,11 @@ export const ListDetailPage = ({
                       overflow="auto"
                       flex
                       style={{ scrollbarColor: 'auto' }}
+                      // Contained: rows sit on a background-contrast surface
+                      // (same treatment as detail cards)
+                      background={contained ? 'background-contrast' : undefined}
+                      round={contained ? 'medium' : undefined}
+                      pad={contained ? { horizontal: 'small' } : undefined}
                     >
                       {visible.length ? (
                         renderList({ items: visible, selectedId, onSelect })
