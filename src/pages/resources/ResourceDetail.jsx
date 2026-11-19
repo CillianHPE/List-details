@@ -96,11 +96,7 @@ const ResourceAlerts = ({ resource }) => {
 
 // ----------------------------------------------------------------- facets
 
-const Facet = ({ children }) => (
-  <Box gap="medium">
-    {children}
-  </Box>
-);
+const Facet = ({ children }) => <Box gap="small">{children}</Box>;
 
 const Overview = ({ resource }) => {
   const { os, ip, make, model, serial } = resource.overview;
@@ -131,58 +127,58 @@ const Overview = ({ resource }) => {
   );
 };
 
+// Single-block facets: the tab already names the content, so no container or
+// repeated heading; the supporting note leads, then the content sits flat.
+const Lead = ({ children }) => (
+  <Text size="small" color="text-weak">
+    {children}
+  </Text>
+);
+
 const Related = ({ resource }) => {
   const related = relatedResources(resource);
   return (
     <Facet>
-      <Card
-        title="Related resources"
-        note={`Other members of ${resource.cluster}`}
-      >
-        {related.length ? (
-          <List data={related} pad="none" border={false} itemKey="id">
-            {(r, index) => (
-              <ListRow index={index} count={related.length}>
-                <Box>
-                  <ListPrimary>{r.name}</ListPrimary>
-                  <Text size="small" color="text-weak">
-                    {r.ip} · {r.model}
-                  </Text>
-                </Box>
-                <ListStatus>
-                  <ResourceStatus availability={r.availability} />
-                </ListStatus>
-              </ListRow>
-            )}
-          </List>
-        ) : (
-          <EmptyState
-            level={4}
-            title="No related resources"
-            description="Resources discovered in the same cluster will be listed here."
-          />
-        )}
-      </Card>
+      <Lead>Other members of {resource.cluster}</Lead>
+      {related.length ? (
+        <List data={related} pad="none" border={false} itemKey="id">
+          {(r, index) => (
+            <ListRow index={index} count={related.length}>
+              <Box>
+                <ListPrimary>{r.name}</ListPrimary>
+                <Text size="small" color="text-weak">
+                  {r.ip}
+                </Text>
+              </Box>
+              <ListStatus>
+                <ResourceStatus availability={r.availability} />
+              </ListStatus>
+            </ListRow>
+          )}
+        </List>
+      ) : (
+        <EmptyState
+          level={4}
+          title="No related resources"
+          description="Resources discovered in the same cluster will be listed here."
+        />
+      )}
     </Facet>
   );
 };
 
 const CustomAttributes = ({ resource }) => (
   <Facet>
-    <Card
-      title="Custom attributes"
-      note="Set by your organisation; used for filtering and reporting"
-    >
-      {resource.attributes.length ? (
-        <Pairs pairs={resource.attributes} />
-      ) : (
-        <EmptyState
-          level={4}
-          title="No custom attributes"
-          description="Add attributes from the Actions menu to tag this resource for your organisation."
-        />
-      )}
-    </Card>
+    <Lead>Set by your organisation; used for filtering and reporting</Lead>
+    {resource.attributes.length ? (
+      <Pairs pairs={resource.attributes} />
+    ) : (
+      <EmptyState
+        level={4}
+        title="No custom attributes"
+        description="Add attributes from the Actions menu to tag this resource for your organisation."
+      />
+    )}
   </Facet>
 );
 
