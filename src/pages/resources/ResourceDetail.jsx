@@ -127,19 +127,12 @@ const Overview = ({ resource }) => {
   );
 };
 
-// Single-block facets: the tab already names the content, so no container or
-// repeated heading; the supporting note leads, then the content sits flat.
-const Lead = ({ children }) => (
-  <Text size="small" color="text-weak">
-    {children}
-  </Text>
-);
-
+// Single-block facets: the tab already names the content, so it sits flat
+// with no container or repeated heading.
 const Related = ({ resource }) => {
   const related = relatedResources(resource);
   return (
     <Facet>
-      <Lead>Other members of {resource.cluster}</Lead>
       {related.length ? (
         <List data={related} pad="none" border={false} itemKey="id">
           {(r, index) => (
@@ -169,7 +162,6 @@ const Related = ({ resource }) => {
 
 const CustomAttributes = ({ resource }) => (
   <Facet>
-    <Lead>Set by your organisation; used for filtering and reporting</Lead>
     {resource.attributes.length ? (
       <Pairs pairs={resource.attributes} />
     ) : (
