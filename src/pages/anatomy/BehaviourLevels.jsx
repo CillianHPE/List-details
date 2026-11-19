@@ -42,10 +42,11 @@ const ScrollTrack = ({ thumb = '35%' }) => (
 // ---------------------------------------------------------------------------
 // Scroll & height
 
-// The page (Main) is the scroll container, so the surface can sit among other
-// page content: the list column is sticky and scrolls its own items while the
-// detail grows the page. Global header and viewport are app-shell concerns and
-// are deliberately out of scope here.
+// At the side-by-side tiers the surface fills the available view height and
+// ends level with the side navigation (12px, edgeSize.small, above the
+// viewport edge). The page never scrolls: the list body and the detail pane
+// are each their own scroll container. Stacked (narrow) layouts fall back to
+// the page as scroll container.
 const SCROLL = {
   toolbar: region(
     1,
@@ -53,7 +54,7 @@ const SCROLL = {
     'sticky',
     'Keeps search, filters and collection actions reachable while the items scroll beneath it.',
     'Search · filters · collection actions · count',
-    'Sticky within the list column; never scrolls out of view.',
+    'Pinned at the top of the list zone; never scrolls out of view.',
   ),
   listBody: region(
     2,
@@ -62,9 +63,9 @@ const SCROLL = {
     'Scrolls the items independently so browsing the list never moves the record beside it.',
     'Wheel · ↑/↓ · PgUp/PgDn',
     [
-      'Height is what remains of the visible page after the page header and toolbar.',
-      'The column sticks below the global header (offset 24px, edgeSize.medium) so it stays put while the page scrolls.',
-      'It stretches to match the detail height, so a short list never leaves the divider hanging mid-surface.',
+      'Height is what remains of the view after the global header, page header and toolbar; the zone always fills it, even with 1 or 2 items.',
+      'The list zone, the divider and the side navigation all end 12px (edgeSize.small) above the viewport edge, so they read as 1 aligned set.',
+      'The page does not scroll at this tier; the surface is sized to the viewport instead.',
       'Keyboard navigation scrolls the selected item into view.',
       'Uses the native scrollbar so people can see that the list scrolls.',
       'Jumps back to the top when the filter changes — a new filter is a new list.',
@@ -80,27 +81,27 @@ const SCROLL = {
   detailHeader: region(
     3,
     'Detail header',
-    'static',
-    'Names the open record and holds its actions; scrolls away with the page.',
+    'scrolls with detail',
+    'Names the open record and holds its actions; scrolls away with the detail.',
     '—',
-    'Scrolls away with the page like normal content.',
+    'Scrolls with the detail pane like normal content.',
   ),
   detailContent: region(
     4,
     'Detail content',
-    'grows page',
-    'Holds the record’s tabs and content; long content makes the page taller.',
-    '—',
+    'overflow auto',
+    'Holds the record’s tabs and content; long content scrolls inside the detail pane.',
+    'Wheel · PgUp/PgDn',
     [
-      'Long content makes the page taller.',
-      'Changing selection scrolls the page back to the top of the detail, so every record starts with its header and first facet visible.',
+      'The detail pane is its own scroll container, bounded by the same view height as the list zone.',
+      'Changing selection scrolls the pane back to the top, so every record starts with its header and first facet visible.',
       'If a tab is open, the same tab stays selected for the new record.',
     ],
   ),
 };
 
-// Page header and the page scrollbar are drawn as context only; the page
-// (Main) is the scroll container and the surface never sets its own height.
+// Page header is drawn as context only; the surface is bounded to the view
+// height and the list body and detail pane each own a scrollbar.
 const ScrollWireframe = () => {
   const R = SCROLL;
   return (
@@ -114,7 +115,7 @@ const ScrollWireframe = () => {
         <Box flex gap="small">
           <Box direction="row" gap="small" align="center">
             <Dim label="Page header" flex />
-            <Tag color="text-weak">scrolls away</Tag>
+            <Tag color="text-weak">static</Tag>
           </Box>
           <Box direction="row" gap="small" flex>
             <Box width="40%" gap="xsmall" flex={false}>
@@ -140,28 +141,25 @@ const ScrollWireframe = () => {
             <Box flex gap="xsmall">
               <Focus
                 region={R.detailHeader}
-                label="static"
+                label="scrolls"
                 pad="xsmall"
                 gap="xsmall"
               >
                 <Ghost width="140px" height="20px" />
               </Focus>
-              <Focus
-                region={R.detailContent}
-                label="grows page"
-                pad="xsmall"
-                flex
-              >
-                <Box flex gap="xsmall" overflow="hidden">
-                  {Array.from({ length: 9 }, (_, i) => (
-                    <Ghost key={i} width={`${60 + ((i * 17) % 35)}%`} />
-                  ))}
+              <Focus region={R.detailContent} label="scrolls" pad="xsmall" flex>
+                <Box direction="row" gap="xsmall" flex overflow="hidden">
+                  <Box flex gap="xsmall" overflow="hidden">
+                    {Array.from({ length: 9 }, (_, i) => (
+                      <Ghost key={i} width={`${60 + ((i * 17) % 35)}%`} />
+                    ))}
+                  </Box>
+                  <ScrollTrack thumb="55%" />
                 </Box>
               </Focus>
             </Box>
           </Box>
         </Box>
-        <ScrollTrack thumb="55%" />
       </Box>
     </Box>
   );
@@ -169,7 +167,7 @@ const ScrollWireframe = () => {
 
 export const ScrollLevel = () => (
   <Level
-    intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. The page scrolls; the list keeps its own scroll."
+    intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. The surface fills the view height and ends level with the side navigation; the list and the detail each keep their own scroll."
     wireframe={<ScrollWireframe />}
     regions={SCROLL}
   />

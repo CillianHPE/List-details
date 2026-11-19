@@ -56,7 +56,7 @@ const PAGE = {
     'Grid · 2 columns',
     'Lets the user pick one record from a collection and read or act on it, side by side, without leaving the page.',
     'Divider between zones (optional)',
-    'Fills the remaining width and height of the page content; never sets its own.',
+    'Fills the remaining width of the page content and the full view height below the page header, ending level with the side navigation (12px, edgeSize.small, above the viewport edge).',
     {
       why: [
         'Find and inspect without leaving the page',

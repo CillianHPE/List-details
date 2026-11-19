@@ -77,15 +77,13 @@ export const ListDetailPage = ({
   const [divider, setDivider] = useState(true);
   // Prototype control: draw the whole list zone on a contained surface.
   const [contained, setContained] = useState(false);
-  // Prototype control: list zone always fills the available view height.
-  const [fullHeight, setFullHeight] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
-  // Full height: distance from the document top to the surface, so the
-  // surface can be sized to end level with the side nav (12px above the
-  // viewport edge) without the page needing to scroll.
+  // The surface always fills the available view height: measure its distance
+  // from the document top so it can end level with the side nav (12px above
+  // the viewport edge) without the page needing to scroll.
   const [surfaceTop, setSurfaceTop] = useState(0);
   useLayoutEffect(() => {
-    if (!fullHeight || !surfaceRef.current) return undefined;
+    if (stacked || !surfaceRef.current) return undefined;
     const measure = () => {
       const r = surfaceRef.current.getBoundingClientRect();
       setSurfaceTop(Math.ceil(r.top + window.scrollY));
@@ -93,8 +91,9 @@ export const ListDetailPage = ({
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, [fullHeight, surfaceRef, stacked, showDetail]);
-  const fillHeight = fullHeight && !stacked;
+  }, [surfaceRef, stacked, showDetail]);
+  // Stacked (narrow) layouts fall back to the page as scroll container.
+  const fillHeight = !stacked;
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -127,10 +126,6 @@ export const ListDetailPage = ({
     label: contained ? 'Plain list' : 'Contained list',
     onClick: () => setContained((c) => !c),
   };
-  const fullHeightItem = {
-    label: fullHeight ? 'Natural height' : 'Full height',
-    onClick: () => setFullHeight((f) => !f),
-  };
   const headerActions = !dividerControl ? undefined : tier === 'comfortable' ? (
     <Box
       direction="row"
@@ -151,19 +146,13 @@ export const ListDetailPage = ({
         checked={contained}
         onChange={(e) => setContained(e.target.checked)}
       />
-      <CheckBox
-        toggle
-        label="Full height"
-        checked={fullHeight}
-        onChange={(e) => setFullHeight(e.target.checked)}
-      />
     </Box>
   ) : (
     <Menu
       icon={<More />}
       a11yTitle="More actions"
       dropAlign={{ top: 'bottom', right: 'right' }}
-      items={[dividerItem, containedItem, fullHeightItem]}
+      items={[dividerItem, containedItem]}
     />
   );
 
@@ -199,9 +188,6 @@ export const ListDetailPage = ({
             ) : undefined
           }
           actions={headerActions}
-          // Title track floors at size.small (256px) instead of the theme's
-          // default so 3 toggles fit on one line beside it
-          gridProps={{ columns: [['small', 'flex'], 'auto'] }}
         />
 
         {/* Page context describes the collection, so it steps aside while a
