@@ -4,6 +4,7 @@ import { hpe } from 'grommet-theme-hpe';
 import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
+import { ServersPage } from './pages/servers/ServersPage';
 import { AnatomyPage, PAGES } from './pages/anatomy/AnatomyPage';
 import { sparseUsers } from './data/users';
 
@@ -13,7 +14,14 @@ import { sparseUsers } from './data/users';
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
 //   #/v3-sparse → four users, little data yet (empty states, unavailable values)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
-const VERSIONS = ['anatomy', 'v3', 'v3-sparse', 'accounts-cockpit'];
+//   #/compute-servers → Servers with Compute Ops Management content (FigJam FoohSpgNF5QhNv5d0se2ot)
+const VERSIONS = [
+  'anatomy',
+  'v3',
+  'v3-sparse',
+  'accounts-cockpit',
+  'compute-servers',
+];
 // Old and group-level routes land on each group's first page
 const REDIRECTS = {
   behaviour: 'behaviour/scroll',
@@ -62,6 +70,11 @@ const App = () => {
       {version === 'accounts-cockpit' && (
         <V3Shell appName="Sales Cockpit">
           <CockpitPage />
+        </V3Shell>
+      )}
+      {version === 'compute-servers' && (
+        <V3Shell appName="Compute Ops Management">
+          <ServersPage />
         </V3Shell>
       )}
       {PAGES[version] &&

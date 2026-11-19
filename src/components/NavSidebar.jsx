@@ -94,6 +94,11 @@ export const navItems = {
       label: 'Sales Cockpit',
       href: '#/accounts-cockpit',
     },
+    {
+      key: 'proto-compute-servers',
+      label: 'Servers (Compute)',
+      href: '#/compute-servers',
+    },
   ],
 };
 
