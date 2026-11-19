@@ -118,13 +118,12 @@ export const ListDetailPage = ({
   const pageActionButton =
     pageAction &&
     (tier === 'comfortable' ? (
-      <Button label={pageAction.label} icon={pageAction.icon} secondary />
+      <Button label={pageAction.label} icon={pageAction.icon} />
     ) : (
       <Button
         icon={pageAction.icon}
         a11yTitle={pageAction.label}
         tip={pageAction.label}
-        secondary
       />
     ));
   const headerActions = pageActionButton ? (
