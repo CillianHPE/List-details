@@ -29,11 +29,15 @@ const ArrowlessTabs = styled(Tabs)`
   }
 `;
 
+// Spacing (DS spacing rules, knowledge/core/data/foundations/spacing.yaml):
+// the tab bar opens a new content section, so it sits `large` below whatever
+// precedes it (one step down from the page-level xlarge, as the detail pane
+// is nested) while tab content keeps the Tabs template's `medium` offset.
 export const DetailTabs = (props) => (
   <ArrowlessTabs
     justify="start"
     flex={false}
-    margin={{ top: 'small' }}
+    margin={{ top: 'large' }}
     {...props}
   />
 );

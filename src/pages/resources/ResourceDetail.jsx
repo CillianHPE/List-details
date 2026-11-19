@@ -12,11 +12,7 @@ import {
   DetailTabs,
 } from '../../pattern/detail';
 import { relatedResources } from '../../data/resources';
-import {
-  ALERT_STATUS,
-  AVAILABILITY_STATUS,
-  ResourceStatus,
-} from './ResourceStatus';
+import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
 
 // Kubernetes · OpsRamp resource. The preview's "Resource Details" card, read
 // beside the list: identity in the header, alert counts directly under it,
@@ -24,13 +20,11 @@ import {
 
 // ----------------------------------------------------------------- header
 
-// D · Detail header — name, availability + IP · model underneath, record actions
+// D · Detail header — name and record actions; facts live in the alerts card and Overview
 const DetailHeader = ({ resource, children }) => (
   <Box flex={false} gap="small">
     <DetailHeading
       heading={resource.name}
-      status={AVAILABILITY_STATUS[resource.availability]}
-      description={`${resource.availability} · ${resource.ip} · ${resource.model}`}
       trailing={
         <Menu
           label="Actions"
