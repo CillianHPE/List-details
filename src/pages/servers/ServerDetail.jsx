@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   Anchor,
   Box,
@@ -11,6 +11,7 @@ import {
   Text,
   ThemeContext,
 } from 'grommet';
+import { deepMerge } from 'grommet/utils';
 import { Download, Edit, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
@@ -31,11 +32,7 @@ import { ServerHealth, StatusText } from './ServerHealth';
 
 // ------------------------------------------------------------- primitives
 
-const Facet = ({ children }) => (
-  <Box gap="medium">
-    {children}
-  </Box>
-);
+const Facet = ({ children }) => <Box gap="medium">{children}</Box>;
 
 // ----------------------------------------------------------------- header
 
@@ -183,11 +180,16 @@ const SMALL_SWITCH = {
   },
 };
 
-const SmallSwitch = (props) => (
-  <ThemeContext.Extend value={SMALL_SWITCH}>
-    <CheckBox toggle {...props} />
-  </ThemeContext.Extend>
-);
+// ThemeContext.Extend is patched onto styled-components' context as a side
+// effect and gets dropped in the production bundle, so merge explicitly.
+const SmallSwitch = (props) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <ThemeContext.Provider value={deepMerge(theme, SMALL_SWITCH)}>
+      <CheckBox toggle {...props} />
+    </ThemeContext.Provider>
+  );
+};
 
 // Each notification is switched in place rather than through an Edit flow
 const NOTIFICATIONS = [
