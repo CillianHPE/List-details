@@ -31,6 +31,33 @@ import {
 // Mirrors hpe-design-system/sandbox/grommet-app NavSidebar + CollapsibleMenu:
 // title header with collapse toggle, divider, then plain or expandable text items.
 export const navItems = {
+  Examples: [
+    {
+      key: 'proto-v3',
+      label: 'Users',
+      href: '#/v3',
+    },
+    {
+      key: 'proto-v3-sparse',
+      label: 'Users (sparse)',
+      href: '#/v3-sparse',
+    },
+    {
+      key: 'proto-accounts-cockpit',
+      label: 'Sales Cockpit',
+      href: '#/accounts-cockpit',
+    },
+    {
+      key: 'proto-compute-servers',
+      label: 'Servers (Compute)',
+      href: '#/compute-servers',
+    },
+    {
+      key: 'proto-opsramp-resources',
+      label: 'Resources (OpsRamp)',
+      href: '#/opsramp-resources',
+    },
+  ],
   Anatomy: [
     {
       key: 'proto-anatomy',
@@ -97,33 +124,6 @@ export const navItems = {
       key: 'proto-states-read-only',
       label: 'Read-only',
       href: '#/states/read-only',
-    },
-  ],
-  Examples: [
-    {
-      key: 'proto-v3',
-      label: 'Users',
-      href: '#/v3',
-    },
-    {
-      key: 'proto-v3-sparse',
-      label: 'Users (sparse)',
-      href: '#/v3-sparse',
-    },
-    {
-      key: 'proto-accounts-cockpit',
-      label: 'Sales Cockpit',
-      href: '#/accounts-cockpit',
-    },
-    {
-      key: 'proto-compute-servers',
-      label: 'Servers (Compute)',
-      href: '#/compute-servers',
-    },
-    {
-      key: 'proto-opsramp-resources',
-      label: 'Resources (OpsRamp)',
-      href: '#/opsramp-resources',
     },
   ],
 };

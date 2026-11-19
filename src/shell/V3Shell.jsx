@@ -388,26 +388,56 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
       </Box>
       {open && (
         <Nav gap="4xsmall" pad={{ bottom: 'small' }} overflow="auto">
-          {Object.entries(items).map(([group, value]) =>
-            Array.isArray(value) ? (
-              <NavGroupV3
-                key={group}
-                group={group}
-                items={value}
-                open={expanded.includes(group)}
-                onToggle={() => toggle(group)}
-                selected={selected}
-                onSelect={onSelect}
+          {/* Examples: top-level links under a group header, then one divider
+              before the documentation groups. */}
+          {items.Examples && (
+            <>
+              <Box
+                pad={{ left: 'xsmall', right: 'xxsmall', top: 'xxsmall' }}
+                height={{ min: '36px' }}
+                justify="center"
+              >
+                <Text size="small" weight={500} color="text-weak">
+                  Examples
+                </Text>
+              </Box>
+              {items.Examples.map((item) => (
+                <NavItemV3
+                  key={item.key}
+                  item={item}
+                  selected={selected.key === item.key}
+                  onSelect={onSelect}
+                />
+              ))}
+              <Box
+                border={{ side: 'bottom', color: 'border-weak' }}
+                margin={{ vertical: 'xsmall', horizontal: 'xsmall' }}
+                flex={false}
               />
-            ) : (
-              <NavItemV3
-                key={value.key}
-                item={value}
-                selected={selected.key === value.key}
-                onSelect={onSelect}
-              />
-            ),
+            </>
           )}
+          {Object.entries(items)
+            .filter(([group]) => group !== 'Examples')
+            .map(([group, value]) =>
+              Array.isArray(value) ? (
+                <NavGroupV3
+                  key={group}
+                  group={group}
+                  items={value}
+                  open={expanded.includes(group)}
+                  onToggle={() => toggle(group)}
+                  selected={selected}
+                  onSelect={onSelect}
+                />
+              ) : (
+                <NavItemV3
+                  key={value.key}
+                  item={value}
+                  selected={selected.key === value.key}
+                  onSelect={onSelect}
+                />
+              ),
+            )}
         </Nav>
       )}
     </Box>
