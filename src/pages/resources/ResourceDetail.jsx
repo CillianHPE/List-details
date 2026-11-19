@@ -1,0 +1,238 @@
+import { useState } from 'react';
+import {
+  Anchor,
+  Box,
+  Heading,
+  List,
+  Menu,
+  Tab,
+  Tabs,
+  Tag,
+  Text,
+} from 'grommet';
+import { EmptyState } from '../../components/EmptyState';
+import {
+  Card,
+  ListPrimary,
+  ListRow,
+  ListStatus,
+  Pairs,
+  Section,
+} from '../../pattern/detail';
+import { relatedResources } from '../../data/resources';
+import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
+
+// Kubernetes · OpsRamp resource. The preview's "Resource Details" card, read
+// beside the list: identity in the header, alert counts directly under it,
+// then the 3 facets as tabs.
+
+// ----------------------------------------------------------------- header
+
+// D · Detail header — name with availability, IP underneath, record actions
+const DetailHeader = ({ resource, children }) => (
+  <Box flex={false} gap="small">
+    <Box direction="row" align="start" justify="between" gap="small" wrap>
+      <Box gap="xxsmall">
+        <Box direction="row" align="center" gap="small" wrap>
+          <Heading level={2} margin="none">
+            {resource.name}
+          </Heading>
+          <ResourceStatus availability={resource.availability} />
+        </Box>
+        <Text color="text-weak">
+          {resource.ip} · {resource.model}
+        </Text>
+      </Box>
+      <Menu
+        label="Actions"
+        dropProps={{ align: { top: 'bottom', right: 'right' } }}
+        items={[
+          [
+            { label: 'Run discovery' },
+            { label: 'Open remote console' },
+            { label: 'Create ticket' },
+          ],
+          [{ label: 'Edit custom attributes' }, { label: 'Manage traits' }],
+          [{ label: 'Decommission resource' }],
+        ]}
+      />
+    </Box>
+    {children}
+  </Box>
+);
+
+// Alert counts at one type scale: 5 severities side by side, each a labelled
+// figure with its status icon, so the strip reads as one row of facts.
+const AlertCount = ({ severity, count }) => {
+  const { label, Icon, color } = ALERT_STATUS[severity];
+  return (
+    <Box gap="4xsmall" flex={false} width={{ min: '72px' }}>
+      <Text size="small" color="text-weak">
+        {label}
+      </Text>
+      <Box direction="row" align="center" gap="xsmall">
+        <Icon color={color} size="small" aria-hidden />
+        <Text size="xlarge" weight={500}>
+          {count}
+        </Text>
+      </Box>
+    </Box>
+  );
+};
+
+const ResourceAlerts = ({ resource }) => {
+  const total = Object.values(resource.alerts).reduce((a, b) => a + b, 0);
+  return (
+    <Card
+      title="Resource alerts"
+      note={total === 1 ? '1 open alert' : `${total} open alerts`}
+      action={
+        <Box direction="row" gap="medium" flex={false}>
+          <Anchor
+            label={`Tickets: ${resource.tickets}`}
+            href="#"
+            size="small"
+          />
+          <Anchor label={`Notes: ${resource.notes}`} href="#" size="small" />
+        </Box>
+      }
+    >
+      <Box direction="row" gap="large" wrap>
+        {Object.keys(ALERT_STATUS).map((severity) => (
+          <AlertCount
+            key={severity}
+            severity={severity}
+            count={resource.alerts[severity]}
+          />
+        ))}
+      </Box>
+    </Card>
+  );
+};
+
+// ----------------------------------------------------------------- facets
+
+const Facet = ({ children }) => (
+  <Box gap="medium" pad={{ top: 'medium' }}>
+    {children}
+  </Box>
+);
+
+const Overview = ({ resource }) => {
+  const { os, ip, make, model, serial } = resource.overview;
+  return (
+    <Facet>
+      <Card title="System">
+        <Pairs
+          pairs={[
+            ['Operating system', os],
+            ['IP address', ip],
+            ['Make', make],
+            ['Model', model],
+            ['Serial number', serial],
+          ]}
+        />
+      </Card>
+      <Card
+        title="Traits"
+        note="Characteristics OpsRamp has discovered for this resource"
+      >
+        <Box direction="row" gap="xsmall" wrap>
+          {resource.traits.map((trait) => (
+            <Tag key={trait} value={trait} size="small" />
+          ))}
+        </Box>
+      </Card>
+    </Facet>
+  );
+};
+
+const Related = ({ resource }) => {
+  const related = relatedResources(resource);
+  return (
+    <Facet>
+      <Card
+        title="Related resources"
+        note={`Other members of ${resource.cluster}`}
+      >
+        {related.length ? (
+          <List data={related} pad="none" border={false} itemKey="id">
+            {(r, index) => (
+              <ListRow index={index} count={related.length}>
+                <Box>
+                  <ListPrimary>{r.name}</ListPrimary>
+                  <Text size="small" color="text-weak">
+                    {r.ip} · {r.model}
+                  </Text>
+                </Box>
+                <ListStatus>
+                  <ResourceStatus availability={r.availability} />
+                </ListStatus>
+              </ListRow>
+            )}
+          </List>
+        ) : (
+          <EmptyState
+            level={4}
+            title="No related resources"
+            description="Resources discovered in the same cluster will be listed here."
+          />
+        )}
+      </Card>
+    </Facet>
+  );
+};
+
+const CustomAttributes = ({ resource }) => (
+  <Facet>
+    <Card
+      title="Custom attributes"
+      note="Set by your organisation; used for filtering and reporting"
+    >
+      {resource.attributes.length ? (
+        <Pairs pairs={resource.attributes} />
+      ) : (
+        <EmptyState
+          level={4}
+          title="No custom attributes"
+          description="Add attributes from the Actions menu to tag this resource for your organisation."
+        />
+      )}
+    </Card>
+  </Facet>
+);
+
+// E · Detail body
+export const ResourceDetail = ({ resource }) => {
+  const [tab, setTab] = useState(0);
+  return (
+    <Box>
+      <DetailHeader resource={resource}>
+        <ResourceAlerts resource={resource} />
+      </DetailHeader>
+      <Tabs
+        activeIndex={tab}
+        onActive={setTab}
+        justify="start"
+        flex={false}
+        margin={{ top: 'small' }}
+      >
+        <Tab title="Overview">
+          <Section title="Overview" hideTitle>
+            <Overview resource={resource} />
+          </Section>
+        </Tab>
+        <Tab title="Related resources">
+          <Section title="Related resources" hideTitle>
+            <Related resource={resource} />
+          </Section>
+        </Tab>
+        <Tab title="Custom attributes">
+          <Section title="Custom attributes" hideTitle>
+            <CustomAttributes resource={resource} />
+          </Section>
+        </Tab>
+      </Tabs>
+    </Box>
+  );
+};

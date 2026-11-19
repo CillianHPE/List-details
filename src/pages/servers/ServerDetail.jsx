@@ -7,8 +7,6 @@ import {
   Heading,
   List,
   Menu,
-  NameValueList,
-  NameValuePair,
   Notification,
   Tab,
   Tabs,
@@ -18,12 +16,13 @@ import {
 import { Download, Edit, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
+  Card,
   ListPrimary,
   ListRow,
   ListStatus,
+  Pairs,
   Section,
   Table,
-  usePairDirection,
 } from '../../pattern/detail';
 import { ServerHealth, StatusText } from './ServerHealth';
 
@@ -31,51 +30,6 @@ import { ServerHealth, StatusText } from './ServerHealth';
 // by side with the list instead of on a separate page.
 
 // ------------------------------------------------------------- primitives
-
-// Contained card: groups related pairs so a facet reads as a few blocks
-// rather than one long list.
-const Card = ({ title, note, action, children }) => (
-  <Box
-    background="background-contrast"
-    round="medium"
-    pad="medium"
-    gap="medium"
-    flex={false}
-  >
-    {(title || action) && (
-      <Box direction="row" align="start" justify="between" gap="medium" wrap>
-        <Box gap="4xsmall">
-          <Heading level={4} size="small" margin="none">
-            {title}
-          </Heading>
-          {note && (
-            <Text size="small" color="text-weak">
-              {note}
-            </Text>
-          )}
-        </Box>
-        {action}
-      </Box>
-    )}
-    {children}
-  </Box>
-);
-
-// Name beside value in one column; stacks when the card gets too narrow
-const Pairs = ({ pairs }) => {
-  const [ref, direction] = usePairDirection();
-  return (
-    <Box ref={ref}>
-      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
-        {pairs.map(([name, value]) => (
-          <NameValuePair key={name} name={name}>
-            {typeof value === 'string' ? <Text>{value}</Text> : value}
-          </NameValuePair>
-        ))}
-      </NameValueList>
-    </Box>
-  );
-};
 
 const Facet = ({ children }) => (
   <Box gap="medium" pad={{ top: 'medium' }}>

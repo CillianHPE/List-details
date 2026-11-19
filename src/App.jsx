@@ -6,6 +6,7 @@ import { V3Shell } from './shell/V3Shell';
 import { UsersPage } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
 import { ServersPage } from './pages/servers/ServersPage';
+import { ResourcesPage } from './pages/resources/ResourcesPage';
 import { AnatomyPage, PAGES } from './pages/anatomy/AnatomyPage';
 import { sparseUsers } from './data/users';
 
@@ -22,12 +23,14 @@ const theme = deepMerge(hpe, {
 //   #/v3-sparse → four users, little data yet (empty states, unavailable values)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
 //   #/compute-servers → Servers with Compute Ops Management content (FigJam FoohSpgNF5QhNv5d0se2ot)
+//   #/opsramp-resources → Kubernetes resources, adapted from hpe-theme-preview detail-opsramp
 const VERSIONS = [
   'anatomy',
   'v3',
   'v3-sparse',
   'accounts-cockpit',
   'compute-servers',
+  'opsramp-resources',
 ];
 // Old and group-level routes land on each group's first page
 const REDIRECTS = {
@@ -82,6 +85,11 @@ const App = () => {
       {version === 'compute-servers' && (
         <V3Shell appName="Compute Ops Management">
           <ServersPage />
+        </V3Shell>
+      )}
+      {version === 'opsramp-resources' && (
+        <V3Shell appName="OpsRamp">
+          <ResourcesPage />
         </V3Shell>
       )}
       {PAGES[version] &&

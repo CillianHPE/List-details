@@ -120,6 +120,11 @@ export const navItems = {
       label: 'Servers (Compute)',
       href: '#/compute-servers',
     },
+    {
+      key: 'proto-opsramp-resources',
+      label: 'Resources (OpsRamp)',
+      href: '#/opsramp-resources',
+    },
   ],
 };
 

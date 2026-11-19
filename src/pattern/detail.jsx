@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, DataTable, Heading, Text } from 'grommet';
+import {
+  Box,
+  DataTable,
+  Heading,
+  NameValueList,
+  NameValuePair,
+  Text,
+} from 'grommet';
 
 // Building blocks for the detail zone's content area, shared by every record
 // type (Anatomy › Detail zone › Content area).
@@ -111,3 +118,48 @@ export const ListStatus = ({ width = 'small', children }) => (
     {children}
   </Box>
 );
+
+// Contained card: groups related pairs so a facet reads as a few blocks
+// rather than one long list.
+export const Card = ({ title, note, action, children }) => (
+  <Box
+    background="background-contrast"
+    round="medium"
+    pad="medium"
+    gap="medium"
+    flex={false}
+  >
+    {(title || action) && (
+      <Box direction="row" align="start" justify="between" gap="medium" wrap>
+        <Box gap="4xsmall">
+          <Heading level={4} size="small" margin="none">
+            {title}
+          </Heading>
+          {note && (
+            <Text size="small" color="text-weak">
+              {note}
+            </Text>
+          )}
+        </Box>
+        {action}
+      </Box>
+    )}
+    {children}
+  </Box>
+);
+
+// Name beside value in one column; stacks when the card gets too narrow
+export const Pairs = ({ pairs }) => {
+  const [ref, direction] = usePairDirection();
+  return (
+    <Box ref={ref}>
+      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
+        {pairs.map(([name, value]) => (
+          <NameValuePair key={name} name={name}>
+            {typeof value === 'string' ? <Text>{value}</Text> : value}
+          </NameValuePair>
+        ))}
+      </NameValueList>
+    </Box>
+  );
+};
