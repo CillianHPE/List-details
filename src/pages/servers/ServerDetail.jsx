@@ -13,6 +13,7 @@ import {
   Tab,
   Tabs,
   Text,
+  ThemeContext,
 } from 'grommet';
 import { Download, Edit, Refresh } from '@hpe-design/icons-grommet';
 import { EmptyState } from '../../components/EmptyState';
@@ -184,6 +185,39 @@ const Status = ({ server }) => {
   );
 };
 
+// Prototype proposal: a small switch one step below the DS medium
+// (48×24 track, 20px handle). Not yet in Figma or grommet-theme-hpe;
+// uses existing base dimension tokens so it can be adopted as-is.
+const SMALL_SWITCH = {
+  checkBox: {
+    size: '18px', // base.dimension.450 (track height)
+    // The HPE theme positions the checked handle from here, so this must
+    // be overridden at the same level (36 - 14 - 3)
+    extend: `
+      input:checked + span[class*='CheckBoxToggle'] > span[class*='CheckBoxKnob'] {
+        left: 19px;
+      }
+    `,
+    toggle: {
+      size: '36px', // base.dimension.900 (track width)
+      knob: {
+        extend: `
+          width: 14px; /* base.dimension.350 */
+          height: 14px;
+          top: 1px;
+          left: 1px;
+        `,
+      },
+    },
+  },
+};
+
+const SmallSwitch = (props) => (
+  <ThemeContext.Extend value={SMALL_SWITCH}>
+    <CheckBox toggle {...props} />
+  </ThemeContext.Extend>
+);
+
 // Each notification is switched in place rather than through an Edit flow
 const NOTIFICATIONS = [
   ['issues', 'Issues'],
@@ -200,8 +234,7 @@ const EmailNotifications = ({ server }) => {
         {([key, label], index) => (
           <ListRow index={index} count={NOTIFICATIONS.length}>
             <ListPrimary>{label}</ListPrimary>
-            <CheckBox
-              toggle
+            <SmallSwitch
               reverse
               a11yTitle={`${label} notifications`}
               checked={!!prefs[key]}
