@@ -1046,55 +1046,19 @@ export const PatternWhatLevel = () => (
     <Box gap="small">
       <MockZones />
       <Text size="small" color="text-weak">
-        2 zones side by side: the list keeps the set in view; the detail shows
-        the record you picked.
+        Left: the list, for finding and choosing. Right: the detail, for
+        inspecting and acting.
       </Text>
     </Box>
 
     <Box gap="medium">
-      <SectionHeading>Cheat sheet</SectionHeading>
-      <IsNotSheet rows={IS_NOT} />
-    </Box>
-
-    <Box gap="medium">
-      <SectionHeading>The job to be done</SectionHeading>
-      <Box
-        border={{ side: 'left', color: 'brand', size: 'medium' }}
-        pad={{ left: 'medium', vertical: 'xsmall' }}
-      >
-        <Text size="large" style={{ maxWidth: '60ch' }}>
-          When I am working through a set of records, I want to see each one in
-          full without losing my place in the set, so I can review, compare or
-          act on many of them quickly.
-        </Text>
-      </Box>
-    </Box>
-
-    <Box gap="medium">
-      <SectionHeading>How it does that job</SectionHeading>
+      <SectionHeading>What it gives you</SectionHeading>
       <JobSheet rows={JOB} />
     </Box>
 
-    <Box
-      background="background-contrast"
-      round="medium"
-      pad="medium"
-      gap="xxsmall"
-    >
-      <Text size="small" weight={500} color="text-weak">
-        The 1-line test
-      </Text>
-      <Text size="large">
-        If the job is about{' '}
-        <Text size="large" weight={500}>
-          many records
-        </Text>
-        , use list–detail. If the job is about{' '}
-        <Text size="large" weight={500}>
-          1 record
-        </Text>
-        , give it its own page.
-      </Text>
+    <Box gap="medium">
+      <SectionHeading>Is it list–detail?</SectionHeading>
+      <IsNotSheet rows={IS_NOT} />
     </Box>
   </Box>
 );
@@ -1145,48 +1109,79 @@ const JTBD = [
   },
 ];
 
+const JtbdPart = ({ children }) => (
+  <Text size="large" weight={500}>
+    {children}
+  </Text>
+);
+
 export const PatternJtbdLevel = () => (
   <Box gap="xlarge">
-    <Lead>
-      Jobs to be done that list–detail serves well. Each 1 follows the same
-      shape: when I am in a situation, I want to do something, so I can get an
-      outcome.
-    </Lead>
-
-    <Box
-      border={{ side: 'left', color: 'brand', size: 'medium' }}
-      pad={{ left: 'medium', vertical: 'xsmall' }}
-    >
-      <Text size="large" style={{ maxWidth: '60ch' }}>
-        When I am working through a set of records, I want to see each one in
-        full without losing my place in the set, so I can review, compare or act
-        on many of them quickly.
-      </Text>
-      <Text size="small" color="text-weak" margin={{ top: 'xsmall' }}>
-        The core job. Everything below is a more specific version of it.
+    <Box gap="medium">
+      <Lead>
+        A job to be done is what someone is trying to get done in a situation,
+        written without naming a screen or a feature. It keeps the focus on the
+        outcome, so the design can be judged by whether it delivers that
+        outcome.
+      </Lead>
+      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+        Every job here follows the same shape:{' '}
+        <Text weight={500}>when I am</Text> in a situation,{' '}
+        <Text weight={500}>I want to</Text> do something,{' '}
+        <Text weight={500}>so I can</Text> reach an outcome.
       </Text>
     </Box>
 
-    {JTBD.map((g) => (
-      <Box key={g.group} gap="medium">
-        <Box gap="2px">
-          <SectionHeading>{g.group}</SectionHeading>
-          <Text color="text-weak">{g.tagline}</Text>
-        </Box>
-        <Box as="ul" margin="none" pad="none" style={{ listStyle: 'none' }}>
-          {g.jobs.map((job, i) => (
-            <Box
-              as="li"
-              key={job}
-              pad={{ vertical: 'small' }}
-              border={i < g.jobs.length - 1 ? 'bottom' : undefined}
-            >
-              <Text style={{ maxWidth: '70ch' }}>{job}</Text>
-            </Box>
-          ))}
-        </Box>
+    <Box gap="small">
+      <Text size="small" weight={500} color="text-weak">
+        The core job
+      </Text>
+      <Box
+        border={{ side: 'left', color: 'brand', size: 'medium' }}
+        pad={{ left: 'medium', vertical: 'xsmall' }}
+      >
+        <Text size="large" style={{ maxWidth: '60ch' }}>
+          <JtbdPart>When I am</JtbdPart> working through a set of records,{' '}
+          <JtbdPart>I want to</JtbdPart> see each one in full without losing my
+          place in the set, <JtbdPart>so I can</JtbdPart> review, compare or act
+          on many of them quickly.
+        </Text>
       </Box>
-    ))}
+      <Text size="small" color="text-weak">
+        The 4 groups below are more specific versions of this 1 job. Each group
+        has its own user story.
+      </Text>
+    </Box>
+
+    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="medium">
+      {JTBD.map((g) => (
+        <Box
+          key={g.group}
+          background="background-front"
+          border
+          round="small"
+          pad="medium"
+          gap="medium"
+        >
+          <Box gap="2px">
+            <SectionHeading>{g.group}</SectionHeading>
+            <Text color="text-weak">{g.tagline}</Text>
+          </Box>
+          <Box as="ul" margin="none" pad="none" style={{ listStyle: 'none' }}>
+            {g.jobs.map((job, i) => (
+              <Box
+                as="li"
+                key={job}
+                pad={{ vertical: 'small' }}
+                border={i < g.jobs.length - 1 ? 'bottom' : undefined}
+              >
+                <Text>{job}</Text>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      ))}
+    </Grid>
   </Box>
 );
 

@@ -581,7 +581,7 @@ export const PAGES = {
   'pattern/what': {
     title: 'Overview',
     subtitle:
-      'The list–detail pattern in plain language, starting from the job it does.',
+      'The list–detail pattern in plain language: what it is and what it is not.',
     Content: PatternWhatLevel,
   },
   'pattern/jtbd': {
