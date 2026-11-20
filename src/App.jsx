@@ -94,22 +94,11 @@ const App = () => {
           <ResourcesPage />
         </V3Shell>
       )}
-      {PAGES[version] &&
-        (chrome ? (
-          <V3Shell>
-            <AnatomyPage
-              route={version}
-              chrome={chrome}
-              onChromeChange={setChrome}
-            />
-          </V3Shell>
-        ) : (
-          <AnatomyPage
-            route={version}
-            chrome={chrome}
-            onChromeChange={setChrome}
-          />
-        ))}
+      {PAGES[version] && (
+        <V3Shell chrome={chrome} onChromeChange={setChrome}>
+          <AnatomyPage route={version} />
+        </V3Shell>
+      )}
     </Grommet>
   );
 };

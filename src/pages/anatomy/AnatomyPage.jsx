@@ -2,7 +2,6 @@ import { Search } from '@hpe-design/icons-grommet';
 import { useState } from 'react';
 import {
   Box,
-  CheckBox,
   Page,
   PageContent,
   PageHeader,
@@ -38,7 +37,11 @@ import {
   ReadOnlyLevel,
 } from './StatesLevels';
 import { CritNov19Level } from './CritLevels';
-import { PatternWhatLevel, PatternStoryLevel } from './PatternLevels';
+import {
+  PatternWhatLevel,
+  PatternJtbdLevel,
+  PatternStoryLevel,
+} from './PatternLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -581,6 +584,12 @@ export const PAGES = {
       'The list–detail pattern in plain language, starting from the job it does.',
     Content: PatternWhatLevel,
   },
+  'pattern/jtbd': {
+    title: 'Jobs to be done',
+    subtitle:
+      'The jobs people hire a list–detail page to do, as plain statements.',
+    Content: PatternJtbdLevel,
+  },
   'pattern/when/gather': {
     title: 'Clearing the access request queue',
     subtitle: 'A Gather story: working through a queue, 1 record at a time.',
@@ -682,11 +691,7 @@ export const PAGES = {
   },
 };
 
-export const AnatomyPage = ({
-  route = 'anatomy',
-  chrome = true,
-  onChromeChange,
-}) => {
+export const AnatomyPage = ({ route = 'anatomy' }) => {
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
   const go = (target, tab) => {
@@ -701,20 +706,7 @@ export const AnatomyPage = ({
     <AnatomyNav.Provider value={go}>
       <Page pad={{ bottom: 'xlarge' }}>
         <PageContent gap="medium">
-          <PageHeader
-            title={page.title}
-            subtitle={page.subtitle}
-            actions={
-              onChromeChange && (
-                <CheckBox
-                  toggle
-                  label="App chrome"
-                  checked={chrome}
-                  onChange={(e) => onChromeChange(e.target.checked)}
-                />
-              )
-            }
-          />
+          <PageHeader title={page.title} subtitle={page.subtitle} />
           {Content && <Content />}
           {!Content && (
             <Tabs activeIndex={level} onActive={setLevel} justify="start">

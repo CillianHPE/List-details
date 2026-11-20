@@ -42,7 +42,7 @@ import {
 
 // Prototype switches for the list–detail surface. Tucked behind 1 icon button
 // in the global header so they stay out of the way but are 1 click to reach.
-const PrototypeSwitches = () => {
+const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   const {
     divider,
     contained,
@@ -57,6 +57,7 @@ const PrototypeSwitches = () => {
     ['Contained list', contained, setContained],
     ['Context pane', contextPane, setContextPane],
   ];
+  if (onChromeChange) switches.push(['App chrome', chrome, onChromeChange]);
   return (
     <DropButton
       icon={<Configure />}
@@ -92,7 +93,7 @@ const PrototypeSwitches = () => {
 // White canvas · 60px bordered global header · 12px wrapper holding a rounded
 // grey navigation pane (256px, radius large) beside the main content column.
 
-const GlobalHeaderV3 = () => {
+const GlobalHeaderV3 = ({ switches }) => {
   const size = useContext(ResponsiveContext);
   const compact = ['xsmall', 'small'].includes(size);
   return (
@@ -146,7 +147,7 @@ const GlobalHeaderV3 = () => {
         )}
       </Box>
       <Box direction="row" align="center" gap="3xsmall" flex={false}>
-        <PrototypeSwitches />
+        {switches}
         <Button
           icon={<AIGenFill color="brand" />}
           size="small"
@@ -181,7 +182,7 @@ const GlobalHeaderV3 = () => {
 // Global Header V2, application variant (HPE DS template → "Global Header",
 // Figma mNCeAPPHJ2E8NtLaJlqSpM / 103:11776): HPE logo + "HPE <app name>"
 // leading, a single account button trailing. No search, workspace or tools.
-const GlobalHeaderApp = ({ appName }) => {
+const GlobalHeaderApp = ({ appName, switches }) => {
   const size = useContext(ResponsiveContext);
   const compact = ['xsmall', 'small'].includes(size);
   return (
@@ -210,7 +211,7 @@ const GlobalHeaderApp = ({ appName }) => {
         </Text>
       </Box>
       <Box direction="row" align="center" gap="3xsmall" flex={false}>
-        <PrototypeSwitches />
+        {switches}
         <DropButton
           icon={<User />}
           size="small"
@@ -593,7 +594,12 @@ const ContextPaneV3 = () => {
 };
 
 // `appName` swaps the GreenLake platform header for the application variant.
-export const V3Shell = ({ appName, children }) => {
+export const V3Shell = ({
+  appName,
+  chrome = true,
+  onChromeChange,
+  children,
+}) => {
   const [divider, setDivider] = useState(true);
   const [contained, setContained] = useState(false);
   const [contextPane, setContextPane] = useState(false);
@@ -608,11 +614,32 @@ export const V3Shell = ({ appName, children }) => {
     }),
     [divider, contained, contextPane],
   );
+  const switches = (
+    <PrototypeSwitches chrome={chrome} onChromeChange={onChromeChange} />
+  );
+  if (!chrome) {
+    // Shell hidden: bare page, with the options button floating so the
+    // chrome can be switched back on.
+    return (
+      <ShellContext.Provider value="v3">
+        <PrototypeContext.Provider value={prototype}>
+          <Box style={{ position: 'fixed', top: 12, right: 12, zIndex: 10 }}>
+            {switches}
+          </Box>
+          {children}
+        </PrototypeContext.Provider>
+      </ShellContext.Provider>
+    );
+  }
   return (
     <ShellContext.Provider value="v3">
       <PrototypeContext.Provider value={prototype}>
         <Box background="background" fill="vertical" flex>
-          {appName ? <GlobalHeaderApp appName={appName} /> : <GlobalHeaderV3 />}
+          {appName ? (
+            <GlobalHeaderApp appName={appName} switches={switches} />
+          ) : (
+            <GlobalHeaderV3 switches={switches} />
+          )}
           <Box direction="row" gap="xsmall" pad="xsmall" align="start" flex>
             <NavPaneV3 />
             <Box as="main" flex style={{ minWidth: 0 }}>

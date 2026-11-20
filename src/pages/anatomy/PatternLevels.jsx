@@ -1100,6 +1100,97 @@ export const PatternWhatLevel = () => (
 );
 
 // ---------------------------------------------------------------------------
+// Page 1b: Jobs to be done
+
+const JTBD = [
+  {
+    group: 'Gather',
+    tagline: 'Working through a queue, 1 record at a time.',
+    jobs: [
+      'When I am clearing a queue of access requests, I want to open each one and approve or reject it in place, so I can empty the queue without losing count of what is left.',
+      'When I am reviewing new support tickets, I want to read each ticket in full and assign it, so I can hand the whole batch on before the morning stand-up.',
+      'When I am onboarding a batch of new users, I want to check each profile and fix what is missing, so I can finish the batch in 1 sitting.',
+      'When I am approving expense claims, I want to see the receipts for the claim I am on while the rest of the list stays visible, so I can keep moving down it.',
+    ],
+  },
+  {
+    group: 'Compare',
+    tagline: 'Flipping between similar records to find the difference.',
+    jobs: [
+      'When 2 servers should be identical but 1 is failing, I want to flip between their details with the same section in view, so I can spot the setting that differs.',
+      'When I am choosing between 3 subscription tiers, I want to switch between them without scrolling back to the top, so I can compare the same line item on each.',
+      'When a deployment worked in staging but not production, I want to step between the 2 environments, so I can find the configuration that changed.',
+      'When I am picking a template for a new workspace, I want to preview each candidate in turn, so I can choose the closest fit.',
+    ],
+  },
+  {
+    group: 'Triage',
+    tagline: 'Finding the few that matter in a large set, then acting.',
+    jobs: [
+      'When 2,340 resources are reporting and a handful are critical, I want to filter to the critical ones and open each, so I can decide what to escalate first.',
+      'When an alert storm hits, I want to sort by severity and work from the top, so I can clear the real incidents before the noise.',
+      'When I am auditing accounts after a policy change, I want to find the ones that no longer comply and fix them 1 by 1, so I can close the audit.',
+      'When cost spikes overnight, I want to find the resources that grew the most and look at each, so I can stop the runaway ones.',
+    ],
+  },
+  {
+    group: 'Quick edit',
+    tagline: 'Making the same small change to many records.',
+    jobs: [
+      'When a team member leaves, I want to reassign each of their devices to a new owner, so I can finish the handover in 1 pass.',
+      'When we rename a cost centre, I want to update the tag on every affected resource without opening a new page each time, so I can be done in minutes.',
+      'When I am tidying up a set of dashboards, I want to open each and fix its title and owner, so I can leave the set consistent.',
+      'When a new location opens, I want to move the right devices to it, so I can keep the inventory accurate.',
+    ],
+  },
+];
+
+export const PatternJtbdLevel = () => (
+  <Box gap="xlarge">
+    <Lead>
+      Jobs to be done that list–detail serves well. Each 1 follows the same
+      shape: when I am in a situation, I want to do something, so I can get an
+      outcome.
+    </Lead>
+
+    <Box
+      border={{ side: 'left', color: 'brand', size: 'medium' }}
+      pad={{ left: 'medium', vertical: 'xsmall' }}
+    >
+      <Text size="large" style={{ maxWidth: '60ch' }}>
+        When I am working through a set of records, I want to see each one in
+        full without losing my place in the set, so I can review, compare or act
+        on many of them quickly.
+      </Text>
+      <Text size="small" color="text-weak" margin={{ top: 'xsmall' }}>
+        The core job. Everything below is a more specific version of it.
+      </Text>
+    </Box>
+
+    {JTBD.map((g) => (
+      <Box key={g.group} gap="medium">
+        <Box gap="2px">
+          <SectionHeading>{g.group}</SectionHeading>
+          <Text color="text-weak">{g.tagline}</Text>
+        </Box>
+        <Box as="ul" margin="none" pad="none" style={{ listStyle: 'none' }}>
+          {g.jobs.map((job, i) => (
+            <Box
+              as="li"
+              key={job}
+              pad={{ vertical: 'small' }}
+              border={i < g.jobs.length - 1 ? 'bottom' : undefined}
+            >
+              <Text style={{ maxWidth: '70ch' }}>{job}</Text>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    ))}
+  </Box>
+);
+
+// ---------------------------------------------------------------------------
 // Page 2: When to use it
 
 const USE = [
