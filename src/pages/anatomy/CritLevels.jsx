@@ -82,7 +82,7 @@ const OPEN = [
 const PLAN = [
   [
     'Lock defaults (done)',
-    'Divider off, list uncontained, contained padding small (16px, size.small). Gutter steps up to large (48px, size.large) when the divider is off.',
+    'Divider off, list uncontained, contained padding small (16px, size.small). List and detail are sibling zones inside the primary content area, so the gutter between them is the content-section gap: 32px (size.large), 16px (size.small) each side.',
   ],
   [
     'Fix the details',

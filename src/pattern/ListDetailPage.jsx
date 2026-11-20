@@ -283,10 +283,10 @@ export const ListDetailPage = ({
                         : bare
                           ? stacked
                             ? { vertical: 'medium' }
-                            : { right: 'medium' }
+                            : { right: 'small' }
                           : stacked
                             ? 'medium'
-                            : { horizontal: 'medium' }
+                            : { left: 'medium', right: 'small' }
                     }
                     gap="xsmall"
                     style={
@@ -372,17 +372,18 @@ export const ListDetailPage = ({
             {/* D + E · Detail pane */}
             {detailVisible && (
               <Box
-                // No divider: the gutter steps up to large so proximity does
-                // the separating that the line used to do.
+                // List and detail are sibling zones inside the primary
+                // content area, so the gutter is the content-section gap:
+                // 32px (large), 16px (small) each side.
                 pad={
                   bare
                     ? stacked
                       ? undefined
-                      : { left: divider ? 'medium' : 'large' }
+                      : { left: 'small' }
                     : {
                         vertical: 'medium',
                         right: 'medium',
-                        left: divider || stacked ? 'medium' : 'large',
+                        left: stacked ? 'medium' : 'small',
                       }
                 }
                 overflow={fillHeight ? 'auto' : undefined}
