@@ -113,8 +113,8 @@ const PLAN = [
     'Default on: the selected detail tab is kept while clicking through records, per page. "Keep tab across records" in prototype options switches it off to compare.',
   ],
   [
-    'Resize divider',
-    'Explore panes resizable via a divider revealed on hover.',
+    'Resize divider (dropped)',
+    'Not pursued. Resizable panes are not an interaction the pattern will support; widths follow the responsive ladder.',
   ],
   [
     'Review process',
