@@ -1029,46 +1029,70 @@ export const PatternWhatLevel = () => (
 const USE = [
   {
     title: 'Gather',
-    when: 'I need to read a set of records 1 by 1 and build a picture before I act.',
-    why: [
-      'The list is the queue: it shows what is left to look at.',
-      'The detail holds everything needed to decide, so no page hopping.',
-      'Approve or decline, and the next record is 1 click away.',
+    persona: 'Priya, workspace administrator',
+    scene:
+      'It is Monday. 3 access requests landed over the weekend and 1 of them is for an Administrator role. Priya does not approve blind: she wants to see who asked, who manages them and whether SSO is already set up.',
+    job: {
+      when: 'I am working through a queue of requests',
+      want: 'to see everything about each one without leaving the queue',
+      so: 'I can approve or decline them in 1 sitting and know when I am done',
+    },
+    beats: [
+      'The list is the queue. The pending filter is on by default, so she sees exactly what is left.',
+      'The detail pane holds role, manager and SSO status together. No hopping to a user page and back.',
+      'Approve, and the next request is 1 click away. The list count ticks down as she goes.',
     ],
-    eg: 'Reviewing 3 pending access requests. Each needs the requested role, manager and SSO status before approving.',
     mock: <MockListDetail {...USERS} selected={1} />,
   },
   {
     title: 'Compare',
-    when: 'I need to flip between similar records to spot what is different.',
-    why: [
-      'The list keeps the candidates in view while 1 is open.',
-      'Switching is instant, so differences stay in short-term memory.',
-      'Same tabs and fields in the same place make the diff obvious.',
+    persona: 'Daniel, infrastructure engineer',
+    scene:
+      '2 production servers raised the same memory alert within 10 minutes. Daniel suspects a shared cause but needs to check: same workload, same firmware, same reboot history?',
+    job: {
+      when: 'I have 2 or 3 similar records that behave differently',
+      want: 'to flip between them with the same fields in the same place',
+      so: 'I can spot what is different while it is still fresh in my mind',
+    },
+    beats: [
+      'Both servers stay visible in the list while 1 is open, so he never loses the other candidate.',
+      'Switching is instant and the tabs do not move. The difference jumps out instead of being recalled.',
+      'Firmware is 1 version behind on 1 of them. He has his answer in under a minute.',
     ],
-    eg: '2 production servers raising the same memory alert. Is it the same workload, firmware and reboot history?',
     mock: <MockListDetail {...SERVERS} selected={1} />,
   },
   {
     title: 'Triage',
-    when: 'I need to scan for the few that need attention, then act on each.',
-    why: [
-      'Status in the list sorts the signal from the noise at a glance.',
-      'Quick filters narrow 2,000 records to the handful that matter.',
-      'Acknowledge or escalate without losing your place in the queue.',
+    persona: 'Mei-Ling, NOC operator',
+    scene:
+      'Shift start. 2,340 monitored resources, and the overnight run left 2 critical and 1 warning. Mei-Ling needs to find them, understand each one and either acknowledge it or escalate.',
+    job: {
+      when: 'a large set has a few records that need attention right now',
+      want: 'to find those few, understand each and act on it',
+      so: 'I can clear the urgent work first without losing my place',
+    },
+    beats: [
+      'Status icons in the list separate signal from noise at a glance. Sort by severity puts critical first.',
+      'The detail shows the alert, the recent events and the owner, enough to decide escalate or acknowledge.',
+      'She acts in the pane and moves to the next one. The list is still filtered to what matters.',
     ],
-    eg: 'Monday morning: 2 critical and 1 warning out of 2,340 resources. Work the critical ones first.',
     mock: <MockListDetail {...RESOURCES} selected={0} />,
   },
   {
     title: 'Quick edit',
-    when: 'I need to change 1 or 2 fields across a lot of records.',
-    why: [
-      'The edit is small enough to live in the pane, no full form needed.',
-      'Save and move on keeps the rhythm: select, change, next.',
-      'The list updates as you go, so progress is visible.',
+    persona: 'Tomás, asset manager',
+    scene:
+      'An audit is 2 weeks out and 41 devices have no owner or cost centre. Each fix is 2 fields, but there are 41 of them and Tomás wants the list to empty as he works.',
+    job: {
+      when: 'I need to make the same small change across many records',
+      want: 'to select, edit and save without opening a full form each time',
+      so: 'I can keep a rhythm and see my progress as the list shrinks',
+    },
+    beats: [
+      'The unassigned filter turns the list into a to-do list. 41 becomes 40, 39, 38.',
+      'Owner and cost centre are editable in the pane. The edit is small enough that a full page would be in the way.',
+      'Save and the next device is already next in the list. No navigation, no reload, no lost scroll position.',
     ],
-    eg: 'Assigning an owner and cost centre to 41 unassigned devices before the audit.',
     mock: <MockListDetail {...OWNERS} selected={1} />,
   },
 ];
@@ -1167,6 +1191,57 @@ const Scenario = ({
   </Box>
 );
 
+// 1 story per row: full-width mock, then persona + scene, the job statement, and how the page helps.
+const Story = ({ title, persona, scene, job, beats, mock }) => (
+  <Box gap="medium">
+    {mock}
+    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
+      <Box gap="small">
+        <Box gap="xxsmall">
+          <Box direction="row" gap="xsmall" align="center">
+            <Checkmark size="small" color="status-ok" />
+            <Heading level={3} size="xsmall" margin="none">
+              {title}
+            </Heading>
+          </Box>
+          <Label>{persona}</Label>
+        </Box>
+        <Text>{scene}</Text>
+      </Box>
+      <Box gap="small">
+        <Box
+          border={{ side: 'left', color: 'border', size: 'small' }}
+          pad={{ left: 'medium' }}
+          gap="xxsmall"
+        >
+          <Text size="large">
+            <Text size="large" color="text-weak">
+              When{' '}
+            </Text>
+            {job.when},
+          </Text>
+          <Text size="large">
+            <Text size="large" color="text-weak">
+              I want{' '}
+            </Text>
+            {job.want},
+          </Text>
+          <Text size="large">
+            <Text size="large" color="text-weak">
+              so{' '}
+            </Text>
+            {job.so}.
+          </Text>
+        </Box>
+        <Box gap="xxsmall">
+          <Label>How the page helps</Label>
+          <Bullets items={beats} />
+        </Box>
+      </Box>
+    </Grid>
+  </Box>
+);
+
 const CHECK = [
   'There are more records than fit on 1 screen, and the set can grow.',
   'A person will look at several of them in 1 sitting.',
@@ -1177,29 +1252,20 @@ const CHECK = [
 export const PatternWhenLevel = () => (
   <Box gap="large">
     <Lead>
-      Use list–detail when the work is across many records. Give a record its
-      own page when the work is deep inside 1 of them.
+      Use list–detail when the work is across many records. 4 short stories show
+      what that looks like in practice.
     </Lead>
 
     <Box gap="medium">
       <SectionHeading>Use it when</SectionHeading>
       <Box>
-        {USE.map(({ title, when, why, eg, mock }, i) => (
+        {USE.map((story, i) => (
           <Box
-            key={title}
+            key={story.title}
             pad={{ vertical: 'xlarge' }}
             border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
           >
-            <Scenario
-              ok
-              title={title}
-              when={when}
-              whyLabel="Why it fits"
-              why={why}
-              noteLabel="For example"
-              note={eg}
-              mock={mock}
-            />
+            <Story {...story} />
           </Box>
         ))}
       </Box>
