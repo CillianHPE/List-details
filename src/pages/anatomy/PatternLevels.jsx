@@ -1324,7 +1324,7 @@ const StoryLink = ({ id }) => {
 
 // Full story page: who, the moment, the job, why it matters, how the page helps.
 const StoryHeading = ({ children }) => (
-  <Heading level={3} size="xsmall" margin="none">
+  <Heading level={2} margin="none">
     {children}
   </Heading>
 );
