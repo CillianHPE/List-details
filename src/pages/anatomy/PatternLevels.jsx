@@ -653,24 +653,6 @@ export const PatternWhenLevel = () => (
       </Grid>
     </Box>
 
-    <Box border={{ side: 'top', color: 'border-weak' }} />
-
-    <Box gap="medium">
-      <SectionHeading>Do not use it when</SectionHeading>
-      <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
-        {AVOID.map(({ title, when, instead, mock }) => (
-          <Scenario
-            key={title}
-            title={title}
-            when={when}
-            noteLabel="Use instead"
-            note={instead}
-            mock={mock}
-          />
-        ))}
-      </Grid>
-    </Box>
-
     <Box
       background="background-contrast"
       round="medium"
@@ -686,6 +668,53 @@ export const PatternWhenLevel = () => (
         </Text>
       </Box>
       <Bullets items={CHECK} />
+    </Box>
+  </Box>
+);
+
+const SIGNALS = [
+  'The user arrives to do 1 thing to 1 record and then leaves.',
+  'The record needs the full width to be read or edited well.',
+  'The set is tiny, fixed, or there is no set at all.',
+  'The question is about a field, not a record.',
+];
+
+export const PatternWhenNotLevel = () => (
+  <Box gap="large">
+    <Lead>
+      List–detail earns its place when the work is across many records. When the
+      work is deep inside 1 record, or there is no set to move through, another
+      surface does the job better.
+    </Lead>
+
+    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
+      {AVOID.map(({ title, when, instead, mock }) => (
+        <Scenario
+          key={title}
+          title={title}
+          when={when}
+          noteLabel="Use instead"
+          note={instead}
+          mock={mock}
+        />
+      ))}
+    </Grid>
+
+    <Box
+      background="background-contrast"
+      round="medium"
+      pad="medium"
+      gap="small"
+    >
+      <Box gap="xxsmall">
+        <Text size="small" weight={500} color="text-weak">
+          Warning signs
+        </Text>
+        <Text size="large">
+          If any of these is true, reach for a different pattern.
+        </Text>
+      </Box>
+      <Bullets items={SIGNALS} />
     </Box>
   </Box>
 );

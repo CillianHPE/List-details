@@ -69,6 +69,11 @@ export const navItems = {
       label: 'When to use it',
       href: '#/pattern/when',
     },
+    {
+      key: 'proto-pattern-when-not',
+      label: 'When not to use it',
+      href: '#/pattern/when-not',
+    },
   ],
   Anatomy: [
     {

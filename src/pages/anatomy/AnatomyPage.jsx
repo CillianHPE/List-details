@@ -38,7 +38,11 @@ import {
   ReadOnlyLevel,
 } from './StatesLevels';
 import { CritNov19Level } from './CritLevels';
-import { PatternWhatLevel, PatternWhenLevel } from './PatternLevels';
+import {
+  PatternWhatLevel,
+  PatternWhenLevel,
+  PatternWhenNotLevel,
+} from './PatternLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -583,9 +587,13 @@ export const PAGES = {
   },
   'pattern/when': {
     title: 'When to use it',
-    subtitle:
-      '4 scenarios where it fits, 4 where it does not, and a quick check.',
+    subtitle: '4 scenarios where it fits, and a quick check.',
     Content: PatternWhenLevel,
+  },
+  'pattern/when-not': {
+    title: 'When not to use it',
+    subtitle: '4 scenarios where another surface does the job better.',
+    Content: PatternWhenNotLevel,
   },
   anatomy: {
     title: 'Structure',
