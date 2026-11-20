@@ -1037,7 +1037,7 @@ const JobSheet = ({ rows }) => (
 );
 
 export const PatternWhatLevel = () => (
-  <Box gap="large">
+  <Box gap="xlarge">
     <Lead>
       A list–detail page shows many records on 1 side and the selected record in
       full on the other. You move through the set without ever leaving the page.
@@ -1051,12 +1051,12 @@ export const PatternWhatLevel = () => (
       </Text>
     </Box>
 
-    <Box gap="small">
+    <Box gap="medium">
       <SectionHeading>Cheat sheet</SectionHeading>
       <IsNotSheet rows={IS_NOT} />
     </Box>
 
-    <Box gap="small">
+    <Box gap="medium">
       <SectionHeading>The job to be done</SectionHeading>
       <Box
         border={{ side: 'left', color: 'brand', size: 'medium' }}
@@ -1070,7 +1070,7 @@ export const PatternWhatLevel = () => (
       </Box>
     </Box>
 
-    <Box gap="small">
+    <Box gap="medium">
       <SectionHeading>How it does that job</SectionHeading>
       <JobSheet rows={JOB} />
     </Box>
