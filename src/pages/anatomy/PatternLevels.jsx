@@ -1071,48 +1071,160 @@ const JTBD = [
     group: 'Gather',
     tagline: 'Working through a queue, 1 record at a time.',
     jobs: [
-      'When I am clearing a queue of access requests, I want to open each one and approve or reject it in place, so I can empty the queue without losing count of what is left.',
-      'When I am reviewing new support tickets, I want to read each ticket in full and assign it, so I can hand the whole batch on before the morning stand-up.',
-      'When I am onboarding a batch of new users, I want to check each profile and fix what is missing, so I can finish the batch in 1 sitting.',
-      'When I am approving expense claims, I want to see the receipts for the claim I am on while the rest of the list stays visible, so I can keep moving down it.',
+      [
+        'clearing a queue of access requests',
+        'open each one and approve or reject it in place',
+        'empty the queue without losing count of what is left',
+      ],
+      [
+        'reviewing new support tickets',
+        'read each ticket in full and assign it',
+        'hand the whole batch on before the morning stand-up',
+      ],
+      [
+        'onboarding a batch of new users',
+        'check each profile and fix what is missing',
+        'finish the batch in 1 sitting',
+      ],
+      [
+        'approving expense claims',
+        'see the receipts for the claim I am on while the rest of the list stays visible',
+        'keep moving down the list',
+      ],
     ],
   },
   {
     group: 'Compare',
     tagline: 'Flipping between similar records to find the difference.',
     jobs: [
-      'When 2 servers should be identical but 1 is failing, I want to flip between their details with the same section in view, so I can spot the setting that differs.',
-      'When I am choosing between 3 subscription tiers, I want to switch between them without scrolling back to the top, so I can compare the same line item on each.',
-      'When a deployment worked in staging but not production, I want to step between the 2 environments, so I can find the configuration that changed.',
-      'When I am picking a template for a new workspace, I want to preview each candidate in turn, so I can choose the closest fit.',
+      [
+        'looking at 2 servers that should be identical but 1 is failing',
+        'flip between their details with the same section in view',
+        'spot the setting that differs',
+      ],
+      [
+        'choosing between 3 subscription tiers',
+        'switch between them without scrolling back to the top',
+        'compare the same line item on each',
+      ],
+      [
+        'debugging a deployment that worked in staging but not production',
+        'step between the 2 environments',
+        'find the configuration that changed',
+      ],
+      [
+        'picking a template for a new workspace',
+        'preview each candidate in turn',
+        'choose the closest fit',
+      ],
     ],
   },
   {
     group: 'Triage',
     tagline: 'Finding the few that matter in a large set, then acting.',
     jobs: [
-      'When 2,340 resources are reporting and a handful are critical, I want to filter to the critical ones and open each, so I can decide what to escalate first.',
-      'When an alert storm hits, I want to sort by severity and work from the top, so I can clear the real incidents before the noise.',
-      'When I am auditing accounts after a policy change, I want to find the ones that no longer comply and fix them 1 by 1, so I can close the audit.',
-      'When cost spikes overnight, I want to find the resources that grew the most and look at each, so I can stop the runaway ones.',
+      [
+        'watching 2,340 resources of which a handful are critical',
+        'filter to the critical ones and open each',
+        'decide what to escalate first',
+      ],
+      [
+        'in the middle of an alert storm',
+        'sort by severity and work from the top',
+        'clear the real incidents before the noise',
+      ],
+      [
+        'auditing accounts after a policy change',
+        'find the ones that no longer comply and fix them 1 by 1',
+        'close the audit',
+      ],
+      [
+        'looking into an overnight cost spike',
+        'find the resources that grew the most and look at each',
+        'stop the runaway ones',
+      ],
     ],
   },
   {
     group: 'Quick edit',
     tagline: 'Making the same small change to many records.',
     jobs: [
-      'When a team member leaves, I want to reassign each of their devices to a new owner, so I can finish the handover in 1 pass.',
-      'When we rename a cost centre, I want to update the tag on every affected resource without opening a new page each time, so I can be done in minutes.',
-      'When I am tidying up a set of dashboards, I want to open each and fix its title and owner, so I can leave the set consistent.',
-      'When a new location opens, I want to move the right devices to it, so I can keep the inventory accurate.',
+      [
+        'handing over the devices of a team member who has left',
+        'reassign each one to a new owner',
+        'finish the handover in 1 pass',
+      ],
+      [
+        'renaming a cost centre',
+        'update the tag on every affected resource without opening a new page each time',
+        'be done in minutes',
+      ],
+      [
+        'tidying up a set of dashboards',
+        'open each and fix its title and owner',
+        'leave the set consistent',
+      ],
+      [
+        'opening a new location',
+        'move the right devices to it',
+        'keep the inventory accurate',
+      ],
     ],
   },
 ];
+
+const JTBD_PARTS = ['When I am', 'I want to', 'So I can'];
+const JTBD_COLUMNS = ['1fr', '1.3fr', '1fr'];
 
 const JtbdPart = ({ children }) => (
   <Text size="large" weight={500}>
     {children}
   </Text>
+);
+
+// 1 category, full width: heading, then a 3-column sheet whose headers are
+// the 3 parts of a job statement, so every row reads as the same sentence.
+const JtbdGroup = ({ group, tagline, jobs }) => (
+  <Box gap="medium">
+    <Box gap="2px">
+      <SectionHeading>{group}</SectionHeading>
+      <Text color="text-weak">{tagline}</Text>
+    </Box>
+    <Box>
+      <Grid
+        columns={JTBD_COLUMNS}
+        gap="large"
+        pad={{ bottom: 'xsmall' }}
+        border={{ side: 'bottom', color: 'border' }}
+      >
+        {JTBD_PARTS.map((h) => (
+          <Text key={h} size="small" weight={500} color="text-weak">
+            {h}
+          </Text>
+        ))}
+      </Grid>
+      {jobs.map((parts) => (
+        <Grid
+          key={parts.join()}
+          columns={JTBD_COLUMNS}
+          gap="large"
+          pad={{ vertical: 'small' }}
+          border={{ side: 'bottom', color: 'border-weak' }}
+          align="start"
+        >
+          {parts.map((part, i) => (
+            <Text key={JTBD_PARTS[i]}>
+              <Text weight={500}>
+                {i === 0 ? 'When I am ' : i === 1 ? 'I want to ' : 'so I can '}
+              </Text>
+              {part}
+              {i < 2 ? ',' : '.'}
+            </Text>
+          ))}
+        </Grid>
+      ))}
+    </Box>
+  </Box>
 );
 
 export const PatternJtbdLevel = () => (
@@ -1153,35 +1265,9 @@ export const PatternJtbdLevel = () => (
       </Text>
     </Box>
 
-    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="medium">
-      {JTBD.map((g) => (
-        <Box
-          key={g.group}
-          background="background-front"
-          border
-          round="small"
-          pad="medium"
-          gap="medium"
-        >
-          <Box gap="2px">
-            <SectionHeading>{g.group}</SectionHeading>
-            <Text color="text-weak">{g.tagline}</Text>
-          </Box>
-          <Box as="ul" margin="none" pad="none" style={{ listStyle: 'none' }}>
-            {g.jobs.map((job, i) => (
-              <Box
-                as="li"
-                key={job}
-                pad={{ vertical: 'small' }}
-                border={i < g.jobs.length - 1 ? 'bottom' : undefined}
-              >
-                <Text>{job}</Text>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      ))}
-    </Grid>
+    {JTBD.map((g) => (
+      <JtbdGroup key={g.group} {...g} />
+    ))}
   </Box>
 );
 
