@@ -72,21 +72,25 @@ export const navItems = {
         {
           key: 'proto-pattern-when-gather',
           label: 'Gather',
+          description: 'Work through a queue',
           href: '#/pattern/when/gather',
         },
         {
           key: 'proto-pattern-when-compare',
           label: 'Compare',
+          description: 'Spot what differs',
           href: '#/pattern/when/compare',
         },
         {
           key: 'proto-pattern-when-triage',
           label: 'Triage',
+          description: 'Find the few that matter',
           href: '#/pattern/when/triage',
         },
         {
           key: 'proto-pattern-when-quick-edit',
           label: 'Quick edit',
+          description: 'Same edit, many records',
           href: '#/pattern/when/quick-edit',
         },
       ],

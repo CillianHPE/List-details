@@ -273,7 +273,11 @@ const NavItemV3 = ({
       align="center"
       gap={levelGap[Math.min(level, levelGap.length - 1)]}
       height={{ min: '36px' }}
-      pad={{ left: '3xsmall', right: 'xxsmall', vertical: '3xsmall' }}
+      pad={{
+        left: '3xsmall',
+        right: 'xxsmall',
+        vertical: item.description ? 'xxsmall' : '3xsmall',
+      }}
       round="small"
       background={selected ? 'background-contrast' : undefined}
     >
@@ -286,6 +290,11 @@ const NavItemV3 = ({
       />
       <Box flex>
         <Text weight={selected ? 500 : undefined}>{item.label}</Text>
+        {item.description && (
+          <Text size="small" color="text-weak">
+            {item.description}
+          </Text>
+        )}
       </Box>
       {actions}
     </Box>
