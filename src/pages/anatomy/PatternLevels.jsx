@@ -555,8 +555,8 @@ export const MockSettings = () => (
   </MockPage>
 );
 
-// Lo-fi zoning wireframe: grey blocks with zone labels, no real data.
-const Zone = ({ label, children, ...rest }) => (
+// Lo-fi zoning wireframe: no text at all, only shapes that read as a list–detail page.
+const Zone = ({ children, ...rest }) => (
   <Box
     border={{ color: 'border', style: 'dashed' }}
     background="background-back"
@@ -565,25 +565,27 @@ const Zone = ({ label, children, ...rest }) => (
     gap="xsmall"
     {...rest}
   >
-    <Text
-      size="xsmall"
-      weight={500}
-      color="text-weak"
-      truncate
-      style={{ flexShrink: 0 }}
-    >
-      {label}
-    </Text>
     {children}
   </Box>
 );
 
-const Bar = ({ width = '100%', strong }) => (
+const Bar = ({ width = '100%', height, strong }) => (
   <Box
     width={width}
-    height={strong ? '8px' : '6px'}
+    height={height || (strong ? '8px' : '6px')}
     round="xsmall"
     background={strong ? 'text-weak' : 'border'}
+    flex={false}
+  />
+);
+
+const Pill = ({ width, strong }) => (
+  <Box
+    width={width}
+    height="14px"
+    round="large"
+    border={strong ? undefined : { color: 'border' }}
+    background={strong ? 'text-weak' : 'background-front'}
     flex={false}
   />
 );
@@ -597,50 +599,73 @@ export const MockZones = () => (
     pad="small"
     gap="xsmall"
   >
-    <Zone label="Page header" direction="row" justify="between" align="center">
-      <Bar width="120px" strong />
+    <Zone direction="row" justify="between" align="center" flex={false}>
+      <Bar width="140px" height="10px" strong />
       <Box direction="row" gap="xsmall">
-        <Bar width="80px" />
-        <Bar width="60px" strong />
+        <Pill width="56px" />
+        <Pill width="72px" strong />
       </Box>
     </Zone>
     <Box direction="row" gap="xsmall" flex>
-      <Zone
-        label="List · many records"
-        width="38%"
-        flex={false}
-        overflow="hidden"
-      >
-        <Zone
-          label="Toolbar · search, filter, sort"
-          pad="xxsmall"
-          flex={false}
-        />
-        {[0, 1, 2, 3, 4].map((i) => (
+      <Zone width="38%" flex={false} overflow="hidden">
+        <Box direction="row" gap="xxsmall" flex={false}>
+          <Box flex>
+            <Pill width="100%" />
+          </Box>
+          <Pill width="20px" />
+        </Box>
+        <Box direction="row" gap="xxsmall" flex={false}>
+          <Pill width="36px" strong />
+          <Pill width="36px" />
+          <Pill width="36px" />
+        </Box>
+        {[0, 1, 2, 3].map((i) => (
           <Box
             key={i}
             pad="xxsmall"
             round="xsmall"
             background={i === 1 ? 'background-contrast' : undefined}
-            border={
-              i === 1
-                ? { side: 'left', color: 'brand', size: '2px' }
-                : { side: 'left', color: 'transparent', size: '2px' }
-            }
+            border={{
+              side: 'left',
+              color: i === 1 ? 'brand' : 'transparent',
+              size: '2px',
+            }}
             gap="xxsmall"
             flex={false}
           >
-            <Bar width={i === 1 ? '70%' : '60%'} strong={i === 1} />
+            <Bar width={i === 1 ? '75%' : '60%'} strong={i === 1} />
             <Bar width="40%" />
           </Box>
         ))}
       </Zone>
-      <Zone label="Detail · the selected record" flex overflow="hidden">
+      <Zone flex overflow="hidden" gap="small">
         <Box direction="row" justify="between" align="center" flex={false}>
-          <Bar width="40%" strong />
-          <Bar width="18%" />
+          <Box gap="xxsmall">
+            <Bar width="160px" height="10px" strong />
+            <Bar width="90px" />
+          </Box>
+          <Box direction="row" gap="xsmall">
+            <Pill width="48px" />
+            <Pill width="48px" />
+          </Box>
         </Box>
-        <Zone label="Tabs" pad="xxsmall" flex={false} />
+        <Box
+          direction="row"
+          gap="small"
+          border={{ side: 'bottom', color: 'border' }}
+          pad={{ bottom: 'xsmall' }}
+          flex={false}
+        >
+          <Box
+            border={{ side: 'bottom', color: 'brand', size: '2px' }}
+            pad={{ bottom: 'xsmall' }}
+          >
+            <Bar width="36px" strong />
+          </Box>
+          <Bar width="36px" />
+          <Bar width="36px" />
+          <Bar width="36px" />
+        </Box>
         <Grid
           columns={{ count: 2, size: 'auto' }}
           gap="small"
