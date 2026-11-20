@@ -718,22 +718,26 @@ const OWNERS = {
 // Page 1: What it is
 
 const JOB = [
-  [
-    'Keep my place',
-    'The list stays on screen so I always know where I am in the set and what comes next.',
-  ],
-  [
-    'See the whole record',
-    'The detail region shows everything about the selected record, organised into tabs when it is large.',
-  ],
-  [
-    'Move fast between records',
-    'Selecting a row swaps the detail in place. No page load, no back button, no lost filters.',
-  ],
-  [
-    'Act where it makes sense',
-    'Set-level actions (search, filter, add) live with the list. Record-level actions live with the detail.',
-  ],
+  {
+    goal: 'Keep my place',
+    how: 'The list stays on screen, so I always know where I am in the set and what comes next.',
+    zone: 'List',
+  },
+  {
+    goal: 'See the whole record',
+    how: 'The detail shows everything about the selected record, organised into tabs when it is large.',
+    zone: 'Detail',
+  },
+  {
+    goal: 'Move fast between records',
+    how: 'Selecting a row swaps the detail in place. No page load, no back button, no lost filters.',
+    zone: 'Both',
+  },
+  {
+    goal: 'Act where it makes sense',
+    how: 'Set-level actions (search, filter, add) live with the list. Record-level actions live with the detail.',
+    zone: 'Both',
+  },
 ];
 
 const NOT = [
@@ -742,12 +746,50 @@ const NOT = [
   'Not a table. Tables compare columns; list–detail compares whole records.',
 ];
 
-const Point = ({ title, children }) => (
-  <Box gap="xxsmall">
-    <Heading level={3} size="xsmall" margin="none">
-      {title}
-    </Heading>
-    <Text>{children}</Text>
+const ZoneChip = ({ zone }) => (
+  <Box
+    alignSelf="start"
+    style={{ justifySelf: 'start' }}
+    pad={{ horizontal: 'small', vertical: 'xxsmall' }}
+    round="large"
+    background="background-contrast"
+    flex={false}
+  >
+    <Text size="small" weight={500}>
+      {zone}
+    </Text>
+  </Box>
+);
+
+// Cheatsheet: goal → how the pattern delivers it → which zone does the work.
+const JobSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['small', 'flex', 'xsmall']}
+      gap="medium"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
+    >
+      {['I want to', 'List–detail gives me', 'Zone'].map((h) => (
+        <Text key={h} size="small" weight={500} color="text-weak">
+          {h}
+        </Text>
+      ))}
+    </Grid>
+    {rows.map(({ goal, how, zone }) => (
+      <Grid
+        key={goal}
+        columns={['small', 'flex', 'xsmall']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Text weight={500}>{goal}</Text>
+        <Text>{how}</Text>
+        <ZoneChip zone={zone} />
+      </Grid>
+    ))}
   </Box>
 );
 
@@ -779,15 +821,9 @@ export const PatternWhatLevel = () => (
       </Box>
     </Box>
 
-    <Box gap="medium">
+    <Box gap="small">
       <SectionHeading>How it does that job</SectionHeading>
-      <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="medium">
-        {JOB.map(([title, body]) => (
-          <Point key={title} title={title}>
-            {body}
-          </Point>
-        ))}
-      </Grid>
+      <JobSheet rows={JOB} />
     </Box>
 
     <Box gap="small">
