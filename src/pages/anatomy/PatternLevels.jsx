@@ -555,11 +555,10 @@ export const MockSettings = () => (
   </MockPage>
 );
 
-// Lo-fi zoning wireframe: no text at all, only shapes that read as a list–detail page.
+// Lo-fi zoning wireframe: no text, light grey shapes only, no selection state.
 const Zone = ({ children, ...rest }) => (
   <Box
-    border={{ color: 'border', style: 'dashed' }}
-    background="background-back"
+    border={{ color: 'border-weak', style: 'dashed' }}
     round="xsmall"
     pad="xsmall"
     gap="xsmall"
@@ -569,26 +568,28 @@ const Zone = ({ children, ...rest }) => (
   </Box>
 );
 
-const Bar = ({ width = '100%', height, strong }) => (
+const Bar = ({ width = '100%', height = '6px', strong }) => (
   <Box
     width={width}
-    height={height || (strong ? '8px' : '6px')}
+    height={height}
     round="xsmall"
-    background={strong ? 'text-weak' : 'border'}
+    background={strong ? 'border' : 'border-weak'}
     flex={false}
   />
 );
 
-const Pill = ({ width, strong }) => (
+const Pill = ({ width }) => (
   <Box
     width={width}
     height="14px"
     round="large"
-    border={strong ? undefined : { color: 'border' }}
-    background={strong ? 'text-weak' : 'background-front'}
+    border={{ color: 'border-weak' }}
     flex={false}
   />
 );
+
+const ROWS = [0, 1, 2];
+const FIELDS = [0, 1, 2, 3, 4, 5];
 
 export const MockZones = () => (
   <Box
@@ -603,7 +604,7 @@ export const MockZones = () => (
       <Bar width="140px" height="10px" strong />
       <Box direction="row" gap="xsmall">
         <Pill width="56px" />
-        <Pill width="72px" strong />
+        <Pill width="72px" />
       </Box>
     </Zone>
     <Box direction="row" gap="xsmall" flex>
@@ -615,25 +616,19 @@ export const MockZones = () => (
           <Pill width="20px" />
         </Box>
         <Box direction="row" gap="xxsmall" flex={false}>
-          <Pill width="36px" strong />
+          <Pill width="36px" />
           <Pill width="36px" />
           <Pill width="36px" />
         </Box>
-        {[0, 1, 2, 3].map((i) => (
+        {ROWS.map((i) => (
           <Box
             key={i}
-            pad="xxsmall"
-            round="xsmall"
-            background={i === 1 ? 'background-contrast' : undefined}
-            border={{
-              side: 'left',
-              color: i === 1 ? 'brand' : 'transparent',
-              size: '2px',
-            }}
+            pad={{ vertical: 'xsmall' }}
+            border={i > 0 ? { side: 'top', color: 'border-weak' } : undefined}
             gap="xxsmall"
             flex={false}
           >
-            <Bar width={i === 1 ? '75%' : '60%'} strong={i === 1} />
+            <Bar width="60%" strong />
             <Bar width="40%" />
           </Box>
         ))}
@@ -652,16 +647,11 @@ export const MockZones = () => (
         <Box
           direction="row"
           gap="small"
-          border={{ side: 'bottom', color: 'border' }}
+          border={{ side: 'bottom', color: 'border-weak' }}
           pad={{ bottom: 'xsmall' }}
           flex={false}
         >
-          <Box
-            border={{ side: 'bottom', color: 'brand', size: '2px' }}
-            pad={{ bottom: 'xsmall' }}
-          >
-            <Bar width="36px" strong />
-          </Box>
+          <Bar width="36px" strong />
           <Bar width="36px" />
           <Bar width="36px" />
           <Bar width="36px" />
@@ -671,7 +661,7 @@ export const MockZones = () => (
           gap="small"
           style={{ flexShrink: 0 }}
         >
-          {[0, 1, 2, 3, 4, 5].map((i) => (
+          {FIELDS.map((i) => (
             <Box key={i} gap="xxsmall">
               <Bar width="35%" />
               <Bar width="70%" strong />
