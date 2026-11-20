@@ -332,10 +332,8 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
   const [selected, setSelected] = useState(() =>
     activeNavItem(navItems.Anatomy[0]),
   );
-  const [expanded, setExpanded] = usePersistedState(
-    'nav.expanded',
-    Object.keys(items),
-  );
+  // Groups start collapsed; the active item's group is opened below.
+  const [expanded, setExpanded] = usePersistedState('nav.expanded', []);
   // Keep selection in step with in-page links that change the route.
   useEffect(() => {
     const onHash = () => setSelected((s) => activeNavItem(s));
