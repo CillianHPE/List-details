@@ -1064,6 +1064,243 @@ export const PatternWhatLevel = () => (
 );
 
 // ---------------------------------------------------------------------------
+// Page 1a: When to use. Pulls the decision out of the stories into 1 place:
+// use list–detail, or give the record its own page.
+
+const DECIDE = [
+  {
+    q: 'How many records does the person touch in a sitting?',
+    use: 'Several. They move between records and want to keep their place.',
+    page: '1. They arrive at a record from a link, alert or search and leave again.',
+  },
+  {
+    q: 'How long is the work on 1 record?',
+    use: 'Seconds to a few minutes: read, check, approve, assign, flag.',
+    page: 'Long: configuring, authoring, multi-step changes, anything with a Save and a draft.',
+  },
+  {
+    q: 'What does the detail need to show?',
+    use: 'A summary and a few tabs that fit in 480px (size.large) or more.',
+    page: 'Wide tables, charts, editors or nested lists that need the full width.',
+  },
+  {
+    q: 'Does the list matter while the record is open?',
+    use: 'Yes. The count, filters and the next item are part of the task.',
+    page: 'No. Once the record is open the rest of the set is noise.',
+  },
+  {
+    q: 'What does the comparison look like?',
+    use: 'Whole records, flipped between with the same fields in the same place.',
+    page: '1 or 2 values across many rows. That is a table, not list–detail.',
+  },
+];
+
+const DecideSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['1fr', '1fr', '1fr']}
+      gap="medium"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
+    >
+      <Text size="small" weight={500} color="text-weak">
+        Ask
+      </Text>
+      <Box direction="row" gap="xsmall" align="center">
+        <Checkmark size="small" color="status-ok" />
+        <Text size="small" weight={500} color="text-weak">
+          Use list–detail when
+        </Text>
+      </Box>
+      <Box direction="row" gap="xsmall" align="center">
+        <Close size="small" color="status-critical" />
+        <Text size="small" weight={500} color="text-weak">
+          Give it a page when
+        </Text>
+      </Box>
+    </Grid>
+    {rows.map(({ q, use, page }) => (
+      <Grid
+        key={q}
+        columns={['1fr', '1fr', '1fr']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Text weight={500}>{q}</Text>
+        <Text>{use}</Text>
+        <Text>{page}</Text>
+      </Grid>
+    ))}
+  </Box>
+);
+
+const SCENARIOS = [
+  {
+    id: 'gather',
+    name: 'Gather',
+    fit: 'Strong',
+    text: 'Work through a queue 1 record at a time. The list is the queue and the count is the progress bar.',
+  },
+  {
+    id: 'compare',
+    name: 'Compare',
+    fit: 'Strong',
+    text: 'Flip between 2 or 3 similar records with the same fields in the same place.',
+  },
+  {
+    id: 'triage',
+    name: 'Triage',
+    fit: 'Strong',
+    text: 'Filter a large set down to the few that matter, inspect each, act, move on.',
+  },
+  {
+    id: 'quick-edit',
+    name: 'Quick edit',
+    fit: 'Good',
+    text: 'The same small change across many records. Edits are short and land in the detail pane without a mode switch.',
+  },
+  {
+    id: null,
+    name: 'Execute',
+    fit: 'Boundary',
+    text: 'Deep work inside 1 record: configure, author, run a multi-step change. Start it from the detail pane, then hand off to a dedicated page or a full-height layer. The list–detail page is the place you return to, not the place the work happens.',
+  },
+];
+
+const FIT_COLOR = {
+  Strong: 'status-ok',
+  Good: 'status-ok',
+  Boundary: 'status-warning',
+};
+
+const ScenarioSheet = ({ rows }) => {
+  const go = useContext(AnatomyNav);
+  return (
+    <Box>
+      <Grid
+        columns={['xsmall', 'xsmall', 'flex']}
+        gap="medium"
+        pad={{ bottom: 'xsmall' }}
+        border={{ side: 'bottom', color: 'border' }}
+      >
+        {['Scenario', 'Fit', 'What it looks like'].map((h) => (
+          <Text key={h} size="small" weight={500} color="text-weak">
+            {h}
+          </Text>
+        ))}
+      </Grid>
+      {rows.map(({ id, name, fit, text }) => (
+        <Grid
+          key={name}
+          columns={['xsmall', 'xsmall', 'flex']}
+          gap="medium"
+          pad={{ vertical: 'small' }}
+          border={{ side: 'bottom', color: 'border-weak' }}
+          align="start"
+        >
+          {id ? (
+            <Anchor
+              label={name}
+              weight={500}
+              onClick={() => go(`pattern/when/${id}`)}
+            />
+          ) : (
+            <Text weight={500}>{name}</Text>
+          )}
+          <Box direction="row" gap="xsmall" align="center">
+            <Box
+              width="8px"
+              height="8px"
+              round="full"
+              background={FIT_COLOR[fit]}
+              flex={false}
+            />
+            <Text size="small">{fit}</Text>
+          </Box>
+          <Text>{text}</Text>
+        </Grid>
+      ))}
+    </Box>
+  );
+};
+
+const EXAMPLES = [
+  {
+    name: 'Realism',
+    text: 'Records read like production data: real-looking names, states, dates and counts. No lorem ipsum, no "Item 1".',
+  },
+  {
+    name: 'Diversity',
+    text: 'Across the set of examples, cover different domains (people, hardware, accounts, resources), record sizes and list densities, so no 1 example sets the expectation.',
+  },
+  {
+    name: 'Safety',
+    text: 'Fictional people, organisations and identifiers. Nothing that could be mistaken for a customer, a colleague or a live system.',
+  },
+  {
+    name: 'Structural coverage',
+    text: 'Together the examples exercise every zone and state: toolbar variants, sparse and dense lists, tabbed and single-pane details, empty, loading and error.',
+  },
+];
+
+const ExampleSheet = ({ rows }) => (
+  <Box>
+    {rows.map(({ name, text }) => (
+      <Grid
+        key={name}
+        columns={['small', 'flex']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Text weight={500}>{name}</Text>
+        <Text>{text}</Text>
+      </Grid>
+    ))}
+  </Box>
+);
+
+export const PatternUseLevel = () => (
+  <Box gap="xlarge">
+    <Lead>
+      Use list–detail when the person works across several records in 1 sitting
+      and the work on each is short. Give a record its own page when the work is
+      long, wide or arrived at directly.
+    </Lead>
+
+    <Box gap="medium">
+      <SectionHeading>Decide in 5 questions</SectionHeading>
+      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+        Most answers will fall in 1 column. If they split, the pattern still
+        works for browsing and the deep work hands off to a page.
+      </Text>
+      <DecideSheet rows={DECIDE} />
+    </Box>
+
+    <Box gap="medium">
+      <SectionHeading>The scenarios it serves</SectionHeading>
+      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+        4 scenarios fit well and each has a user story. Execute is the boundary:
+        the pattern gets you to the record, not through the work.
+      </Text>
+      <ScenarioSheet rows={SCENARIOS} />
+    </Box>
+
+    <Box gap="medium">
+      <SectionHeading>Choosing example content</SectionHeading>
+      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+        The examples in this library are chosen against 4 criteria, in this
+        order of priority.
+      </Text>
+      <ExampleSheet rows={EXAMPLES} />
+    </Box>
+  </Box>
+);
+
+// ---------------------------------------------------------------------------
 // Page 1b: Jobs to be done
 
 const JTBD = [

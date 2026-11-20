@@ -38,6 +38,11 @@ export const navItems = {
       href: '#/pattern/what',
     },
     {
+      key: 'proto-pattern-use',
+      label: 'When to use',
+      href: '#/pattern/use',
+    },
+    {
       key: 'proto-pattern-jtbd',
       label: 'JTBD',
       href: '#/pattern/jtbd',

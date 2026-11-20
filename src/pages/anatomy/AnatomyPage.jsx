@@ -43,6 +43,7 @@ import { CritNov19Level } from './CritLevels';
 import {
   PatternWhatLevel,
   PatternJtbdLevel,
+  PatternUseLevel,
   PatternStoryLevel,
 } from './PatternLevels';
 
@@ -611,6 +612,12 @@ export const PAGES = {
     subtitle:
       'The list–detail pattern in plain language: what it is and what it is not.',
     Content: PatternWhatLevel,
+  },
+  'pattern/use': {
+    title: 'When to use',
+    subtitle:
+      'List–detail or a dedicated page: 5 questions, the scenarios it serves, and how examples are chosen.',
+    Content: PatternUseLevel,
   },
   'pattern/jtbd': {
     title: 'Jobs to be done',

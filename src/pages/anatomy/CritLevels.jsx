@@ -101,8 +101,8 @@ const PLAN = [
     'Responsive → Breakpoints, Regions by width and Shell configurations now state the ladder as rules and show the surface width each shell configuration leaves.',
   ],
   [
-    'Usage guidance',
-    'When to use vs a dedicated page, 4 scenarios (gather, compare, triage, execute), anatomy with region names, example-selection criteria.',
+    'Usage guidance (done)',
+    'Pattern → When to use: 5 decision questions (list–detail vs a dedicated page), the 4 scenarios with Execute named as the boundary, and the 4 example-selection criteria.',
   ],
   [
     'Scroll toggle (done)',
