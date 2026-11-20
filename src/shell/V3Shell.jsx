@@ -296,7 +296,7 @@ const NavItemV3 = ({
 // trailing action is the Up/Down chevron; children sit one level deeper.
 // Parents start open and re-open whenever the route moves into them.
 // Groups that start a new section of the nav, separated by a divider.
-const NAV_DIVIDER_BEFORE = ['Design crit'];
+const NAV_DIVIDER_BEFORE = ['Anatomy', 'Design crit'];
 
 const NavDivider = () => (
   <Box
