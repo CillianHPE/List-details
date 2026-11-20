@@ -555,6 +555,109 @@ export const MockSettings = () => (
   </MockPage>
 );
 
+// Lo-fi zoning wireframe: grey blocks with zone labels, no real data.
+const Zone = ({ label, children, ...rest }) => (
+  <Box
+    border={{ color: 'border', style: 'dashed' }}
+    background="background-back"
+    round="xsmall"
+    pad="xsmall"
+    gap="xsmall"
+    {...rest}
+  >
+    <Text
+      size="xsmall"
+      weight={500}
+      color="text-weak"
+      truncate
+      style={{ flexShrink: 0 }}
+    >
+      {label}
+    </Text>
+    {children}
+  </Box>
+);
+
+const Bar = ({ width = '100%', strong }) => (
+  <Box
+    width={width}
+    height={strong ? '8px' : '6px'}
+    round="xsmall"
+    background={strong ? 'text-weak' : 'border'}
+    flex={false}
+  />
+);
+
+export const MockZones = () => (
+  <Box
+    height="320px"
+    border={{ color: 'border-weak' }}
+    background="background-front"
+    round="small"
+    pad="small"
+    gap="xsmall"
+  >
+    <Zone label="Page header" direction="row" justify="between" align="center">
+      <Bar width="120px" strong />
+      <Box direction="row" gap="xsmall">
+        <Bar width="80px" />
+        <Bar width="60px" strong />
+      </Box>
+    </Zone>
+    <Box direction="row" gap="xsmall" flex>
+      <Zone
+        label="List · many records"
+        width="38%"
+        flex={false}
+        overflow="hidden"
+      >
+        <Zone
+          label="Toolbar · search, filter, sort"
+          pad="xxsmall"
+          flex={false}
+        />
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Box
+            key={i}
+            pad="xxsmall"
+            round="xsmall"
+            background={i === 1 ? 'background-contrast' : undefined}
+            border={
+              i === 1
+                ? { side: 'left', color: 'brand', size: '2px' }
+                : { side: 'left', color: 'transparent', size: '2px' }
+            }
+            gap="xxsmall"
+            flex={false}
+          >
+            <Bar width={i === 1 ? '70%' : '60%'} strong={i === 1} />
+            <Bar width="40%" />
+          </Box>
+        ))}
+      </Zone>
+      <Zone label="Detail · the selected record" flex overflow="hidden">
+        <Box direction="row" justify="between" align="center" flex={false}>
+          <Bar width="40%" strong />
+          <Bar width="18%" />
+        </Box>
+        <Zone label="Tabs" pad="xxsmall" flex={false} />
+        <Grid
+          columns={{ count: 2, size: 'auto' }}
+          gap="small"
+          style={{ flexShrink: 0 }}
+        >
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <Box key={i} gap="xxsmall">
+              <Bar width="35%" />
+              <Bar width="70%" strong />
+            </Box>
+          ))}
+        </Grid>
+      </Zone>
+    </Box>
+  </Box>
+);
+
 // ---------------------------------------------------------------------------
 // Realistic datasets for the list–detail mocks
 
@@ -740,11 +843,54 @@ const JOB = [
   },
 ];
 
-const NOT = [
-  'Not a dashboard. It is about records, not metrics.',
-  'Not a wizard or form page. It is for looking across many, not building 1.',
-  'Not a table. Tables compare columns; list–detail compares whole records.',
+const IS_NOT = [
+  ['About records', 'About metrics. That is a dashboard.'],
+  [
+    'Looking across many',
+    'Building or configuring 1. That is a wizard or form.',
+  ],
+  ['Comparing whole records', 'Comparing 1 column. That is a table.'],
+  [
+    'Short actions in the pane',
+    'Deep work on 1 thing. That needs its own page.',
+  ],
 ];
+
+const IsNotSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['1fr', '1fr']}
+      gap="large"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
+    >
+      <Box direction="row" gap="xsmall" align="center">
+        <Checkmark size="small" color="status-ok" />
+        <Text size="small" weight={500} color="text-weak">
+          It is
+        </Text>
+      </Box>
+      <Box direction="row" gap="xsmall" align="center">
+        <Close size="small" color="status-critical" />
+        <Text size="small" weight={500} color="text-weak">
+          It is not
+        </Text>
+      </Box>
+    </Grid>
+    {rows.map(([is, not]) => (
+      <Grid
+        key={is}
+        columns={['1fr', '1fr']}
+        gap="large"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+      >
+        <Text weight={500}>{is}</Text>
+        <Text>{not}</Text>
+      </Grid>
+    ))}
+  </Box>
+);
 
 const ZoneChip = ({ zone }) => (
   <Box
@@ -801,10 +947,16 @@ export const PatternWhatLevel = () => (
     </Lead>
 
     <Box gap="small">
-      <MockListDetail {...USERS} selected={1} />
+      <MockZones />
       <Text size="small" color="text-weak">
-        The list keeps the set in view; the detail shows the record you picked.
+        2 zones side by side: the list keeps the set in view; the detail shows
+        the record you picked.
       </Text>
+    </Box>
+
+    <Box gap="small">
+      <SectionHeading>Cheat sheet</SectionHeading>
+      <IsNotSheet rows={IS_NOT} />
     </Box>
 
     <Box gap="small">
@@ -824,11 +976,6 @@ export const PatternWhatLevel = () => (
     <Box gap="small">
       <SectionHeading>How it does that job</SectionHeading>
       <JobSheet rows={JOB} />
-    </Box>
-
-    <Box gap="small">
-      <SectionHeading>What it is not</SectionHeading>
-      <Bullets items={NOT} />
     </Box>
 
     <Box
