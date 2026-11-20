@@ -587,8 +587,8 @@ export const PAGES = {
     Content: PatternWhatLevel,
   },
   'pattern/when': {
-    title: 'When to use it',
-    subtitle: '4 stories where it fits, and a quick check.',
+    title: 'User stories',
+    subtitle: '4 stories showing when list–detail fits, and a quick check.',
     Content: PatternWhenLevel,
   },
   'pattern/when/gather': {

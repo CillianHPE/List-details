@@ -66,7 +66,7 @@ export const navItems = {
     },
     {
       key: 'proto-pattern-when',
-      label: 'When to use it',
+      label: 'User stories',
       href: '#/pattern/when',
       children: [
         {
