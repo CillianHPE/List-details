@@ -126,6 +126,13 @@ export const navItems = {
       href: '#/states/read-only',
     },
   ],
+  'Design crit': [
+    {
+      key: 'proto-crit-2026-11-19',
+      label: 'Page design critique · 19 Nov',
+      href: '#/crit/2026-11-19',
+    },
+  ],
 };
 
 // Items with an href navigate the prototype; others only update selection.

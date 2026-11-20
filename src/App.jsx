@@ -40,6 +40,7 @@ const REDIRECTS = {
   responsive: 'responsive/breakpoints',
   'responsive/shell': 'responsive/shell-configs',
   states: 'states/loading',
+  crit: 'crit/2026-11-19',
 };
 const readVersion = () => {
   const v = window.location.hash.replace(/^#\/?/, '');

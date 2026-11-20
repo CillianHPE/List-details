@@ -37,6 +37,7 @@ import {
   ErrorLevel,
   ReadOnlyLevel,
 } from './StatesLevels';
+import { CritNov19Level } from './CritLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -642,6 +643,12 @@ export const PAGES = {
     title: 'Read-only',
     subtitle: 'About the controls, not the content.',
     Content: ReadOnlyLevel,
+  },
+  'crit/2026-11-19': {
+    title: 'Page design critique · 19 Nov',
+    subtitle:
+      'Sentiment, verdicts and the ordered plan from the first review of the live prototype.',
+    Content: CritNov19Level,
   },
 };
 
