@@ -638,7 +638,10 @@ export const PatternWhenLevel = () => (
 
     <Box gap="medium">
       <SectionHeading>Use it when</SectionHeading>
-      <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
+      <Grid
+        columns={{ count: 'fit', size: ['medium', 'flex'] }}
+        gap={{ row: 'xlarge', column: 'large' }}
+      >
         {USE.map(({ title, when, eg, mock }) => (
           <Scenario
             key={title}
@@ -687,7 +690,10 @@ export const PatternWhenNotLevel = () => (
       surface does the job better.
     </Lead>
 
-    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
+    <Grid
+      columns={{ count: 'fit', size: ['medium', 'flex'] }}
+      gap={{ row: 'xlarge', column: 'large' }}
+    >
       {AVOID.map(({ title, when, instead, mock }) => (
         <Scenario
           key={title}
