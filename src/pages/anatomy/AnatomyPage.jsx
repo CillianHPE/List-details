@@ -726,7 +726,7 @@ export const PAGES = {
   },
 };
 
-// Elevation stack: which token each surface uses and why. Answers the crit
+// Background stack: which background token each surface uses and why. Answers the crit
 // question of whether the greys are consistent (now: 1 pane grey) and frames
 // the open base-1 (inset) question for the DS team.
 const SURFACES = [
@@ -764,7 +764,7 @@ const SurfacesLevel = () => (
   <Box gap="large" pad={{ top: 'medium' }}>
     <Box gap="xsmall">
       <Heading level={2} size="small" margin="none">
-        Elevation stack
+        Background stack
       </Heading>
       <Text color="text-weak" style={{ maxWidth: '68ch' }}>
         3 steps, 3 tokens. Containers share 1 grey; the translucent tint is kept

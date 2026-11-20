@@ -49,7 +49,7 @@ const VERDICTS = [
   {
     title: 'Surfaces: greys are inconsistent',
     who: 'Matt',
-    body: 'Nav, context pane and detail containers use different greys. Reviewers want the elevation stack made explicit, and asked whether a base-1 (inset) surface has a place alongside base, base+1, base+2.',
+    body: 'Nav, context pane and detail containers use different greys. Reviewers want the background token stack made explicit, and asked whether a base-1 (inset) surface has a place alongside base, base+1, base+2.',
   },
   {
     title: 'Spacing: non-divider view needs a wider gutter',
@@ -89,7 +89,7 @@ const PLAN = [
     'Support card button is now secondary; name–value rows tightened to 8px (size.xxsmall); the Sales Cockpit list shows icon + status name with the score as secondary text, per the status indicator guidance.',
   ],
   [
-    'Elevation audit (done)',
+    'Background token audit (done)',
     'Anatomy → Surfaces: 1 table of surface to token. Containers now share background-back; background-contrast is kept for selection. Inset (base −1) framed as a question for the DS team.',
   ],
   [
