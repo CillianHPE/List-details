@@ -41,6 +41,7 @@ import {
   usePersistedState,
 } from '../components/NavSidebar';
 import {
+  APP_HEADER_HEIGHT,
   PrototypeContext,
   ShellContext,
   stickyBelowHeader,
@@ -429,8 +430,23 @@ const groupOf = (items, selected) =>
     ([, v]) => Array.isArray(v) && inGroup(v, selected),
   )?.[0];
 
+// Responsive ladder (crit 19 Nov): the navigation gives way first. Under
+// `xlarge` (1440px) it drops to an icon rail as soon as the context pane
+// opens; from `medium` (1080px) down it starts as a rail regardless, so content
+// and the context pane keep their width; below `small` (768px) opening it
+// overlays the shell instead of pushing content. The wide-screen preference
+// is kept separately so returning to a wide window restores it.
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
-  const [open, setOpen] = usePersistedState('nav.open', true);
+  const size = useContext(ResponsiveContext);
+  const { contextPane } = usePrototype();
+  const autoCollapse =
+    ['xsmall', 'small', 'medium'].includes(size) ||
+    (contextPane && size !== 'xlarge');
+  const overlay = ['xsmall', 'small'].includes(size);
+  const [wideOpen, setWideOpen] = usePersistedState('nav.open', true);
+  const [narrowOpen, setNarrowOpen] = useState(false);
+  const open = autoCollapse ? narrowOpen : wideOpen;
+  const setOpen = autoCollapse ? setNarrowOpen : setWideOpen;
   const [selected, setSelected] = useState(() =>
     activeNavItem(navItems.Anatomy[0]),
   );
@@ -446,10 +462,13 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
     const g = groupOf(items, selected);
     if (g) setExpanded((e) => (e.includes(g) ? e : [...e, g]));
   }, [items, selected]);
-  const onSelect = (item) => selectNavItem(item, setSelected);
+  const onSelect = (item) => {
+    selectNavItem(item, setSelected);
+    if (overlay) setNarrowOpen(false);
+  };
   const toggle = (g) =>
     setExpanded((e) => (e.includes(g) ? e.filter((i) => i !== g) : [...e, g]));
-  return (
+  const pane = (
     <Box
       as="nav"
       aria-label="Primary"
@@ -537,6 +556,27 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
       )}
     </Box>
   );
+  if (overlay && open) {
+    // Rail keeps its slot so content does not jump; the open pane floats over
+    // it from the same corner.
+    return (
+      <>
+        <Box width="48px" flex={false} />
+        <Layer
+          position="top-left"
+          modal
+          animation="slide"
+          margin={{ top: `${APP_HEADER_HEIGHT + 12}px`, left: 'xsmall' }}
+          onEsc={() => setNarrowOpen(false)}
+          onClickOutside={() => setNarrowOpen(false)}
+          background="none"
+        >
+          {pane}
+        </Layer>
+      </>
+    );
+  }
+  return pane;
 };
 
 // Context pane (Figma: Slot builds → AppShell - V3 → ContextPane). At medium

@@ -8,10 +8,10 @@ export const SURFACE = {
   listMin: 256, // size.small — floor so avatar + two lines of text fit
   listMax: 384, // size.medium — ceiling used by the Fixed / Resizable variants
   listShare: 0.4, // Proportional variant: list 40%, detail 60%
-  gap: 24, // edgeSize.medium
+  gap: 48, // edgeSize.xlarge, the content-section gap
   detailMin: 480, // name–value pairs stack under this
 };
-SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 760
+SURFACE.twoColumnMin = SURFACE.listMin + SURFACE.gap + SURFACE.detailMin; // 784
 SURFACE.comfortableMin = 1000;
 
 // Proportional zones: list = 40% of the surface, floored at listMin; detail

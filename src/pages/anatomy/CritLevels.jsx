@@ -93,10 +93,13 @@ const PLAN = [
     'Anatomy → Surfaces: 1 table of surface to token. Containers now share background-back; background-contrast is kept for selection. Inset (base −1) framed as a question for the DS team.',
   ],
   [
-    'Responsive ladder',
-    'Build the nav / content / pane priority order into the shell; narrow entry lands on the selected record with a back-to-list path.',
+    'Responsive ladder (done)',
+    'Nav collapses to its rail under 1080px (medium) or whenever the context pane is open under 1440px (xlarge); under 768px (small) the nav and context pane become overlays. Narrow entry lands on the selected record with Back in the page header. List and detail stay 2 columns while the surface is at least 784px.',
   ],
-  ['Responsive rules', 'Write the behaviour as rules on the Responsive pages.'],
+  [
+    'Responsive rules (done)',
+    'Responsive → Breakpoints, Regions by width and Shell configurations now state the ladder as rules and show the surface width each shell configuration leaves.',
+  ],
   [
     'Usage guidance',
     'When to use vs a dedicated page, 4 scenarios (gather, compare, triage, execute), anatomy with region names, example-selection criteria.',

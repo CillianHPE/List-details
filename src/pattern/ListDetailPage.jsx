@@ -94,8 +94,8 @@ const QuickFilters = ({ options, value, onChange }) => {
 // The surface sizes itself from its own width (not the viewport) because the
 // shell's nav / context panes take width first — see Anatomy › Responsive:
 //   comfortable ≥ 1000px  proportional 40 / 60
-//   compact     760–999px same split, list floored at size.small
-//   drill-in    < 760px   one column, list → detail
+//   compact     784–999px same split, list floored at size.small
+//   drill-in    < 784px   one column, list → detail
 // Pages supply the data and the record-specific renderers:
 //   items            records; each needs a stable `id`
 //   matches(item,q)  free-text search predicate (q already lower-cased)
@@ -132,6 +132,12 @@ export const ListDetailPage = ({
   // Prototype controls (divider, contained list) live in the global header.
   const { divider, contained, pageScroll } = usePrototype();
   const [showDetail, setShowDetail] = useState(false);
+  // Narrow entry (crit 19 Nov): when the surface drops to 1 column with a
+  // record already selected, land on that record, matching the wide view;
+  // the page header's back link returns to the list.
+  useEffect(() => {
+    if (stacked && selectedId !== null) setShowDetail(true);
+  }, [stacked]); // eslint-disable-line react-hooks/exhaustive-deps
   // The surface always fills the available view height: measure its distance
   // from the document top so it can end level with the side nav (12px above
   // the viewport edge) without the page needing to scroll.

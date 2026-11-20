@@ -37,8 +37,8 @@ const BREAKPOINTS = {
   medium: region(
     'B',
     'Compact',
-    '760 – 999px surface width',
-    '2 columns, still 40 / 60: list 304–400px, detail 456–600px. The 256px (size.small) floor never binds above 640px.',
+    '784 – 999px surface width',
+    '2 columns, still 40 / 60: list 314–400px, detail 422–551px after the 48px (size.xlarge) gap. The 256px (size.small) floor never binds above 640px.',
     'Navigation pane collapsed to icons',
     'Chrome gives way first: secondary actions fold into overflow, tabs scroll, the detail header may wrap.',
     {
@@ -49,9 +49,9 @@ const BREAKPOINTS = {
   narrow: region(
     'C',
     'Drill-in',
-    '< 760px surface width',
-    'Stacked. Only 1 zone is visible: the list by default, the detail as a drill-in screen once an item is chosen.',
-    'Navigation in a drawer behind the header menu button',
+    '< 784px surface width',
+    'Stacked. Only 1 zone is visible: the detail if a record is already selected (matching the wide view), otherwise the list; selecting drills in.',
+    'Navigation rail; opens as an overlay',
     'A Back link in the page header parent slot ("All <collection>") returns to the list; record actions live in an overflow menu; pairs stack.',
     {
       questions:
@@ -69,12 +69,13 @@ const RESPONSIVE = {
     'expanded → icons → drawer',
     'Section switching at every width.',
     'Collapse toggle · menu button',
-    'Collapses to icons under 1024px and moves behind the header menu button under 768px.',
+    'Rail under 1080px (medium), or under 1440px (xlarge) while the context pane is open; opens as an overlay under 768px (small).',
     {
       at: {
-        wide: 'Expanded, with labels.',
-        medium: 'Icons only; labels on hover/focus.',
-        narrow: 'Hidden in a drawer, opened from the header menu button.',
+        wide: 'Expanded, with labels. Drops to the rail if the context pane opens under 1440px.',
+        medium: 'Icon rail; the toggle expands it and pushes content.',
+        narrow:
+          'Icon rail; the toggle opens it over the page and it closes on selection.',
       },
     },
   ),
@@ -84,12 +85,13 @@ const RESPONSIVE = {
     '2 columns → stacked',
     'The arrangement of the 2 zones.',
     'Back link in page header (drill-in only)',
-    'Grid columns [40% in px, flex] from 760px surface width. Below, only 1 zone is visible: the list by default, the detail after an item is chosen, with Back in the page header parent slot.',
+    'Grid columns [40% in px, flex] from 784px surface width. Below, only 1 zone is visible: the list by default, the detail after an item is chosen, with Back in the page header parent slot.',
     {
       at: {
         wide: 'Grid [40% in px, flex]; list 40% (400–576px at 1000–1440).',
-        medium: 'Same grid; list 40% (304–400px), detail 60% (456–600px).',
-        narrow: 'Single column; list screen, then detail screen on selection.',
+        medium: 'Same grid; list 40% (314–400px), detail 60% (422–551px).',
+        narrow:
+          'Single column; lands on the selected record with Back, or the list if nothing is selected.',
       },
     },
   ),
@@ -311,16 +313,19 @@ const ResponsiveFrame = ({ bp }) => {
 
 const SHELL = {
   header: 60,
-  gutter: 12, // outer page gutter ≥1024
-  gutterSmall: 6, // outer page gutter ≤768
+  gutter: 12, // outer page gutter
+  gutterSmall: 6, // outer page gutter under 768px
   nav: 256, // expanded
   navRail: 48, // collapsed to an icon rail — measured in the Shell v3 prototype
   context: 425,
   gap: 12, // between panes
-  mainPad: 24, // Main horizontal padding each side ≥1024
-  mainPadSmall: 12, // ≤768
-  overlayBelow: 1024, // panes float over the page at or under this width
-  coexistFrom: 1536, // nav + context may be open together from here
+  mainPad: 48, // PageContent horizontal padding each side, edgeSize.xlarge
+  mainPadSmall: 24, // under 768px the theme remaps xlarge to 24
+  // Ladder, on the theme breakpoints (grommet-theme-hpe): nav gives way
+  // first, then the context pane, then the surface itself.
+  overlayBelow: 768, // small: nav and context pane float over the page
+  railBelow: 1080, // medium: nav starts as an icon rail
+  coexistFrom: 1440, // xlarge: nav may stay expanded beside the context pane
 };
 
 // What the surface needs to stay two-column — shared with the prototype
@@ -329,22 +334,29 @@ const SHELL = {
 const NAV_WIDTH = { expanded: SHELL.nav, collapsed: SHELL.navRail, hidden: 0 };
 
 // nav: 'expanded' | 'collapsed' | 'hidden'
-const shellLayout = (width, nav, context) => {
+const shellLayout = (width, requestedNav, context) => {
   const overlay = width < SHELL.overlayBelow;
   const gutter = overlay ? SHELL.gutterSmall : SHELL.gutter;
   const pad = overlay ? SHELL.mainPadSmall : SHELL.mainPad;
+  // The shell collapses an expanded nav to its rail under railBelow, or when
+  // the context pane is open under coexistFrom.
+  const autoRail =
+    requestedNav === 'expanded' &&
+    (width < SHELL.railBelow || (context && width < SHELL.coexistFrom));
+  const nav = autoRail ? 'collapsed' : requestedNav;
   const navPx = NAV_WIDTH[nav] || 0;
-  const navTakes = navPx && !overlay ? navPx + SHELL.gap : 0;
+  // In overlay the rail keeps its slot; the open pane floats over the page.
+  const navTakes = navPx ? (overlay ? SHELL.navRail : navPx) + SHELL.gap : 0;
   const ctxTakes = context && !overlay ? SHELL.context + SHELL.gap : 0;
   const main = width - gutter * 2 - navTakes - ctxTakes;
   const available = main - pad * 2;
   const tier = tierFor(available);
   const list = tier === 'drillIn' ? available : listWidthFor(available);
   const detail = tier === 'drillIn' ? 0 : available - list - SURFACE.gap;
-  const conflict =
-    nav === 'expanded' && context && !overlay && width < SHELL.coexistFrom;
+  const conflict = autoRail;
   return {
     overlay,
+    nav,
     navPx,
     gutter,
     pad,
@@ -503,21 +515,21 @@ const SHELL_CONFIGS = [
   { title: 'Laptop · 1366px · nav expanded', width: 1366, nav: 'expanded' },
   {
     title: 'Laptop · 1366px · rail + context pane',
-    note: `Opening the context pane under ${SHELL.coexistFrom}px collapses the nav to its rail.`,
+    note: `Opening the context pane under ${SHELL.coexistFrom}px (xlarge) collapses the nav to its rail automatically.`,
     width: 1366,
-    nav: 'collapsed',
+    nav: 'expanded',
     context: true,
   },
   {
-    title: 'Small laptop · 1024px · nav expanded',
-    note: `Collapsing to the rail gives the surface ${shellLayout(1024, 'collapsed', false).available}px and 2 columns back.`,
+    title: 'Small laptop · 1024px · rail',
+    note: `Under ${SHELL.railBelow}px (medium) the nav starts as a rail, giving the surface ${shellLayout(1024, 'expanded', false).available}px.`,
     width: 1024,
     nav: 'expanded',
   },
   {
-    title: 'Tablet · 768px · panes overlay',
-    note: `Under ${SHELL.overlayBelow}px panes float over the page and take no width.`,
-    width: 768,
+    title: 'Tablet · 700px · panes overlay',
+    note: `Under ${SHELL.overlayBelow}px (small) nav and context pane float over the page and take no width; the surface drills in and lands on the selected record.`,
+    width: 700,
     nav: 'expanded',
   },
 ];
@@ -657,11 +669,11 @@ const WidthShare = () => (
     <Text size="small" color="text-weak">
       The list takes {SURFACE.listShare * 100}% of the surface, never less than{' '}
       {SURFACE.listMin}px (size.small); the detail takes the rest after a{' '}
-      {SURFACE.gap}px (edgeSize.medium) gap. Under {SURFACE.twoColumnMin}px the
-      2 no longer fit side by side.
+      {SURFACE.gap}px (size.xlarge) gap. Under {SURFACE.twoColumnMin}px the 2 no
+      longer fit side by side.
     </Text>
     <Box gap="xsmall" margin={{ top: 'small' }} data-doc="figure">
-      {[1440, 1200, 1000, 900, 760, 600].map((w) => (
+      {[1440, 1200, 1000, 900, 784, 600].map((w) => (
         <WidthBar key={w} width={w} />
       ))}
     </Box>
