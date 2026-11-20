@@ -38,11 +38,7 @@ import {
   ReadOnlyLevel,
 } from './StatesLevels';
 import { CritNov19Level } from './CritLevels';
-import {
-  PatternWhatLevel,
-  PatternStoryLevel,
-  PatternWhenNotLevel,
-} from './PatternLevels';
+import { PatternWhatLevel, PatternStoryLevel } from './PatternLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -608,11 +604,6 @@ export const PAGES = {
     subtitle:
       'Quick edit · Tomás, asset manager, makes the same small change 41 times.',
     Content: () => <PatternStoryLevel id="quick-edit" />,
-  },
-  'pattern/when-not': {
-    title: 'When not to use it',
-    subtitle: '4 scenarios where another surface does the job better.',
-    Content: PatternWhenNotLevel,
   },
   anatomy: {
     title: 'Structure',
