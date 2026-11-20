@@ -17,11 +17,11 @@ import {
   AIGenFill,
   Catalog,
   Close,
+  Configure,
   Down,
   Up,
   Help,
   Menu as MenuIcon,
-  More,
   Notification,
   Search,
   Sidebar as SidebarIcon,
@@ -40,9 +40,9 @@ import {
   usePrototype,
 } from './ShellContext';
 
-// Prototype switches for the list–detail surface, shown in the global header
-// (compact breakpoints collapse them into a menu).
-const PrototypeSwitches = ({ compact }) => {
+// Prototype switches for the list–detail surface. Tucked behind 1 icon button
+// in the global header so they stay out of the way but are 1 click to reach.
+const PrototypeSwitches = () => {
   const {
     divider,
     contained,
@@ -51,58 +51,40 @@ const PrototypeSwitches = ({ compact }) => {
     setContained,
     setContextPane,
   } = usePrototype();
-  if (compact) {
-    return (
-      <Menu
-        icon={<More />}
-        size="small"
-        a11yTitle="Prototype options"
-        dropAlign={{ top: 'bottom', right: 'right' }}
-        items={[
-          {
-            label: divider ? 'Hide divider' : 'Show divider',
-            onClick: () => setDivider(!divider),
-          },
-          {
-            label: contained ? 'Plain list' : 'Contained list',
-            onClick: () => setContained(!contained),
-          },
-          {
-            label: contextPane ? 'Hide context pane' : 'Show context pane',
-            onClick: () => setContextPane(!contextPane),
-          },
-        ]}
-      />
-    );
-  }
+  const [open, setOpen] = useState(false);
+  const switches = [
+    ['Divider', divider, setDivider],
+    ['Contained list', contained, setContained],
+    ['Context pane', contextPane, setContextPane],
+  ];
   return (
-    <Box
-      direction="row"
-      align="center"
-      gap="medium"
-      flex={false}
-      pad={{ right: 'small' }}
-      style={{ whiteSpace: 'nowrap' }}
-    >
-      <CheckBox
-        toggle
-        label="Divider"
-        checked={divider}
-        onChange={(e) => setDivider(e.target.checked)}
-      />
-      <CheckBox
-        toggle
-        label="Contained list"
-        checked={contained}
-        onChange={(e) => setContained(e.target.checked)}
-      />
-      <CheckBox
-        toggle
-        label="Context pane"
-        checked={contextPane}
-        onChange={(e) => setContextPane(e.target.checked)}
-      />
-    </Box>
+    <DropButton
+      icon={<Configure />}
+      size="small"
+      a11yTitle="Prototype options"
+      tip="Prototype options"
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      dropAlign={{ top: 'bottom', right: 'right' }}
+      dropProps={{ round: 'small', margin: { top: 'xsmall' } }}
+      dropContent={
+        <Box pad="medium" gap="small" width="small">
+          <Text size="small" weight={500} color="text-weak">
+            Prototype options
+          </Text>
+          {switches.map(([label, value, set]) => (
+            <CheckBox
+              key={label}
+              toggle
+              label={label}
+              checked={value}
+              onChange={(e) => set(e.target.checked)}
+            />
+          ))}
+        </Box>
+      }
+    />
   );
 };
 
@@ -164,7 +146,7 @@ const GlobalHeaderV3 = () => {
         )}
       </Box>
       <Box direction="row" align="center" gap="3xsmall" flex={false}>
-        <PrototypeSwitches compact={compact} />
+        <PrototypeSwitches />
         <Button
           icon={<AIGenFill color="brand" />}
           size="small"
@@ -228,7 +210,7 @@ const GlobalHeaderApp = ({ appName }) => {
         </Text>
       </Box>
       <Box direction="row" align="center" gap="3xsmall" flex={false}>
-        <PrototypeSwitches compact={compact} />
+        <PrototypeSwitches />
         <DropButton
           icon={<User />}
           size="small"
