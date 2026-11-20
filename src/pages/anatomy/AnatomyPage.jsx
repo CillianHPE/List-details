@@ -23,6 +23,7 @@ import {
   Dim,
   GhostRows,
   Level,
+  PopoverDot,
 } from './primitives';
 import { ScrollLevel, DataLevel, ActionsLevel } from './BehaviourLevels';
 import {
@@ -111,6 +112,22 @@ const ZONES = {
         'Show everything about the chosen record in 1 place',
         'Act on it (edit, remove) without navigating away',
         'Dedicated zone keeps the list in view while reading',
+      ],
+    },
+  ),
+  gutter: region(
+    3,
+    'Gutter',
+    'space · no divider',
+    'Separates the 2 zones by proximity alone. There is no divider line and no drag handle; the gap does the work.',
+    'None',
+    'Fixed. Does not scale with the surface or collapse before the zones stack.',
+    {
+      space: '32px (edgeSize.large) · 16px (edgeSize.small) each side',
+      why: [
+        'List and detail are sibling zones inside the primary content area, so they take the content-section gap from the spacing scale',
+        'Page regions use 64px (edgeSize.xxlarge); the zones are 1 step down',
+        'A divider line read as noise beside the scrollbar and implied a resize that did not exist',
       ],
     },
   ),
@@ -427,7 +444,7 @@ const ZonesWireframe = ({ variant }) => {
         gap="small"
       >
         <Dim label="Page header" height="56px" />
-        <Box direction="row" gap="small" height={{ min: '360px' }}>
+        <Box direction="row" height={{ min: '360px' }}>
           <Focus
             region={ZONES.list}
             label={resizable ? `${listPx}px` : v.listLabel}
@@ -440,7 +457,16 @@ const ZonesWireframe = ({ variant }) => {
           {resizable ? (
             <ResizeHandle width={listPx} onChange={setListPx} />
           ) : (
-            <Box border={{ side: 'left', color: 'border-weak' }} />
+            <Box
+              width="32px"
+              flex={false}
+              align="center"
+              justify="center"
+              background="background-contrast"
+              round="xsmall"
+            >
+              <PopoverDot region={ZONES.gutter} />
+            </Box>
           )}
           <Focus region={ZONES.detail} label={v.detailLabel} flex>
             <Dim label="Detail header" height="48px" />
