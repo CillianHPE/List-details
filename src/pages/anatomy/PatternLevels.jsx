@@ -1527,11 +1527,18 @@ export const PatternStoryLevel = ({ id }) => {
           </Grid>
         </StoryBlock>
 
-        <StoryBlock title="Without it">
+        <StoryBlock title="Alternative approaches">
+          <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+            Other ways to give {story.persona} this job, and why each one falls
+            short of it.
+          </Text>
           <Grid columns={{ count: 3, size: 'auto' }} gap="large">
             {story.without.alternatives.map(({ name, breaks, cost }) => (
               <Box key={name} gap="small">
                 <Text weight={500}>{name}</Text>
+                <Text size="small" color="text-weak" weight={500}>
+                  Why it falls short
+                </Text>
                 <Text>{breaks}</Text>
                 <Box direction="row" gap="xsmall" align="start">
                   <Close size="small" color="status-critical" aria-hidden />
