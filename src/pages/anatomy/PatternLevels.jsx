@@ -1175,12 +1175,6 @@ const JTBD = [
 
 const JTBD_PARTS = ['When I am ', 'I want to ', 'so I can '];
 
-const JtbdPart = ({ children }) => (
-  <Text size="large" weight={500}>
-    {children}
-  </Text>
-);
-
 // 1 job as a card: a single flowing sentence with the 3 connectors bolded.
 const JtbdCard = ({ parts }) => (
   <Box
@@ -1217,42 +1211,6 @@ const JtbdGroup = ({ group, tagline, jobs }) => (
 
 export const PatternJtbdLevel = () => (
   <Box gap="xlarge">
-    <Box gap="medium">
-      <Lead>
-        A job to be done is what someone is trying to get done in a situation,
-        written without naming a screen or a feature. It keeps the focus on the
-        outcome, so the design can be judged by whether it delivers that
-        outcome.
-      </Lead>
-      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-        Every job here follows the same shape:{' '}
-        <Text weight={500}>when I am</Text> in a situation,{' '}
-        <Text weight={500}>I want to</Text> do something,{' '}
-        <Text weight={500}>so I can</Text> reach an outcome.
-      </Text>
-    </Box>
-
-    <Box gap="small">
-      <Text size="small" weight={500} color="text-weak">
-        The core job
-      </Text>
-      <Box
-        border={{ side: 'left', color: 'brand', size: 'medium' }}
-        pad={{ left: 'medium', vertical: 'xsmall' }}
-      >
-        <Text size="large" style={{ maxWidth: '60ch' }}>
-          <JtbdPart>When I am</JtbdPart> working through a set of records,{' '}
-          <JtbdPart>I want to</JtbdPart> see each one in full without losing my
-          place in the set, <JtbdPart>so I can</JtbdPart> review, compare or act
-          on many of them quickly.
-        </Text>
-      </Box>
-      <Text size="small" color="text-weak">
-        The 4 groups below are more specific versions of this 1 job. Each group
-        has its own user story.
-      </Text>
-    </Box>
-
     {JTBD.map((g) => (
       <JtbdGroup key={g.group} {...g} />
     ))}
