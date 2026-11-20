@@ -279,7 +279,7 @@ export const ListDetailPage = ({
                   <Box
                     pad={
                       contained
-                        ? 'medium'
+                        ? 'small'
                         : bare
                           ? stacked
                             ? { vertical: 'medium' }
@@ -372,8 +372,18 @@ export const ListDetailPage = ({
             {/* D + E · Detail pane */}
             {detailVisible && (
               <Box
+                // No divider: the gutter steps up to large so proximity does
+                // the separating that the line used to do.
                 pad={
-                  bare ? (stacked ? undefined : { left: 'medium' }) : 'medium'
+                  bare
+                    ? stacked
+                      ? undefined
+                      : { left: divider ? 'medium' : 'large' }
+                    : {
+                        vertical: 'medium',
+                        right: 'medium',
+                        left: divider || stacked ? 'medium' : 'large',
+                      }
                 }
                 overflow={fillHeight ? 'auto' : undefined}
                 style={fillHeight ? { minHeight: 0 } : undefined}

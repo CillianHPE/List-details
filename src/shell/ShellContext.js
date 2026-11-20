@@ -11,7 +11,7 @@ export const useShell = () => useContext(ShellContext);
 // contained list surface). Owned by the shell so they sit in the global
 // header rather than competing with real page actions.
 export const PrototypeContext = createContext({
-  divider: true,
+  divider: false,
   contained: false,
   setDivider: () => {},
   setContained: () => {},

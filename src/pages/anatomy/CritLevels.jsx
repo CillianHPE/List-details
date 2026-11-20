@@ -81,8 +81,8 @@ const OPEN = [
 
 const PLAN = [
   [
-    'Lock defaults',
-    'Divider off, list uncontained, contained padding small. Gutter steps up to large when the divider is off.',
+    'Lock defaults (done)',
+    'Divider off, list uncontained, contained padding small (16px, size.small). Gutter steps up to large (48px, size.large) when the divider is off.',
   ],
   [
     'Fix the details',

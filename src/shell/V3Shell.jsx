@@ -600,7 +600,7 @@ export const V3Shell = ({
   onChromeChange,
   children,
 }) => {
-  const [divider, setDivider] = useState(true);
+  const [divider, setDivider] = useState(false);
   const [contained, setContained] = useState(false);
   const [contextPane, setContextPane] = useState(false);
   const prototype = useMemo(
