@@ -171,7 +171,7 @@ export const navItems = {
   'Design crit': [
     {
       key: 'proto-crit-2026-11-19',
-      label: 'Page design critique · 19 Nov',
+      label: '19 Nov 2026',
       href: '#/crit/2026-11-19',
     },
   ],
