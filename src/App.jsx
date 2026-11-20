@@ -14,6 +14,9 @@ import { sparseUsers } from './data/users';
 // gap; grommet-theme-hpe 8.2 puts 'medium' between them, so align to Figma.
 const theme = deepMerge(hpe, {
   notification: { textContainer: { gap: 'none' } },
+  // Crit 19 Nov: name–value rows read loose at the theme's xsmall (12px);
+  // tighten to xxsmall (8px) so pairs group as 1 list (Micro tier).
+  nameValueList: { gap: { row: 'xxsmall' } },
 });
 
 // Versions are addressed by URL hash so they can be linked directly:

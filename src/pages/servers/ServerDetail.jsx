@@ -575,7 +575,7 @@ const Support = ({ server }) => {
       <Card
         title="Support cases"
         note={`${support.cases} open`}
-        action={<Button label="Open a case" size="small" />}
+        action={<Button label="Open a case" secondary />}
       >
         {support.cases ? (
           <List

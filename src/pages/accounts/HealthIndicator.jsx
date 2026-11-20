@@ -5,7 +5,10 @@ import {
   StatusWarning,
 } from '@hpe-design/icons-grommet';
 
-// HPE DS status indicator template: semantic icon + visible label.
+// HPE DS status indicator template: semantic icon + visible label that names
+// the status. Colour and icon alone are not enough, and neither is a bare
+// score (crit 19 Nov), so the compact list form shows the tier and tucks the
+// score in as secondary text.
 // Health tiers from the portfolio pages: Healthy 61–100 · Neutral 41–60 ·
 // At risk 0–40.
 const TIERS = {
@@ -19,9 +22,18 @@ export const HealthIndicator = ({ health, compact }) => {
   return (
     <Box direction="row" align="center" gap="3xsmall" flex={false}>
       <Icon color={color} size="xsmall" aria-hidden />
-      <Text size={compact ? 'small' : undefined}>
-        {compact ? `${health.score}` : `${health.tier} · ${health.score}/100`}
-      </Text>
+      {compact ? (
+        <Text size="small">
+          {health.tier}{' '}
+          <Text size="small" color="text-weak">
+            {health.score}
+          </Text>
+        </Text>
+      ) : (
+        <Text>
+          {health.tier} · {health.score}/100
+        </Text>
+      )}
     </Box>
   );
 };
