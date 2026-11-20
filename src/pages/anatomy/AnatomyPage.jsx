@@ -123,10 +123,10 @@ const ZONES = {
     'None',
     'Fixed. Does not scale with the surface or collapse before the zones stack.',
     {
-      space: '32px (edgeSize.large) · 16px (edgeSize.small) each side',
+      space: '48px (edgeSize.xlarge) · 24px (edgeSize.medium) each side',
       why: [
-        'List and detail are sibling zones inside the primary content area, so they take the content-section gap from the spacing scale',
-        'Page regions use 64px (edgeSize.xxlarge); the zones are 1 step down',
+        'List and detail are sibling zones inside the primary content area, so they take the content-section gap from the spacing scale: 48px (edgeSize.xlarge)',
+        'Page regions use 64px (edgeSize.xxlarge); items within a section use 16px (edgeSize.small)',
         'A divider line read as noise beside the scrollbar and implied a resize that did not exist',
       ],
     },
@@ -458,7 +458,7 @@ const ZonesWireframe = ({ variant }) => {
             <ResizeHandle width={listPx} onChange={setListPx} />
           ) : (
             <Box
-              width="32px"
+              width="48px"
               flex={false}
               align="center"
               justify="center"
