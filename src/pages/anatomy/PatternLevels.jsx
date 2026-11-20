@@ -50,7 +50,7 @@ const Bullets = ({ items, small }) => (
 // Mock primitives. Everything is real text at a tiny size so the mocks read as
 // screens rather than grey bars.
 
-const MOCK_HEIGHT = '380px';
+const MOCK_HEIGHT = '400px';
 
 const T = ({ children, weak, strong, color, ...rest }) => (
   <Text
@@ -96,21 +96,6 @@ const MockTabs = ({ tabs }) => (
       </Box>
     ))}
   </Box>
-);
-
-const MockFields = ({ fields, columns = 1 }) => (
-  <Grid
-    columns={{ count: columns, size: 'auto' }}
-    gap="xsmall"
-    style={{ flexShrink: 0 }}
-  >
-    {fields.map(([k, v]) => (
-      <Box key={k} gap="1px">
-        <T weak>{k}</T>
-        <T>{v}</T>
-      </Box>
-    ))}
-  </Grid>
 );
 
 const MockButton = ({ label, primary }) => (
@@ -200,7 +185,57 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
   </Box>
 );
 
-// Many records on the left, the selected 1 in full on the right.
+// Mirrors the coded examples with Divider and Contained list switched off:
+// search + collection action in the list toolbar, toggle-style quick filters,
+// a count line, plain rows with a filled selected row, and a detail pane with
+// its own header, tabs and name–value rows.
+const Initials = ({ name }) => (
+  <Box
+    width="18px"
+    height="18px"
+    round="full"
+    background="background-contrast"
+    align="center"
+    justify="center"
+    flex={false}
+  >
+    <T strong style={{ fontSize: '7px', lineHeight: '8px' }}>
+      {name
+        .split(/[\s-]+/)
+        .slice(0, 2)
+        .map((p) => p[0]?.toUpperCase())
+        .join('')}
+    </T>
+  </Box>
+);
+
+const QuickFilter = ({ label, active }) => (
+  <Box
+    pad={{ horizontal: 'xsmall', vertical: '1px' }}
+    round="xsmall"
+    border={{ color: active ? 'brand' : 'transparent' }}
+    background={active ? 'background-contrast' : undefined}
+    flex={false}
+  >
+    <T strong>{label}</T>
+  </Box>
+);
+
+const NameValue = ({ rows }) => (
+  <Box gap="3px" flex={false}>
+    {rows.map(([k, v]) => (
+      <Box key={k} direction="row" gap="small">
+        <Box width="38%" flex={false}>
+          <T strong>{k}</T>
+        </Box>
+        <Box flex>
+          <T>{v}</T>
+        </Box>
+      </Box>
+    ))}
+  </Box>
+);
+
 export const MockListDetail = ({
   title,
   subtitle,
@@ -210,68 +245,73 @@ export const MockListDetail = ({
   selected = 0,
   detail,
 }) => (
-  <MockPage title={title} subtitle={subtitle} search action={action}>
-    {filters && (
-      <Box direction="row" gap="xxsmall" align="center" flex={false}>
-        <Filter size="small" color="text-weak" />
-        {filters.map((f, i) => (
-          <Chip key={f} label={f} active={i === 0} />
-        ))}
-      </Box>
-    )}
-    <Box direction="row" gap="small" flex>
-      <Box width="42%" gap="2px" flex={false} overflow="hidden">
-        <Box
-          direction="row"
-          justify="between"
-          align="center"
-          pad={{ horizontal: 'xsmall', bottom: '2px' }}
-          border={{ side: 'bottom', color: 'border-weak' }}
-          flex={false}
-        >
-          <T weak>
-            {rows.length} of {detail.total || 48}
-          </T>
+  <MockPage title={title} subtitle={subtitle}>
+    <Box direction="row" gap="medium" flex margin={{ top: 'xxsmall' }}>
+      <Box width="40%" gap="xsmall" flex={false} overflow="hidden">
+        <Box direction="row" gap="xsmall" align="center" flex={false}>
+          <Box
+            flex
+            direction="row"
+            align="center"
+            gap="xxsmall"
+            pad={{ horizontal: 'xsmall', vertical: '3px' }}
+            border={{ color: 'border' }}
+            round="xsmall"
+          >
+            <Search size="small" color="text-weak" />
+            <T weak>Search {title.toLowerCase()}</T>
+          </Box>
+          {action && <MockButton label={action} />}
+        </Box>
+        {filters && (
+          <Box direction="row" gap="xxsmall" align="center" flex={false}>
+            {filters.map((f, i) => (
+              <QuickFilter key={f} label={f} active={i === 0} />
+            ))}
+          </Box>
+        )}
+        <Box direction="row" justify="between" align="center" flex={false}>
+          <T weak>{detail.total || rows.length} items</T>
           <Box direction="row" gap="xxsmall" align="center">
             <Descending size="small" color="text-weak" />
             <T weak>{detail.sort || 'Name'}</T>
           </Box>
         </Box>
-        {rows.map((r, i) => (
-          <Box
-            key={r.primary}
-            direction="row"
-            gap="xsmall"
-            align="center"
-            pad={{ horizontal: 'xsmall', vertical: '3px' }}
-            round="xsmall"
-            background={i === selected ? 'background-contrast' : undefined}
-            border={
-              i === selected
-                ? { side: 'left', color: 'brand', size: '2px' }
-                : { side: 'left', color: 'transparent', size: '2px' }
-            }
-            flex={false}
-          >
-            {r.status && <Dot status={r.status} />}
-            <Box flex>
-              <T strong={i === selected}>{r.primary}</T>
-              {r.secondary && <T weak>{r.secondary}</T>}
+        <Box flex={false}>
+          {rows.map((r, i) => (
+            <Box
+              key={r.primary}
+              direction="row"
+              gap="xsmall"
+              align="center"
+              pad={{ horizontal: 'xsmall', vertical: '4px' }}
+              round={i === selected ? 'xsmall' : undefined}
+              background={i === selected ? 'background-contrast' : undefined}
+              border={
+                i === selected || i === rows.length - 1
+                  ? false
+                  : { side: 'bottom', color: 'border-weak' }
+              }
+              flex={false}
+            >
+              {r.status ? (
+                <Dot status={r.status} />
+              ) : (
+                <Initials name={r.primary} />
+              )}
+              <Box flex>
+                <T strong>{r.primary}</T>
+                {r.secondary && <T weak>{r.secondary}</T>}
+              </Box>
+              {r.meta && <T weak>{r.meta}</T>}
             </Box>
-            {r.meta && <T weak>{r.meta}</T>}
-          </Box>
-        ))}
+          ))}
+        </Box>
       </Box>
-      <Box
-        flex
-        gap="xsmall"
-        overflow="hidden"
-        pad={{ left: 'small' }}
-        border={{ side: 'left', color: 'border-weak' }}
-      >
+      <Box flex gap="xsmall" overflow="hidden">
         <Box direction="row" justify="between" align="start" flex={false}>
-          <Box gap="1px">
-            <T strong style={{ fontSize: '11px', lineHeight: '14px' }}>
+          <Box gap="2px">
+            <T strong style={{ fontSize: '13px', lineHeight: '16px' }}>
               {detail.title}
             </T>
             {detail.badge && <Badge {...detail.badge} />}
@@ -284,24 +324,24 @@ export const MockListDetail = ({
           </Box>
         </Box>
         <MockTabs tabs={detail.tabs} />
-        <MockFields fields={detail.fields} columns={2} />
+        <Box gap="xsmall" flex={false} margin={{ top: 'xxsmall' }}>
+          <T strong style={{ fontSize: '11px', lineHeight: '14px' }}>
+            {detail.sectionTitle || 'Overview'}
+          </T>
+          <NameValue rows={detail.fields} />
+        </Box>
         {detail.section && (
-          <Box gap="2px" margin={{ top: 'xsmall' }} flex={false}>
-            <T weak strong>
+          <Box
+            gap="xsmall"
+            margin={{ top: 'xsmall' }}
+            pad={{ top: 'xsmall' }}
+            border={{ side: 'top', color: 'border-weak' }}
+            flex={false}
+          >
+            <T strong style={{ fontSize: '11px', lineHeight: '14px' }}>
               {detail.section.title}
             </T>
-            {detail.section.items.map((it) => (
-              <Box
-                key={it[0]}
-                direction="row"
-                justify="between"
-                pad={{ vertical: '2px' }}
-                border={{ side: 'bottom', color: 'border-weak' }}
-              >
-                <T>{it[0]}</T>
-                <T weak>{it[1]}</T>
-              </Box>
-            ))}
+            <NameValue rows={detail.section.items} />
           </Box>
         )}
       </Box>
@@ -1403,13 +1443,21 @@ export const PatternWhenLevel = () => (
 );
 
 // Full story page: who, the moment, the job, why it matters, how the page helps.
-const StorySection = ({ label, children }) => (
-  <Grid columns={['small', 'flex']} gap="large">
-    <Text size="small" weight={500} color="text-weak">
-      {label}
-    </Text>
-    <Box gap="small">{children}</Box>
-  </Grid>
+const StoryHeading = ({ children }) => (
+  <Heading level={3} size="xsmall" margin="none">
+    {children}
+  </Heading>
+);
+
+const StoryBlock = ({ title, children }) => (
+  <Box
+    gap="medium"
+    pad={{ top: 'large' }}
+    border={{ side: 'top', color: 'border-weak' }}
+  >
+    <StoryHeading>{title}</StoryHeading>
+    {children}
+  </Box>
 );
 
 export const PatternStoryLevel = ({ id }) => {
@@ -1422,47 +1470,51 @@ export const PatternStoryLevel = ({ id }) => {
       <Lead>{story.scene}</Lead>
       {story.mock}
 
-      <Box gap="large" pad={{ top: 'medium' }}>
-        <StorySection label="Who">
-          <Box gap="xxsmall">
-            <Text size="large" weight={500}>
-              {story.persona}, {story.role.toLowerCase()}
-            </Text>
+      <Box gap="large" width={{ max: 'xlarge' }}>
+        <Grid columns={['1/3', '2/3']} gap="large" pad={{ top: 'medium' }}>
+          <Box gap="small">
+            <StoryHeading>Who</StoryHeading>
+            <Box gap="xxsmall">
+              <Text size="large" weight={500}>
+                {story.persona}
+              </Text>
+              <Text color="text-weak">{story.role}</Text>
+            </Box>
             <Text>{story.context}</Text>
           </Box>
-        </StorySection>
+          <Box gap="small">
+            <StoryHeading>The job to be done</StoryHeading>
+            <JobStatement job={story.job} />
+          </Box>
+        </Grid>
 
-        <StorySection label="The job to be done">
-          <JobStatement job={story.job} />
-        </StorySection>
+        <StoryBlock title="Why it matters">
+          <Grid columns={{ count: 3, size: 'auto' }} gap="large">
+            {story.why.map((w, i) => (
+              <Box key={w} gap="xsmall">
+                <Text size="xlarge" weight={500} color="text-weak">
+                  {i + 1}
+                </Text>
+                <Text>{w}</Text>
+              </Box>
+            ))}
+          </Grid>
+        </StoryBlock>
 
-        <StorySection label="Why it matters">
-          <Bullets items={story.why} />
-        </StorySection>
-
-        <StorySection label="How the page helps">
-          <Box>
+        <StoryBlock title="How the page helps">
+          <Grid columns={{ count: 2, size: 'auto' }} gap="large">
             {story.beats.map(({ zone, text }, i) => (
-              <Box
-                key={i}
-                direction="row"
-                gap="medium"
-                align="start"
-                pad={{ vertical: 'small' }}
-                border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
-              >
-                <Box width="64px" flex={false}>
-                  <ZoneChip zone={zone} />
-                </Box>
+              <Box key={i} gap="small" align="start">
+                <ZoneChip zone={zone} />
                 <Text>{text}</Text>
               </Box>
             ))}
-          </Box>
-        </StorySection>
+          </Grid>
+        </StoryBlock>
 
-        <StorySection label="Without it">
-          <Text>{story.without}</Text>
-        </StorySection>
+        <StoryBlock title="Without it">
+          <Text style={{ maxWidth: '68ch' }}>{story.without}</Text>
+        </StoryBlock>
       </Box>
 
       <Box
