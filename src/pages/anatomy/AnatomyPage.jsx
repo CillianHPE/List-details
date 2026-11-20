@@ -126,7 +126,7 @@ const ZONES = {
     {
       space: '48px (edgeSize.xlarge) gap, no divider',
       why: [
-        'List and detail are sibling zones inside the primary content area, so they take the content-section gap from the spacing scale: 48px (edgeSize.xlarge)',
+        'The list zone and the detail zone are each a content section (own toolbar or header, own scroll), side by side in the primary content area. So the gap between them is the content-section gap, 48px (edgeSize.xlarge), not the 24px (edgeSize.medium) block gap used inside a section',
         'Page regions use 64px (edgeSize.xxlarge); items within a section use 16px (edgeSize.small)',
         'A divider line read as noise beside the scrollbar and implied a resize that did not exist',
       ],

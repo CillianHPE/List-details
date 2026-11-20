@@ -82,7 +82,7 @@ const OPEN = [
 const PLAN = [
   [
     'Lock defaults (done)',
-    'Divider off, list uncontained, contained padding small (16px, size.small). List and detail are sibling zones inside the primary content area, so the gutter between them is a single content-section gap of 48px (size.xlarge), set as a grid gap with no divider and no per-side padding.',
+    'Divider off, list uncontained, contained padding small (16px, size.small). The list zone and the detail zone are each a content section (own toolbar or header, own scroll), side by side in the primary content area, so the gutter between them is the content-section gap of 48px (size.xlarge), not the 24px (size.medium) block gap used inside a section, set as a grid gap with no divider and no per-side padding.',
   ],
   [
     'Fix the details (done)',
