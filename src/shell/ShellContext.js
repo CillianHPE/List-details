@@ -14,10 +14,12 @@ export const PrototypeContext = createContext({
   divider: false,
   contained: false,
   keepTab: true,
+  pageScroll: false,
   detailTabs: {},
   setDivider: () => {},
   setContained: () => {},
   setKeepTab: () => {},
+  setPageScroll: () => {},
   setDetailTab: () => {},
 });
 

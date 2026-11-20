@@ -102,8 +102,8 @@ const PLAN = [
     'When to use vs a dedicated page, 4 scenarios (gather, compare, triage, execute), anatomy with region names, example-selection criteria.',
   ],
   [
-    'Scroll toggle',
-    'Detail-pane scroll vs full-page scroll with sticky header and tabs, as a header switch for the next crit.',
+    'Scroll toggle (done)',
+    '"Full-page scroll" in prototype options: the page scrolls as 1, with the list toolbar and the detail tab bar pinned 24px (size.medium) below the global header. Off (default) the detail pane scrolls on its own.',
   ],
   [
     'Persist sub-tab (done)',

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { normalizeColor } from 'grommet/utils';
+import { APP_HEADER_HEIGHT, usePrototype } from '../shell/ShellContext';
 import {
   Box,
   DataTable,
@@ -27,20 +29,40 @@ const ArrowlessTabs = styled(Tabs)`
     > button {
     display: none;
   }
+  ${({ $sticky, theme }) =>
+    $sticky &&
+    `
+    & > div:first-child {
+      position: sticky;
+      top: ${APP_HEADER_HEIGHT}px;
+      z-index: 1;
+      background: ${normalizeColor('background', theme)};
+      /* Pin level with the list toolbar: 24px (edgeSize.medium) below the
+         header, with the strip above painted so content scrolls under it. */
+      padding-top: 24px;
+      margin-top: -24px;
+    }
+  `}
 `;
 
 // Spacing (DS spacing rules, knowledge/core/data/foundations/spacing.yaml):
 // the tab bar opens a new content section, so it sits `large` below whatever
 // precedes it (one step down from the page-level xlarge, as the detail pane
 // is nested) while tab content keeps the Tabs template's `medium` offset.
-export const DetailTabs = (props) => (
-  <ArrowlessTabs
-    justify="start"
-    flex={false}
-    margin={{ top: 'large' }}
-    {...props}
-  />
-);
+// With the full-page scroll prototype option the tab bar pins below the
+// global header while the page scrolls.
+export const DetailTabs = (props) => {
+  const { pageScroll } = usePrototype();
+  return (
+    <ArrowlessTabs
+      justify="start"
+      flex={false}
+      margin={{ top: 'large' }}
+      $sticky={pageScroll}
+      {...props}
+    />
+  );
+};
 
 // Detail header title block. Mirrors the Content header component (Components
 // › Content header): heading in text-heading, 2px to the small supporting

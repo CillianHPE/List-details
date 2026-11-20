@@ -130,7 +130,7 @@ export const ListDetailPage = ({
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype controls (divider, contained list) live in the global header.
-  const { divider, contained } = usePrototype();
+  const { divider, contained, pageScroll } = usePrototype();
   const [showDetail, setShowDetail] = useState(false);
   // The surface always fills the available view height: measure its distance
   // from the document top so it can end level with the side nav (12px above
@@ -146,8 +146,10 @@ export const ListDetailPage = ({
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, [surfaceRef, stacked, showDetail]);
-  // Stacked (narrow) layouts fall back to the page as scroll container.
-  const fillHeight = !stacked;
+  // Stacked (narrow) layouts fall back to the page as scroll container, as
+  // does the "Full-page scroll" prototype option: the list toolbar and the
+  // detail tab bar then pin below the global header instead.
+  const fillHeight = !stacked && !pageScroll;
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();

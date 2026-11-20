@@ -55,10 +55,12 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     contained,
     contextPane,
     keepTab,
+    pageScroll,
     setDivider,
     setContained,
     setContextPane,
     setKeepTab,
+    setPageScroll,
   } = usePrototype();
   const [open, setOpen] = useState(false);
   const switches = [
@@ -66,6 +68,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     ['Contained list', contained, setContained],
     ['Context pane', contextPane, setContextPane],
     ['Keep tab across records', keepTab, setKeepTab],
+    ['Full-page scroll', pageScroll, setPageScroll],
   ];
   if (onChromeChange) switches.push(['App chrome', chrome, onChromeChange]);
   return (
@@ -614,6 +617,9 @@ export const V3Shell = ({
   const [contained, setContained] = useState(false);
   const [contextPane, setContextPane] = useState(false);
   const [keepTab, setKeepTab] = useState(true);
+  // Crit 19 Nov: compare detail-pane scroll with the whole page scrolling
+  // while the global header, list toolbar and detail tabs stay pinned.
+  const [pageScroll, setPageScroll] = useState(false);
   const [detailTabs, setDetailTabs] = useState({});
   const setDetailTab = useCallback(
     (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),
@@ -625,14 +631,24 @@ export const V3Shell = ({
       contained,
       contextPane,
       keepTab,
+      pageScroll,
       detailTabs,
       setDivider,
       setContained,
       setContextPane,
       setKeepTab,
+      setPageScroll,
       setDetailTab,
     }),
-    [divider, contained, contextPane, keepTab, detailTabs, setDetailTab],
+    [
+      divider,
+      contained,
+      contextPane,
+      keepTab,
+      pageScroll,
+      detailTabs,
+      setDetailTab,
+    ],
   );
   const switches = (
     <PrototypeSwitches chrome={chrome} onChromeChange={onChromeChange} />
