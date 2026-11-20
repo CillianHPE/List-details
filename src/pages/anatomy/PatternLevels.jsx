@@ -1239,8 +1239,7 @@ export const PatternUseLevel = () => (
     <Box gap="medium">
       <SectionHeading>The scenarios it serves</SectionHeading>
       <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-        4 scenarios fit well and each has a user story. Execute is the boundary:
-        the pattern gets you to the record, not through the work.
+        4 scenarios fit well and each has a user story.
       </Text>
       <ScenarioSheet rows={SCENARIOS} />
     </Box>
