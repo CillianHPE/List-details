@@ -85,7 +85,7 @@ const MockTabs = ({ tabs }) => (
     {tabs.map((t, i) => (
       <Box
         key={t}
-        pad={{ bottom: '3px' }}
+        pad={{ bottom: '4px', horizontal: 'xxsmall' }}
         border={
           i === 0 ? { side: 'bottom', color: 'brand', size: '2px' } : false
         }
@@ -100,10 +100,9 @@ const MockTabs = ({ tabs }) => (
 
 const MockButton = ({ label, primary }) => (
   <Box
-    pad={{ horizontal: 'xsmall', vertical: '2px' }}
-    round="xsmall"
-    background={primary ? 'brand' : undefined}
-    border={primary ? false : { color: 'border' }}
+    pad={{ horizontal: 'small', vertical: '3px' }}
+    round="full"
+    background={primary ? 'brand' : 'background-contrast'}
     flex={false}
   >
     <T strong color={primary ? 'text-strong' : undefined}>
@@ -159,7 +158,7 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
   >
     <Box direction="row" justify="between" align="start" flex={false}>
       <Box>
-        <T strong style={{ fontSize: '12px', lineHeight: '16px' }}>
+        <T strong style={{ fontSize: '15px', lineHeight: '18px' }}>
           {title}
         </T>
         {subtitle && <T weak>{subtitle}</T>}
@@ -172,7 +171,7 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
             gap="xxsmall"
             pad={{ horizontal: 'xsmall', vertical: '2px' }}
             border={{ color: 'border' }}
-            round="xsmall"
+            round="large"
           >
             <Search size="small" color="text-weak" />
             <T weak>Search</T>
@@ -191,15 +190,15 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
 // its own header, tabs and name–value rows.
 const Initials = ({ name }) => (
   <Box
-    width="18px"
-    height="18px"
+    width="22px"
+    height="22px"
     round="full"
     background="background-contrast"
     align="center"
     justify="center"
     flex={false}
   >
-    <T strong style={{ fontSize: '7px', lineHeight: '8px' }}>
+    <T strong style={{ fontSize: '8px', lineHeight: '10px' }}>
       {name
         .split(/[\s-]+/)
         .slice(0, 2)
@@ -211,10 +210,10 @@ const Initials = ({ name }) => (
 
 const QuickFilter = ({ label, active }) => (
   <Box
-    pad={{ horizontal: 'xsmall', vertical: '1px' }}
+    pad={{ horizontal: 'xsmall', vertical: '2px' }}
     round="xsmall"
-    border={{ color: active ? 'brand' : 'transparent' }}
-    background={active ? 'background-contrast' : undefined}
+    border={{ color: active ? 'border-selected' : 'transparent' }}
+    background={active ? 'background-selected-primary' : undefined}
     flex={false}
   >
     <T strong>{label}</T>
@@ -256,7 +255,7 @@ export const MockListDetail = ({
             gap="xxsmall"
             pad={{ horizontal: 'xsmall', vertical: '3px' }}
             border={{ color: 'border' }}
-            round="xsmall"
+            round="large"
           >
             <Search size="small" color="text-weak" />
             <T weak>Search {title.toLowerCase()}</T>
@@ -271,7 +270,7 @@ export const MockListDetail = ({
           </Box>
         )}
         <Box direction="row" justify="between" align="center" flex={false}>
-          <T weak>{detail.total || rows.length} items</T>
+          <T weak>{(detail.total || rows.length).toLocaleString()} items</T>
           <Box direction="row" gap="xxsmall" align="center">
             <Descending size="small" color="text-weak" />
             <T weak>{detail.sort || 'Name'}</T>
@@ -284,8 +283,8 @@ export const MockListDetail = ({
               direction="row"
               gap="xsmall"
               align="center"
-              pad={{ horizontal: 'xsmall', vertical: '4px' }}
-              round={i === selected ? 'xsmall' : undefined}
+              pad={{ horizontal: 'xsmall', vertical: '5px' }}
+              round={i === selected ? 'small' : undefined}
               background={i === selected ? 'background-contrast' : undefined}
               border={
                 i === selected || i === rows.length - 1
@@ -311,7 +310,7 @@ export const MockListDetail = ({
       <Box flex gap="xsmall" overflow="hidden">
         <Box direction="row" justify="between" align="start" flex={false}>
           <Box gap="2px">
-            <T strong style={{ fontSize: '13px', lineHeight: '16px' }}>
+            <T strong style={{ fontSize: '14px', lineHeight: '18px' }}>
               {detail.title}
             </T>
             {detail.badge && <Badge {...detail.badge} />}
@@ -325,7 +324,7 @@ export const MockListDetail = ({
         </Box>
         <MockTabs tabs={detail.tabs} />
         <Box gap="xsmall" flex={false} margin={{ top: 'xxsmall' }}>
-          <T strong style={{ fontSize: '11px', lineHeight: '14px' }}>
+          <T strong style={{ fontSize: '12px', lineHeight: '16px' }}>
             {detail.sectionTitle || 'Overview'}
           </T>
           <NameValue rows={detail.fields} />
@@ -338,7 +337,7 @@ export const MockListDetail = ({
             border={{ side: 'top', color: 'border-weak' }}
             flex={false}
           >
-            <T strong style={{ fontSize: '11px', lineHeight: '14px' }}>
+            <T strong style={{ fontSize: '12px', lineHeight: '16px' }}>
               {detail.section.title}
             </T>
             <NameValue rows={detail.section.items} />
@@ -1368,7 +1367,8 @@ export const PatternStoryLevel = ({ id }) => {
             </Box>
             <Box>
               <Text weight={500}>
-                {story.persona}, {story.role.toLowerCase()}
+                {story.persona},{' '}
+                {story.role[0].toLowerCase() + story.role.slice(1)}
               </Text>
               <Text size="small" color="text-weak">
                 {story.context}
