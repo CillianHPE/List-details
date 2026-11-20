@@ -6,9 +6,30 @@ import {
   Search,
   Descending,
   LinkNext,
+  StatusCritical,
+  StatusGood,
+  StatusWarning,
 } from '@hpe-design/icons-grommet';
-import { Anchor, Box, Grid, Heading, Text } from 'grommet';
+import {
+  Anchor,
+  Avatar,
+  Box,
+  Button,
+  Grid,
+  Heading,
+  PageHeader,
+  Tab,
+  Text,
+  TextInput,
+  ToggleGroup,
+} from 'grommet';
 import { AnatomyNav } from './primitives';
+import {
+  DetailHeading,
+  DetailTabs,
+  Pairs,
+  Section,
+} from '../../pattern/detail';
 
 // Pattern pages: the plain-language "what" and "when" of list–detail,
 // written from the job to be done rather than from the anatomy. Each point
@@ -50,7 +71,7 @@ const Bullets = ({ items, small }) => (
 // Mock primitives. Everything is real text at a tiny size so the mocks read as
 // screens rather than grey bars.
 
-const MOCK_HEIGHT = '400px';
+const MOCK_HEIGHT = '420px';
 
 const T = ({ children, weak, strong, color, ...rest }) => (
   <Text
@@ -184,56 +205,67 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
   </Box>
 );
 
-// Mirrors the coded examples with Divider and Contained list switched off:
-// search + collection action in the list toolbar, toggle-style quick filters,
-// a count line, plain rows with a filled selected row, and a detail pane with
-// its own header, tabs and name–value rows.
-const Initials = ({ name }) => (
-  <Box
-    width="22px"
-    height="22px"
-    round="full"
-    background="background-contrast"
-    align="center"
-    justify="center"
-    flex={false}
-  >
-    <T strong style={{ fontSize: '8px', lineHeight: '10px' }}>
-      {name
-        .split(/[\s-]+/)
-        .slice(0, 2)
-        .map((p) => p[0]?.toUpperCase())
-        .join('')}
-    </T>
-  </Box>
-);
+// Built from the same components as the coded examples (Divider and Contained
+// list switched off): Grommet PageHeader, TextInput search + secondary
+// collection action, ToggleGroup quick filters, a weak count line, Avatar
+// rows with a filled selected row, then the shared detail heading, tabs and
+// name–value sections. Rendered at reduced zoom so a whole page fits the
+// banner; it is a picture, not a live surface.
+const STATUS_ICON = {
+  ok: { Icon: StatusGood, color: 'status-ok' },
+  warning: { Icon: StatusWarning, color: 'status-warning' },
+  critical: { Icon: StatusCritical, color: 'status-critical' },
+};
 
-const QuickFilter = ({ label, active }) => (
-  <Box
-    pad={{ horizontal: 'xsmall', vertical: '2px' }}
-    round="xsmall"
-    border={{ color: active ? 'border-selected' : 'transparent' }}
-    background={active ? 'background-selected-primary' : undefined}
-    flex={false}
-  >
-    <T strong>{label}</T>
-  </Box>
-);
+const initialsOf = (name) =>
+  name
+    .split(/[\s-]+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join('');
 
-const NameValue = ({ rows }) => (
-  <Box gap="3px" flex={false}>
-    {rows.map(([k, v]) => (
-      <Box key={k} direction="row" gap="small">
-        <Box width="38%" flex={false}>
-          <T strong>{k}</T>
-        </Box>
-        <Box flex>
-          <T>{v}</T>
-        </Box>
+const MockRow = ({ row, selected, last }) => {
+  const status = row.status && STATUS_ICON[row.status];
+  return (
+    <Box
+      pad={{ horizontal: 'small', vertical: 'small' }}
+      border={
+        last || selected ? undefined : { side: 'bottom', color: 'border-weak' }
+      }
+      background={selected ? 'background-contrast' : undefined}
+      round={selected ? 'small' : undefined}
+      direction="row"
+      align="center"
+      gap="small"
+      flex={false}
+    >
+      {status ? (
+        <status.Icon color={status.color} aria-hidden />
+      ) : (
+        <Avatar size="medium" background="background-contrast">
+          <Text size="small" weight={500}>
+            {initialsOf(row.primary)}
+          </Text>
+        </Avatar>
+      )}
+      <Box flex>
+        <Text weight={500} truncate>
+          {row.primary}
+        </Text>
+        {row.secondary && (
+          <Text size="small" color="text-weak" truncate>
+            {row.secondary}
+          </Text>
+        )}
       </Box>
-    ))}
-  </Box>
-);
+      {row.meta && (
+        <Text size="small" color="text-weak">
+          {row.meta}
+        </Text>
+      )}
+    </Box>
+  );
+};
 
 export const MockListDetail = ({
   title,
@@ -244,108 +276,107 @@ export const MockListDetail = ({
   selected = 0,
   detail,
 }) => (
-  <MockPage title={title} subtitle={subtitle}>
-    <Box direction="row" gap="medium" flex margin={{ top: 'xxsmall' }}>
-      <Box width="40%" gap="xsmall" flex={false} overflow="hidden">
-        <Box direction="row" gap="xsmall" align="center" flex={false}>
-          <Box
-            flex
-            direction="row"
-            align="center"
-            gap="xxsmall"
-            pad={{ horizontal: 'xsmall', vertical: '3px' }}
-            border={{ color: 'border' }}
-            round="large"
-          >
-            <Search size="small" color="text-weak" />
-            <T weak>Search {title.toLowerCase()}</T>
+  <Box
+    height={MOCK_HEIGHT}
+    border={{ color: 'border-weak' }}
+    background="background-front"
+    round="small"
+    overflow="hidden"
+    aria-hidden
+    style={{ pointerEvents: 'none' }}
+  >
+    <Box pad="medium" style={{ zoom: 0.7 }} flex={false}>
+      <PageHeader
+        title={title}
+        subtitle={subtitle}
+        pad="none"
+        margin={{ bottom: 'medium' }}
+        actions={
+          detail.pageAction ? (
+            <Button primary label={detail.pageAction} />
+          ) : undefined
+        }
+      />
+      <Grid columns={['40%', 'flex']} gap="medium">
+        <Box gap="xsmall" style={{ minWidth: 0 }}>
+          <Box direction="row" gap="xsmall" align="center">
+            <Box flex>
+              <TextInput
+                icon={<Search />}
+                placeholder={`Search ${title.toLowerCase()}`}
+                readOnly
+                tabIndex={-1}
+              />
+            </Box>
+            {action && <Button secondary label={action} tabIndex={-1} />}
           </Box>
-          {action && <MockButton label={action} />}
-        </Box>
-        {filters && (
-          <Box direction="row" gap="xxsmall" align="center" flex={false}>
-            {filters.map((f, i) => (
-              <QuickFilter key={f} label={f} active={i === 0} />
+          {filters && (
+            <Box alignSelf="start" style={{ whiteSpace: 'nowrap' }}>
+              <ToggleGroup
+                options={filters.map((f) => ({ label: f, value: f }))}
+                value={filters[0]}
+              />
+            </Box>
+          )}
+          <Box direction="row" justify="between" align="center">
+            <Text size="small" color="text-weak">
+              {(detail.total || rows.length).toLocaleString()} items
+            </Text>
+            <Box direction="row" gap="xxsmall" align="center">
+              <Descending size="small" color="text-weak" />
+              <Text size="small" color="text-weak">
+                {detail.sort || 'Name'}
+              </Text>
+            </Box>
+          </Box>
+          <Box flex={false}>
+            {rows.map((r, i) => (
+              <MockRow
+                key={r.primary}
+                row={r}
+                selected={i === selected}
+                last={i === rows.length - 1}
+              />
             ))}
           </Box>
-        )}
-        <Box direction="row" justify="between" align="center" flex={false}>
-          <T weak>{(detail.total || rows.length).toLocaleString()} items</T>
-          <Box direction="row" gap="xxsmall" align="center">
-            <Descending size="small" color="text-weak" />
-            <T weak>{detail.sort || 'Name'}</T>
-          </Box>
         </Box>
-        <Box flex={false}>
-          {rows.map((r, i) => (
-            <Box
-              key={r.primary}
-              direction="row"
-              gap="xsmall"
-              align="center"
-              pad={{ horizontal: 'xsmall', vertical: '5px' }}
-              round={i === selected ? 'small' : undefined}
-              background={i === selected ? 'background-contrast' : undefined}
-              border={
-                i === selected || i === rows.length - 1
-                  ? false
-                  : { side: 'bottom', color: 'border-weak' }
-              }
-              flex={false}
-            >
-              {r.status ? (
-                <Dot status={r.status} />
-              ) : (
-                <Initials name={r.primary} />
-              )}
-              <Box flex>
-                <T strong>{r.primary}</T>
-                {r.secondary && <T weak>{r.secondary}</T>}
+        <Box style={{ minWidth: 0 }}>
+          <DetailHeading
+            heading={detail.title}
+            status={detail.badge && STATUS_ICON[detail.badge.status]}
+            description={detail.badge?.label}
+            trailing={
+              <Box direction="row" gap="xsmall">
+                {detail.secondaryAction && (
+                  <Button
+                    secondary
+                    label={detail.secondaryAction}
+                    tabIndex={-1}
+                  />
+                )}
+                {detail.action && (
+                  <Button primary label={detail.action} tabIndex={-1} />
+                )}
               </Box>
-              {r.meta && <T weak>{r.meta}</T>}
-            </Box>
-          ))}
+            }
+          />
+          <DetailTabs activeIndex={0} onActive={() => {}}>
+            {detail.tabs.map((t) => (
+              <Tab key={t} title={t} />
+            ))}
+          </DetailTabs>
+          <Section title={detail.sectionTitle || 'Overview'}>
+            <Pairs pairs={detail.fields} />
+          </Section>
+          {detail.section && (
+            <Section title={detail.section.title}>
+              <Pairs pairs={detail.section.items} />
+            </Section>
+          )}
         </Box>
-      </Box>
-      <Box flex gap="xsmall" overflow="hidden">
-        <Box direction="row" justify="between" align="start" flex={false}>
-          <Box gap="2px">
-            <T strong style={{ fontSize: '14px', lineHeight: '18px' }}>
-              {detail.title}
-            </T>
-            {detail.badge && <Badge {...detail.badge} />}
-          </Box>
-          <Box direction="row" gap="xxsmall">
-            {detail.action && <MockButton label={detail.action} primary />}
-            {detail.secondaryAction && (
-              <MockButton label={detail.secondaryAction} />
-            )}
-          </Box>
-        </Box>
-        <MockTabs tabs={detail.tabs} />
-        <Box gap="xsmall" flex={false} margin={{ top: 'xxsmall' }}>
-          <T strong style={{ fontSize: '12px', lineHeight: '16px' }}>
-            {detail.sectionTitle || 'Overview'}
-          </T>
-          <NameValue rows={detail.fields} />
-        </Box>
-        {detail.section && (
-          <Box
-            gap="xsmall"
-            margin={{ top: 'xsmall' }}
-            pad={{ top: 'xsmall' }}
-            border={{ side: 'top', color: 'border-weak' }}
-            flex={false}
-          >
-            <T strong style={{ fontSize: '12px', lineHeight: '16px' }}>
-              {detail.section.title}
-            </T>
-            <NameValue rows={detail.section.items} />
-          </Box>
-        )}
-      </Box>
+      </Grid>
     </Box>
-  </MockPage>
+  </Box>
 );
 
 // A single record owning the whole page, as a stepped flow.
@@ -1368,7 +1399,9 @@ export const PatternStoryLevel = ({ id }) => {
             <Box>
               <Text weight={500}>
                 {story.persona},{' '}
-                {story.role[0].toLowerCase() + story.role.slice(1)}
+                {/^[A-Z]{2,}/.test(story.role)
+                  ? story.role
+                  : story.role[0].toLowerCase() + story.role.slice(1)}
               </Text>
               <Text size="small" color="text-weak">
                 {story.context}
