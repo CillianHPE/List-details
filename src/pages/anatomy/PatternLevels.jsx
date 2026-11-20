@@ -1161,18 +1161,11 @@ const SCENARIOS = [
     fit: 'Good',
     text: 'The same small change across many records. Edits are short and land in the detail pane without a mode switch.',
   },
-  {
-    id: null,
-    name: 'Execute',
-    fit: 'Boundary',
-    text: 'Deep work inside 1 record: configure, author, run a multi-step change. Start it from the detail pane, then hand off to a dedicated page or a full-height layer. The list–detail page is the place you return to, not the place the work happens.',
-  },
 ];
 
 const FIT_COLOR = {
   Strong: 'status-ok',
   Good: 'status-ok',
-  Boundary: 'status-warning',
 };
 
 const ScenarioSheet = ({ rows }) => {
