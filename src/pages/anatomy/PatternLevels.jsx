@@ -1069,71 +1069,91 @@ export const PatternWhatLevel = () => (
 
 const DECIDE = [
   {
-    q: 'How many records does the person touch in a sitting?',
-    use: 'Several. They move between records and want to keep their place.',
-    page: '1. They arrive at a record from a link, alert or search and leave again.',
+    q: 'Records per sitting',
+    use: ['Several', 'Moving between records, keeping their place.'],
+    page: ['1', 'Arrived at from a link, alert or search.'],
   },
   {
-    q: 'How long is the work on 1 record?',
-    use: 'Seconds to a few minutes: read, check, approve, assign, flag.',
-    page: 'Long: configuring, authoring, multi-step changes, anything with a Save and a draft.',
+    q: 'Work on 1 record',
+    use: ['Short', 'Read, check, approve, assign, flag.'],
+    page: ['Long', 'Configure, author, multi-step, Save and draft.'],
   },
   {
-    q: 'What does the detail need to show?',
-    use: 'A summary and a few tabs that fit in 480px (size.large) or more.',
-    page: 'Wide tables, charts, editors or nested lists that need the full width.',
+    q: 'Detail content',
+    use: ['Summary + tabs', 'Fits in 480px (size.large).'],
+    page: ['Wide', 'Tables, charts, editors, nested lists.'],
   },
   {
-    q: 'Does the list matter while the record is open?',
-    use: 'Yes. The count, filters and the next item are part of the task.',
-    page: 'No. Once the record is open the rest of the set is noise.',
+    q: 'The list while a record is open',
+    use: [
+      'Still matters',
+      'Count, filters and next item are part of the task.',
+    ],
+    page: ['Noise', 'Once open, the rest of the set is irrelevant.'],
   },
   {
-    q: 'What does the comparison look like?',
-    use: 'Whole records, flipped between with the same fields in the same place.',
-    page: '1 or 2 values across many rows. That is a table, not list–detail.',
+    q: 'Comparison',
+    use: ['Whole records', 'Flipped between, same fields in the same place.'],
+    page: ['1 or 2 values', 'Across many rows. That is a table.'],
   },
 ];
 
-const DecideSheet = ({ rows }) => (
-  <Box>
-    <Grid
-      columns={['1fr', '1fr', '1fr']}
-      gap="medium"
-      pad={{ bottom: 'xsmall' }}
-      border={{ side: 'bottom', color: 'border' }}
+// Short verdict in bold, 1 supporting line underneath.
+const Verdict = ({ pair: [lead, text] }) => (
+  <Box gap="2px">
+    <Text weight={500}>{lead}</Text>
+    <Text size="small" color="text-weak">
+      {text}
+    </Text>
+  </Box>
+);
+
+const DecideColumn = ({ icon, color, title, pick }) => (
+  <Box
+    background="background-back"
+    round="small"
+    border={{ color: 'border-weak' }}
+    pad="medium"
+    gap="small"
+  >
+    <Box
+      direction="row"
+      gap="xsmall"
+      align="center"
+      pad={{ bottom: 'small' }}
+      border={{ side: 'bottom', color: 'border-weak' }}
     >
-      <Text size="small" weight={500} color="text-weak">
-        Ask
+      {icon}
+      <Text weight={500} color={color}>
+        {title}
       </Text>
-      <Box direction="row" gap="xsmall" align="center">
-        <Checkmark size="small" color="status-ok" />
-        <Text size="small" weight={500} color="text-weak">
-          Use list–detail when
+    </Box>
+    {DECIDE.map((row) => (
+      <Box key={row.q} gap="2px" pad={{ vertical: 'xsmall' }}>
+        <Text size="xsmall" color="text-weak" weight={500}>
+          {row.q.toUpperCase()}
         </Text>
+        <Verdict pair={pick(row)} />
       </Box>
-      <Box direction="row" gap="xsmall" align="center">
-        <Close size="small" color="status-critical" />
-        <Text size="small" weight={500} color="text-weak">
-          Give it a page when
-        </Text>
-      </Box>
-    </Grid>
-    {rows.map(({ q, use, page }) => (
-      <Grid
-        key={q}
-        columns={['1fr', '1fr', '1fr']}
-        gap="medium"
-        pad={{ vertical: 'small' }}
-        border={{ side: 'bottom', color: 'border-weak' }}
-        align="start"
-      >
-        <Text weight={500}>{q}</Text>
-        <Text>{use}</Text>
-        <Text>{page}</Text>
-      </Grid>
     ))}
   </Box>
+);
+
+const DecideSheet = () => (
+  <Grid columns={{ count: 2, size: 'auto' }} gap="medium">
+    <DecideColumn
+      icon={<Checkmark size="small" color="status-ok" />}
+      color="status-ok"
+      title="Use list–detail"
+      pick={(r) => r.use}
+    />
+    <DecideColumn
+      icon={<Close size="small" color="status-critical" />}
+      color="status-critical"
+      title="Give it a page"
+      pick={(r) => r.page}
+    />
+  </Grid>
 );
 
 const SCENARIOS = [
@@ -1141,80 +1161,88 @@ const SCENARIOS = [
     id: 'gather',
     name: 'Gather',
     fit: 'Strong',
-    text: 'Work through a queue 1 record at a time. The list is the queue and the count is the progress bar.',
+    text: 'Work a queue 1 record at a time. The count is the progress bar.',
+    rows: [1, 0, 0, 0],
   },
   {
     id: 'compare',
     name: 'Compare',
     fit: 'Strong',
-    text: 'Flip between 2 or 3 similar records with the same fields in the same place.',
+    text: 'Flip between 2 or 3 similar records, same fields in the same place.',
+    rows: [1, 1, 0, 0],
   },
   {
     id: 'triage',
     name: 'Triage',
     fit: 'Strong',
-    text: 'Filter a large set down to the few that matter, inspect each, act, move on.',
+    text: 'Filter a large set to the few that matter, then act on each.',
+    rows: [0, 1, 0, 1],
   },
   {
     id: 'quick-edit',
     name: 'Quick edit',
     fit: 'Good',
-    text: 'The same small change across many records. Edits are short and land in the detail pane without a mode switch.',
+    text: 'The same small change across many records, without a mode switch.',
+    rows: [1, 1, 1, 1],
   },
 ];
 
-const FIT_COLOR = {
-  Strong: 'status-ok',
-  Good: 'status-ok',
-};
+// Tiny 2-zone glyph: a list with the marked rows highlighted and a detail pane.
+const ScenarioGlyph = ({ rows }) => (
+  <Box
+    direction="row"
+    gap="xsmall"
+    pad="xsmall"
+    height="56px"
+    background="background-front"
+    round="xsmall"
+    border={{ color: 'border-weak' }}
+  >
+    <Box width="36px" gap="3px" flex={false}>
+      {rows.map((on, i) => (
+        <Box
+          key={i}
+          height="8px"
+          round="2px"
+          background={on ? 'brand' : 'background-contrast'}
+        />
+      ))}
+    </Box>
+    <Box flex background="background-contrast" round="2px" />
+  </Box>
+);
 
-const ScenarioSheet = ({ rows }) => {
+const ScenarioCard = ({ id, name, fit, text, rows }) => {
   const go = useContext(AnatomyNav);
   return (
-    <Box>
-      <Grid
-        columns={['xsmall', 'xsmall', 'flex']}
-        gap="medium"
-        pad={{ bottom: 'xsmall' }}
-        border={{ side: 'bottom', color: 'border' }}
-      >
-        {['Scenario', 'Fit', 'What it looks like'].map((h) => (
-          <Text key={h} size="small" weight={500} color="text-weak">
-            {h}
-          </Text>
-        ))}
-      </Grid>
-      {rows.map(({ id, name, fit, text }) => (
-        <Grid
-          key={name}
-          columns={['xsmall', 'xsmall', 'flex']}
-          gap="medium"
-          pad={{ vertical: 'small' }}
-          border={{ side: 'bottom', color: 'border-weak' }}
-          align="start"
+    <Box
+      background="background-back"
+      round="small"
+      border={{ color: 'border-weak' }}
+      pad="medium"
+      gap="small"
+    >
+      <ScenarioGlyph rows={rows} />
+      <Box direction="row" justify="between" align="center">
+        <Text weight={500}>{name}</Text>
+        <Box
+          pad={{ horizontal: 'small', vertical: '2px' }}
+          round="large"
+          background={fit === 'Strong' ? 'status-ok' : 'background-contrast'}
         >
-          {id ? (
-            <Anchor
-              label={name}
-              weight={500}
-              onClick={() => go(`pattern/when/${id}`)}
-            />
-          ) : (
-            <Text weight={500}>{name}</Text>
-          )}
-          <Box direction="row" gap="xsmall" align="center">
-            <Box
-              width="8px"
-              height="8px"
-              round="full"
-              background={FIT_COLOR[fit]}
-              flex={false}
-            />
-            <Text size="small">{fit}</Text>
-          </Box>
-          <Text>{text}</Text>
-        </Grid>
-      ))}
+          <Text size="xsmall" weight={500}>
+            {fit} fit
+          </Text>
+        </Box>
+      </Box>
+      <Text size="small">{text}</Text>
+      <Anchor
+        label="Read the story"
+        icon={<LinkNext size="small" />}
+        reverse
+        size="small"
+        onClick={() => go(`pattern/when/${id}`)}
+      />
     </Box>
   );
 };
@@ -1228,20 +1256,26 @@ export const PatternUseLevel = () => (
     </Lead>
 
     <Box gap="medium">
-      <SectionHeading>Decide in 5 questions</SectionHeading>
-      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-        Most answers will fall in 1 column. If they split, the pattern still
-        works for browsing and the deep work hands off to a page.
-      </Text>
-      <DecideSheet rows={DECIDE} />
+      <Box gap="2px">
+        <SectionHeading>Decide in 5 questions</SectionHeading>
+        <Text color="text-weak">
+          Read down 1 column. If answers split, browse here and hand the deep
+          work off to a page.
+        </Text>
+      </Box>
+      <DecideSheet />
     </Box>
 
     <Box gap="medium">
-      <SectionHeading>The scenarios it serves</SectionHeading>
-      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-        4 scenarios fit well and each has a user story.
-      </Text>
-      <ScenarioSheet rows={SCENARIOS} />
+      <Box gap="2px">
+        <SectionHeading>The scenarios it serves</SectionHeading>
+        <Text color="text-weak">4 scenarios, each with a user story.</Text>
+      </Box>
+      <Grid columns={{ count: 4, size: 'auto' }} gap="small">
+        {SCENARIOS.map((sc) => (
+          <ScenarioCard key={sc.id} {...sc} />
+        ))}
+      </Grid>
     </Box>
   </Box>
 );
