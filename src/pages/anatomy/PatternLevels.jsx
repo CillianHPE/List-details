@@ -224,7 +224,8 @@ const initialsOf = (name) =>
     .map((p) => p[0]?.toUpperCase())
     .join('');
 
-const MockRow = ({ row, selected, last }) => {
+// Leading visual: a status icon for health, an avatar only for people.
+const MockRow = ({ row, avatar, selected, last }) => {
   const status = row.status && STATUS_ICON[row.status];
   return (
     <Box
@@ -239,9 +240,8 @@ const MockRow = ({ row, selected, last }) => {
       gap="small"
       flex={false}
     >
-      {status ? (
-        <status.Icon color={status.color} aria-hidden />
-      ) : (
+      {status && <status.Icon color={status.color} aria-hidden />}
+      {!status && avatar && (
         <Avatar size="medium" background="background-contrast">
           <Text size="small" weight={500}>
             {initialsOf(row.primary)}
@@ -273,6 +273,7 @@ export const MockListDetail = ({
   action,
   filters,
   rows,
+  avatar = false,
   selected = 0,
   detail,
 }) => (
@@ -334,6 +335,7 @@ export const MockListDetail = ({
               <MockRow
                 key={r.primary}
                 row={r}
+                avatar={avatar}
                 selected={i === selected}
                 last={i === rows.length - 1}
               />
@@ -757,6 +759,7 @@ export const MockZones = () => (
 
 const USERS = {
   title: 'Users',
+  avatar: true,
   subtitle: '48 users · 3 pending review',
   action: 'Add user',
   filters: ['Pending review', 'All', 'Administrators', 'Inactive'],
