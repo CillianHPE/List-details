@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
 import {
   Checkmark,
   Close,
@@ -1181,22 +1181,23 @@ const JtbdPart = ({ children }) => (
   </Text>
 );
 
-// 1 job as a card: the 3 parts stacked so the sentence reads top to bottom.
+// 1 job as a card: a single flowing sentence with the 3 connectors bolded.
 const JtbdCard = ({ parts }) => (
   <Box
     background="background-back"
     round="small"
     pad="medium"
-    gap="xsmall"
     border={{ color: 'border-weak' }}
   >
-    {parts.map((part, i) => (
-      <Text key={JTBD_PARTS[i]}>
-        <Text weight={500}>{JTBD_PARTS[i]}</Text>
-        {part}
-        {i < 2 ? ',' : '.'}
-      </Text>
-    ))}
+    <Text>
+      {parts.map((part, i) => (
+        <Fragment key={JTBD_PARTS[i]}>
+          <Text weight={500}>{JTBD_PARTS[i]}</Text>
+          {part}
+          {i < 2 ? ', ' : '.'}
+        </Fragment>
+      ))}
+    </Text>
   </Box>
 );
 
