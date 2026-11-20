@@ -979,19 +979,24 @@ export const PatternWhenLevel = () => (
 
     <Box gap="medium">
       <SectionHeading>Use it when</SectionHeading>
-      <Box gap="xlarge">
-        {USE.map(({ title, when, why, eg, mock }) => (
-          <Scenario
+      <Box>
+        {USE.map(({ title, when, why, eg, mock }, i) => (
+          <Box
             key={title}
-            ok
-            title={title}
-            when={when}
-            whyLabel="Why it fits"
-            why={why}
-            noteLabel="For example"
-            note={eg}
-            mock={mock}
-          />
+            pad={{ vertical: 'xlarge' }}
+            border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
+          >
+            <Scenario
+              ok
+              title={title}
+              when={when}
+              whyLabel="Why it fits"
+              why={why}
+              noteLabel="For example"
+              note={eg}
+              mock={mock}
+            />
+          </Box>
         ))}
       </Box>
     </Box>
@@ -1030,18 +1035,23 @@ export const PatternWhenNotLevel = () => (
       surface does the job better.
     </Lead>
 
-    <Box gap="xlarge">
-      {AVOID.map(({ title, when, why, instead, mock }) => (
-        <Scenario
+    <Box>
+      {AVOID.map(({ title, when, why, instead, mock }, i) => (
+        <Box
           key={title}
-          title={title}
-          when={when}
-          whyLabel="Why it fails"
-          why={why}
-          noteLabel="Use instead"
-          note={instead}
-          mock={mock}
-        />
+          pad={{ vertical: 'xlarge' }}
+          border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
+        >
+          <Scenario
+            title={title}
+            when={when}
+            whyLabel="Why it fails"
+            why={why}
+            noteLabel="Use instead"
+            note={instead}
+            mock={mock}
+          />
+        </Box>
       ))}
     </Box>
 
