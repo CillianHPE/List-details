@@ -1123,8 +1123,30 @@ const USE = [
       'Requests arrive in batches, so she wants to clear the whole batch, not just the first one she opens.',
       'She has 10 minutes before her next meeting. Finishing matters more than being thorough on 1.',
     ],
-    without:
-      'A plain table with an Approve button hides the manager and SSO status behind a click. A user profile page shows them, but each visit means leaving the queue and losing count of what is left.',
+    without: {
+      alternatives: [
+        {
+          name: 'Table with an Approve button',
+          breaks:
+            'Manager, team and SSO status are hidden behind a click, so Priya approves on name and role alone.',
+          cost: 'Approving blind on an Administrator request.',
+        },
+        {
+          name: 'User profile page per request',
+          breaks:
+            'Every check means leaving the queue and coming back. The filter and scroll position reset each time.',
+          cost: '3 round trips and losing count of what is left.',
+        },
+        {
+          name: 'Email notifications',
+          breaks:
+            'Each request is a separate message with no view of the whole set, and no record of what has been handled.',
+          cost: 'Requests slip and get approved twice or not at all.',
+        },
+      ],
+      summary:
+        'The page keeps the queue in view while she checks each person, so the 3 approvals take 1 sitting.',
+    },
     beats: [
       {
         zone: 'List',
@@ -1165,8 +1187,30 @@ const USE = [
       'Comparison is a memory task. Every extra click between the 2 records is a chance to forget what he just read.',
       'He is mid-incident. He will not write anything down; the page has to hold the state for him.',
     ],
-    without:
-      'Opening each server in its own page means 2 tabs and alt-tabbing, with fields in different scroll positions. A table shows 1 field per column, but firmware, workload and reboot history would be 3 scrolls apart.',
+    without: {
+      alternatives: [
+        {
+          name: 'Server page in 2 browser tabs',
+          breaks:
+            'Fields sit at different scroll positions in each tab, so Daniel compares from memory while alt-tabbing.',
+          cost: 'Misreading a firmware version that differs by 1 digit.',
+        },
+        {
+          name: 'Wide table with a column per field',
+          breaks:
+            'Firmware, workload and reboot history are 3 horizontal scrolls apart, and the detail he needs is not a column.',
+          cost: 'The difference is there but never seen.',
+        },
+        {
+          name: 'Exporting to a spreadsheet',
+          breaks:
+            'A snapshot that is stale the moment a reboot happens, and nothing to act on once the cause is found.',
+          cost: 'Finding the answer in a file he cannot act from.',
+        },
+      ],
+      summary:
+        'Same layout for both servers, 1 click apart, so the eye lands on the field that changed.',
+    },
     beats: [
       {
         zone: 'List',
@@ -1207,8 +1251,30 @@ const USE = [
       'Most of the 2,340 are healthy. Anything that makes her scroll past them is time taken from the 3 that matter.',
       'She will be interrupted. When she comes back, the page needs to show her where she was.',
     ],
-    without:
-      'A dashboard shows the count of criticals but not which ones. A full alert page per resource means 3 round trips and re-finding her place in the list each time.',
+    without: {
+      alternatives: [
+        {
+          name: 'Health dashboard',
+          breaks:
+            'Shows that there are 2 criticals, not which 2, and no way to acknowledge from the tile.',
+          cost: 'A second screen before any action can start.',
+        },
+        {
+          name: 'Alert page per resource',
+          breaks:
+            'Each critical is a full page load, and coming back means re-filtering 2,340 rows to find her place.',
+          cost: '3 round trips at the start of a shift.',
+        },
+        {
+          name: 'Flat alert feed',
+          breaks:
+            'Alerts arrive in time order with no severity filter, so the 3 that matter are buried in the noise.',
+          cost: 'Scanning hundreds of lines to find 3.',
+        },
+      ],
+      summary:
+        'Severity filter, then act from the pane: the critical few are isolated and handled without leaving the list.',
+    },
     beats: [
       {
         zone: 'List',
@@ -1249,8 +1315,30 @@ const USE = [
       '41 small edits is a rhythm task. Any friction per record is multiplied by 41.',
       'He needs to see progress to stay motivated and to know when he can stop.',
     ],
-    without:
-      'A full edit page per device means 41 page loads and 41 trips back to the list. A spreadsheet-style table works but loses the device context he needs to pick the right owner.',
+    without: {
+      alternatives: [
+        {
+          name: 'Edit page per device',
+          breaks:
+            'Each fix is open, edit, save, back to list, re-filter. 2 fields of work wrapped in 5 steps.',
+          cost: '41 page loads and 41 trips back to the list.',
+        },
+        {
+          name: 'Editable spreadsheet table',
+          breaks:
+            'Fast to type into, but model, site and last seen are off screen, so Tomás guesses who should own the device.',
+          cost: 'Wrong owners that surface in the audit anyway.',
+        },
+        {
+          name: 'Bulk assign dialog',
+          breaks:
+            'Assumes all 41 share an owner. They do not, so he still goes 1 by 1 but now through a modal.',
+          cost: 'The same 41 decisions with less context.',
+        },
+      ],
+      summary:
+        'Edit in the pane, save, next device: the context stays in view and the list shrinks as he goes.',
+    },
     beats: [
       {
         zone: 'List',
@@ -1440,7 +1528,24 @@ export const PatternStoryLevel = ({ id }) => {
         </StoryBlock>
 
         <StoryBlock title="Without it">
-          <Text style={{ maxWidth: '68ch' }}>{story.without}</Text>
+          <Grid columns={{ count: 3, size: 'auto' }} gap="large">
+            {story.without.alternatives.map(({ name, breaks, cost }) => (
+              <Box key={name} gap="small">
+                <Text weight={500}>{name}</Text>
+                <Text>{breaks}</Text>
+                <Box direction="row" gap="xsmall" align="start">
+                  <Close size="small" color="status-critical" aria-hidden />
+                  <Text size="small" color="text-weak">
+                    {cost}
+                  </Text>
+                </Box>
+              </Box>
+            ))}
+          </Grid>
+          <Box direction="row" gap="xsmall" align="start">
+            <Checkmark size="small" color="status-ok" aria-hidden />
+            <Text style={{ maxWidth: '68ch' }}>{story.without.summary}</Text>
+          </Box>
         </StoryBlock>
       </Box>
 
