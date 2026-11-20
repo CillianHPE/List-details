@@ -305,7 +305,21 @@ const NavItemV3 = ({
 // trailing action is the Up/Down chevron; children sit one level deeper.
 // Parents start open and re-open whenever the route moves into them.
 // Groups that start a new section of the nav, separated by a divider.
-const NAV_DIVIDER_BEFORE = ['Anatomy', 'Design crit'];
+const NAV_DIVIDER_BEFORE = ['Anatomy', 'Examples', 'Design crit'];
+// Groups rendered as a static header with top-level links, not a collapsible.
+const NAV_HEADER_GROUPS = ['Pattern', 'Examples'];
+
+const NavGroupHeader = ({ label }) => (
+  <Box
+    pad={{ left: 'xsmall', right: 'xxsmall', top: 'xxsmall' }}
+    height={{ min: '36px' }}
+    justify="center"
+  >
+    <Text size="small" weight={500} color="text-weak">
+      {label}
+    </Text>
+  </Box>
+);
 
 const NavDivider = () => (
   <Box
@@ -353,7 +367,7 @@ const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
 
 // A nav item that is also a page and has its own children. Clicking the
 // label navigates and opens it; the chevron only toggles.
-const NavParentV3 = ({ item, selected, onSelect }) => {
+const NavParentV3 = ({ item, level = 1, selected, onSelect }) => {
   const hasActiveChild = item.children.some((c) => c.key === selected.key);
   const [expanded, setExpanded] = usePersistedState(
     `nav.expanded.${item.key}`,
@@ -368,7 +382,7 @@ const NavParentV3 = ({ item, selected, onSelect }) => {
     <Box>
       <NavItemV3
         item={item}
-        level={1}
+        level={level}
         selected={selected.key === item.key}
         onSelect={(i) => {
           setExpanded(true);
@@ -394,7 +408,7 @@ const NavParentV3 = ({ item, selected, onSelect }) => {
             <NavItemV3
               key={child.key}
               item={child}
-              level={2}
+              level={level + 1}
               selected={selected.key === child.key}
               onSelect={onSelect}
             />
@@ -476,54 +490,51 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
       </Box>
       {open && (
         <Nav gap="4xsmall" pad={{ bottom: 'small' }} overflow="auto">
-          {/* Examples: top-level links under a group header, then one divider
-              before the documentation groups. */}
-          {items.Examples && (
-            <>
-              <Box
-                pad={{ left: 'xsmall', right: 'xxsmall', top: 'xxsmall' }}
-                height={{ min: '36px' }}
-                justify="center"
-              >
-                <Text size="small" weight={500} color="text-weak">
-                  Examples
-                </Text>
-              </Box>
-              {items.Examples.map((item) => (
-                <NavItemV3
-                  key={item.key}
-                  item={item}
-                  selected={selected.key === item.key}
+          {Object.entries(items).map(([group, value]) =>
+            NAV_HEADER_GROUPS.includes(group) ? (
+              <Fragment key={group}>
+                {NAV_DIVIDER_BEFORE.includes(group) && <NavDivider />}
+                <NavGroupHeader label={group} />
+                {value.map((item) =>
+                  item.children ? (
+                    <NavParentV3
+                      key={item.key}
+                      item={item}
+                      level={0}
+                      selected={selected}
+                      onSelect={onSelect}
+                    />
+                  ) : (
+                    <NavItemV3
+                      key={item.key}
+                      item={item}
+                      selected={selected.key === item.key}
+                      onSelect={onSelect}
+                    />
+                  ),
+                )}
+              </Fragment>
+            ) : Array.isArray(value) ? (
+              <Fragment key={group}>
+                {NAV_DIVIDER_BEFORE.includes(group) && <NavDivider />}
+                <NavGroupV3
+                  group={group}
+                  items={value}
+                  open={expanded.includes(group)}
+                  onToggle={() => toggle(group)}
+                  selected={selected}
                   onSelect={onSelect}
                 />
-              ))}
-              <NavDivider />
-            </>
+              </Fragment>
+            ) : (
+              <NavItemV3
+                key={value.key}
+                item={value}
+                selected={selected.key === value.key}
+                onSelect={onSelect}
+              />
+            ),
           )}
-          {Object.entries(items)
-            .filter(([group]) => group !== 'Examples')
-            .map(([group, value]) =>
-              Array.isArray(value) ? (
-                <Fragment key={group}>
-                  {NAV_DIVIDER_BEFORE.includes(group) && <NavDivider />}
-                  <NavGroupV3
-                    group={group}
-                    items={value}
-                    open={expanded.includes(group)}
-                    onToggle={() => toggle(group)}
-                    selected={selected}
-                    onSelect={onSelect}
-                  />
-                </Fragment>
-              ) : (
-                <NavItemV3
-                  key={value.key}
-                  item={value}
-                  selected={selected.key === value.key}
-                  onSelect={onSelect}
-                />
-              ),
-            )}
         </Nav>
       )}
     </Box>

@@ -581,7 +581,7 @@ const DetailWireframe = () => (
 // its route and rendered through this component so cross-links work.
 export const PAGES = {
   'pattern/what': {
-    title: 'What it is',
+    title: 'Overview',
     subtitle:
       'The list–detail pattern in plain language, starting from the job it does.',
     Content: PatternWhatLevel,
