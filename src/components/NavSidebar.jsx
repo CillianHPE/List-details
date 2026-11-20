@@ -68,30 +68,28 @@ export const navItems = {
       key: 'proto-pattern-when',
       label: 'When to use it',
       href: '#/pattern/when',
-    },
-    {
-      key: 'proto-pattern-when-gather',
-      label: 'Gather',
-      href: '#/pattern/when/gather',
-      level: 2,
-    },
-    {
-      key: 'proto-pattern-when-compare',
-      label: 'Compare',
-      href: '#/pattern/when/compare',
-      level: 2,
-    },
-    {
-      key: 'proto-pattern-when-triage',
-      label: 'Triage',
-      href: '#/pattern/when/triage',
-      level: 2,
-    },
-    {
-      key: 'proto-pattern-when-quick-edit',
-      label: 'Quick edit',
-      href: '#/pattern/when/quick-edit',
-      level: 2,
+      children: [
+        {
+          key: 'proto-pattern-when-gather',
+          label: 'Gather',
+          href: '#/pattern/when/gather',
+        },
+        {
+          key: 'proto-pattern-when-compare',
+          label: 'Compare',
+          href: '#/pattern/when/compare',
+        },
+        {
+          key: 'proto-pattern-when-triage',
+          label: 'Triage',
+          href: '#/pattern/when/triage',
+        },
+        {
+          key: 'proto-pattern-when-quick-edit',
+          label: 'Quick edit',
+          href: '#/pattern/when/quick-edit',
+        },
+      ],
     },
     {
       key: 'proto-pattern-when-not',
@@ -182,10 +180,15 @@ export const selectNavItem = (item, setSelected) => {
   if (item.href) window.location.hash = item.href.replace(/^#/, '');
 };
 
-export const activeNavItem = (fallback) =>
+// Flatten groups and any nested children into one list of leaf items.
+export const flatNavItems = () =>
   Object.values(navItems)
     .flat()
-    .find((i) => i.href && i.href === window.location.hash) ?? fallback;
+    .flatMap((i) => [i, ...(i.children ?? [])]);
+
+export const activeNavItem = (fallback) =>
+  flatNavItems().find((i) => i.href && i.href === window.location.hash) ??
+  fallback;
 
 const MenuItem = ({ item, selected, onSelect }) => (
   <Button

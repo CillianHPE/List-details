@@ -319,23 +319,89 @@ const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
     />
     <Collapsible open={open}>
       <Box gap="4xsmall">
-        {items.map((item) => (
-          <NavItemV3
-            key={item.key}
-            item={item}
-            level={item.level ?? 1}
-            selected={selected.key === item.key}
-            onSelect={onSelect}
-          />
-        ))}
+        {items.map((item) =>
+          item.children ? (
+            <NavParentV3
+              key={item.key}
+              item={item}
+              selected={selected}
+              onSelect={onSelect}
+            />
+          ) : (
+            <NavItemV3
+              key={item.key}
+              item={item}
+              level={1}
+              selected={selected.key === item.key}
+              onSelect={onSelect}
+            />
+          ),
+        )}
       </Box>
     </Collapsible>
   </Box>
 );
 
+// A nav item that is also a page and has its own children. Clicking the
+// label navigates and opens it; the chevron only toggles.
+const NavParentV3 = ({ item, selected, onSelect }) => {
+  const hasActiveChild = item.children.some((c) => c.key === selected.key);
+  const [expanded, setExpanded] = usePersistedState(
+    `nav.expanded.${item.key}`,
+    false,
+  );
+  const open = expanded || hasActiveChild || selected.key === item.key;
+  return (
+    <Box>
+      <NavItemV3
+        item={item}
+        level={1}
+        selected={selected.key === item.key}
+        onSelect={(i) => {
+          setExpanded(true);
+          onSelect(i);
+        }}
+        actions={
+          // Not a Button: NavItemV3 is already a button and they cannot nest.
+          <Box
+            role="button"
+            aria-label={`${open ? 'Collapse' : 'Expand'} ${item.label}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanded(!open);
+            }}
+          >
+            {open ? <Up aria-hidden="true" /> : <Down aria-hidden="true" />}
+          </Box>
+        }
+      />
+      <Collapsible open={open}>
+        <Box gap="4xsmall">
+          {item.children.map((child) => (
+            <NavItemV3
+              key={child.key}
+              item={child}
+              level={2}
+              selected={selected.key === child.key}
+              onSelect={onSelect}
+            />
+          ))}
+        </Box>
+      </Collapsible>
+    </Box>
+  );
+};
+
+const inGroup = (v, selected) =>
+  v.some(
+    (i) =>
+      i.key === selected.key ||
+      (i.children ?? []).some((c) => c.key === selected.key),
+  );
+
 const groupOf = (items, selected) =>
   Object.entries(items).find(
-    ([, v]) => Array.isArray(v) && v.some((i) => i.key === selected.key),
+    ([, v]) => Array.isArray(v) && inGroup(v, selected),
   )?.[0];
 
 const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
