@@ -94,7 +94,7 @@ export const Section = ({ title, hideTitle, action, contained, children }) => (
     margin={{ top: 'medium' }}
     pad={contained ? 'medium' : undefined}
     round={contained ? 'medium' : undefined}
-    background={contained ? 'background-contrast' : undefined}
+    background={contained ? 'background-back' : undefined}
   >
     {hideTitle && (
       <Heading level={3} margin="none" style={visuallyHidden}>
@@ -186,7 +186,7 @@ export const ListStatus = ({ width = 'small', children }) => (
 // rather than one long list.
 export const Card = ({ title, note, action, children }) => (
   <Box
-    background="background-contrast"
+    background="background-back"
     round="medium"
     pad="medium"
     gap="medium"

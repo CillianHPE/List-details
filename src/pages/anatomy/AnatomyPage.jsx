@@ -2,6 +2,8 @@ import { Search } from '@hpe-design/icons-grommet';
 import { useState } from 'react';
 import {
   Box,
+  Grid,
+  Heading,
   Page,
   PageContent,
   PageHeader,
@@ -691,6 +693,100 @@ export const PAGES = {
   },
 };
 
+// Elevation stack: which token each surface uses and why. Answers the crit
+// question of whether the greys are consistent (now: 1 pane grey) and frames
+// the open base-1 (inset) question for the DS team.
+const SURFACES = [
+  {
+    level: 'Base',
+    token: 'background',
+    value: '#ffffff',
+    used: 'Canvas, global header, detail pane',
+    why: 'The page itself. Content sits directly on it unless it needs grouping.',
+  },
+  {
+    level: 'Base +1',
+    token: 'background-back',
+    value: '#f7f7f7',
+    used: 'Navigation pane, context pane, contained list, detail cards',
+    why: '1 opaque grey for every container, so panes and cards never read as different surfaces.',
+  },
+  {
+    level: 'Selection',
+    token: 'background-contrast',
+    value: 'rgba(0,0,0,0.04)',
+    used: 'Selected list row, hovered row, active nav item',
+    why: 'A tint, not a surface: it layers over base or base +1 and still shows, which an opaque grey would not.',
+  },
+  {
+    level: 'Base −1 (inset)',
+    token: 'none in the HPE theme',
+    value: '–',
+    used: 'Not used',
+    why: 'Reviewers asked whether a recessed well (e.g. for a contained list) belongs in the stack. Open question for the design system team; not invented here.',
+  },
+];
+
+const SurfacesLevel = () => (
+  <Box gap="large" pad={{ top: 'medium' }}>
+    <Box gap="xsmall">
+      <Heading level={2} size="small" margin="none">
+        Elevation stack
+      </Heading>
+      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+        3 steps, 3 tokens. Containers share 1 grey; the translucent tint is kept
+        for state so it can sit on either.
+      </Text>
+    </Box>
+    <Box>
+      <Grid
+        columns={['xsmall', 'small', 'xsmall', 'flex', 'flex']}
+        gap="medium"
+        pad={{ bottom: 'xsmall' }}
+        border={{ side: 'bottom', color: 'border' }}
+      >
+        {['Level', 'Token', 'Light value', 'Used by', 'Why'].map((h) => (
+          <Text key={h} size="small" weight={500} color="text-weak">
+            {h}
+          </Text>
+        ))}
+      </Grid>
+      {SURFACES.map((r) => (
+        <Grid
+          key={r.level}
+          columns={['xsmall', 'small', 'xsmall', 'flex', 'flex']}
+          gap="medium"
+          pad={{ vertical: 'small' }}
+          border={{ side: 'bottom', color: 'border-weak' }}
+          align="start"
+        >
+          <Text weight={500}>{r.level}</Text>
+          <Box direction="row" gap="xsmall" align="center">
+            {r.value !== '–' && (
+              <Box
+                width="20px"
+                height="20px"
+                round="xsmall"
+                border
+                background={r.token}
+                flex={false}
+              />
+            )}
+            <Text size="small" style={{ fontFamily: 'monospace' }}>
+              {r.token}
+            </Text>
+          </Box>
+          <Text size="small" color="text-weak">
+            {r.value}
+          </Text>
+          <Text>{r.used}</Text>
+          <Text color="text-weak">{r.why}</Text>
+        </Grid>
+      ))}
+    </Box>
+  </Box>
+);
+
 export const AnatomyPage = ({ route = 'anatomy' }) => {
   const [zone, setZone] = useState('fixed');
   const [level, setLevel] = useState(0);
@@ -757,6 +853,9 @@ export const AnatomyPage = ({ route = 'anatomy' }) => {
                   regions={DETAIL}
                   labels={{ behaviour: 'Layout' }}
                 />
+              </Tab>
+              <Tab title="Surfaces">
+                <SurfacesLevel />
               </Tab>
             </Tabs>
           )}

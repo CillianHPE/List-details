@@ -29,3 +29,12 @@ export const stickyBelowHeader = (offset = 0, extra = {}) => ({
   top: APP_HEADER_HEIGHT + offset,
   ...extra,
 });
+
+// Elevation stack. 1 grey for every container so nav, context pane, contained
+// list and detail cards read as the same surface; the 4% tint is reserved for
+// selection and hover so a selected row still shows inside a pane.
+export const SURFACE = {
+  base: 'background', // canvas, global header, detail pane
+  pane: 'background-back', // nav, context pane, contained list, cards
+  selected: 'background-contrast', // selected / hovered rows only
+};

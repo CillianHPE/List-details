@@ -89,8 +89,8 @@ const PLAN = [
     'Support card button, name–value list gaps, Sales Cockpit status indicator.',
   ],
   [
-    'Elevation audit',
-    'One table of surface to token for nav, context pane, cards and list; align greys; frame the inset question for the DS team.',
+    'Elevation audit (done)',
+    'Anatomy → Surfaces: 1 table of surface to token. Containers now share background-back; background-contrast is kept for selection. Inset (base −1) framed as a question for the DS team.',
   ],
   [
     'Responsive ladder',

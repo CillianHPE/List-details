@@ -300,7 +300,7 @@ export const ListDetailPage = ({
                     // Contained: the whole list zone (toolbar, filters, count,
                     // rows) sits on a background-contrast surface, same
                     // treatment as the detail cards
-                    background={contained ? 'background-contrast' : undefined}
+                    background={contained ? 'background-back' : undefined}
                     round={contained ? 'medium' : undefined}
                     margin={
                       contained && !stacked
