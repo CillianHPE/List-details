@@ -1069,22 +1069,22 @@ export const PatternWhatLevel = () => (
 
 const DECIDE = [
   {
-    q: 'Records per sitting',
+    q: 'How many records in 1 sitting?',
     use: ['Several', 'Moving between records, keeping their place.'],
     page: ['1', 'Arrived at from a link, alert or search.'],
   },
   {
-    q: 'Work on 1 record',
+    q: 'How long is the work on each?',
     use: ['Short', 'Read, check, approve, assign, flag.'],
     page: ['Long', 'Configure, author, multi-step, Save and draft.'],
   },
   {
-    q: 'Detail content',
+    q: 'How much does the detail show?',
     use: ['Summary + tabs', 'Fits in 480px (size.large).'],
     page: ['Wide', 'Tables, charts, editors, nested lists.'],
   },
   {
-    q: 'The list while a record is open',
+    q: 'Does the list still matter once a record is open?',
     use: [
       'Still matters',
       'Count, filters and next item are part of the task.',
@@ -1092,7 +1092,7 @@ const DECIDE = [
     page: ['Noise', 'Once open, the rest of the set is irrelevant.'],
   },
   {
-    q: 'Comparison',
+    q: 'What is being compared?',
     use: ['Whole records', 'Flipped between, same fields in the same place.'],
     page: ['1 or 2 values', 'Across many rows. That is a table.'],
   },
