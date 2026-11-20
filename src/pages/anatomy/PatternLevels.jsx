@@ -1370,77 +1370,6 @@ const StoryLink = ({ id }) => {
 };
 
 // Index card: mock, title, persona and the job in 1 line, link to the full story.
-const StoryCard = ({ id, title, tagline, persona, role, job, mock }) => (
-  <Box gap="medium">
-    {mock}
-    <Grid columns={['medium', 'flex']} gap="large">
-      <Box gap="xxsmall">
-        <Box direction="row" gap="xsmall" align="center">
-          <Checkmark size="small" color="status-ok" />
-          <Heading level={3} size="xsmall" margin="none">
-            {title}
-          </Heading>
-        </Box>
-        <Text>{tagline}</Text>
-        <Label>
-          {persona}, {role.toLowerCase()}
-        </Label>
-      </Box>
-      <Box gap="small" align="start">
-        <JobStatement job={job} size="medium" />
-        <StoryLink id={id} />
-      </Box>
-    </Grid>
-  </Box>
-);
-
-const CHECK = [
-  'There are more records than fit on 1 screen, and the set can grow.',
-  'A person will look at several of them in 1 sitting.',
-  'Each record is worth more than 1 row, but fits in 1 pane.',
-  'Actions on a record are short: read, approve, edit a field, assign.',
-];
-
-export const PatternWhenLevel = () => (
-  <Box gap="large">
-    <Lead>
-      Use list–detail when the work is across many records. 4 short stories show
-      what that looks like in practice. Each has its own page.
-    </Lead>
-
-    <Box gap="medium">
-      <SectionHeading>Use it when</SectionHeading>
-      <Box>
-        {USE.map((story, i) => (
-          <Box
-            key={story.id}
-            pad={{ vertical: 'xlarge' }}
-            border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
-          >
-            <StoryCard {...story} />
-          </Box>
-        ))}
-      </Box>
-    </Box>
-
-    <Box
-      background="background-contrast"
-      round="medium"
-      pad="medium"
-      gap="small"
-    >
-      <Box gap="xxsmall">
-        <Text size="small" weight={500} color="text-weak">
-          Quick check
-        </Text>
-        <Text size="large">
-          If all 4 are true, list–detail is the right call.
-        </Text>
-      </Box>
-      <Bullets items={CHECK} />
-    </Box>
-  </Box>
-);
 
 // Full story page: who, the moment, the job, why it matters, how the page helps.
 const StoryHeading = ({ children }) => (
@@ -1519,16 +1448,11 @@ export const PatternStoryLevel = ({ id }) => {
 
       <Box
         direction="row"
-        justify="between"
+        justify="end"
         align="center"
         pad={{ top: 'medium' }}
         border={{ side: 'top', color: 'border-weak' }}
       >
-        <Anchor
-          label="All 4 stories"
-          size="small"
-          onClick={() => go('pattern/when')}
-        />
         <Anchor
           label={`Next story: ${next.title}`}
           icon={<LinkNext size="small" />}

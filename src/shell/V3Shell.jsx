@@ -385,6 +385,8 @@ const NavParentV3 = ({ item, level = 1, selected, onSelect }) => {
         level={level}
         selected={selected.key === item.key}
         onSelect={(i) => {
+          // Without a page of its own, the label just toggles the children.
+          if (!item.href) return setExpanded(!open);
           setExpanded(true);
           onSelect(i);
         }}

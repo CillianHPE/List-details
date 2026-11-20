@@ -40,7 +40,6 @@ import {
 import { CritNov19Level } from './CritLevels';
 import {
   PatternWhatLevel,
-  PatternWhenLevel,
   PatternStoryLevel,
   PatternWhenNotLevel,
 } from './PatternLevels';
@@ -585,11 +584,6 @@ export const PAGES = {
     subtitle:
       'The list–detail pattern in plain language, starting from the job it does.',
     Content: PatternWhatLevel,
-  },
-  'pattern/when': {
-    title: 'User stories',
-    subtitle: '4 stories showing when list–detail fits, and a quick check.',
-    Content: PatternWhenLevel,
   },
   'pattern/when/gather': {
     title: 'Clearing the access request queue',

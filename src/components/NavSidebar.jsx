@@ -40,7 +40,6 @@ export const navItems = {
     {
       key: 'proto-pattern-when',
       label: 'User stories',
-      href: '#/pattern/when',
       children: [
         {
           key: 'proto-pattern-when-gather',
