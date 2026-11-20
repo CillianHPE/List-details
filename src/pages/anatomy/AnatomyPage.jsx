@@ -583,26 +583,25 @@ export const PAGES = {
   },
   'pattern/when/gather': {
     title: 'Clearing the access request queue',
-    subtitle:
-      'Gather · Priya, workspace administrator, works through 3 requests in 1 sitting.',
+    subtitle: 'A Gather story: working through a queue, 1 record at a time.',
     Content: () => <PatternStoryLevel id="gather" />,
   },
   'pattern/when/compare': {
     title: 'Spotting what differs between 2 servers',
     subtitle:
-      'Compare · Daniel, infrastructure engineer, flips between near-identical records.',
+      'A Compare story: flipping between similar records to find the difference.',
     Content: () => <PatternStoryLevel id="compare" />,
   },
   'pattern/when/triage': {
     title: 'Finding the critical few in 2,340 resources',
     subtitle:
-      'Triage · Mei-Ling, NOC operator, acts on the alerts that matter.',
+      'A Triage story: finding the few that matter in a large set, then acting.',
     Content: () => <PatternStoryLevel id="triage" />,
   },
   'pattern/when/quick-edit': {
     title: 'Assigning owners to 41 devices',
     subtitle:
-      'Quick edit · Tomás, asset manager, makes the same small change 41 times.',
+      'A Quick edit story: the same small change, across a lot of records.',
     Content: () => <PatternStoryLevel id="quick-edit" />,
   },
   anatomy: {

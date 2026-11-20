@@ -1352,21 +1352,32 @@ export const PatternStoryLevel = ({ id }) => {
       <Box gap="large" width={{ max: 'xlarge' }}>
         <Box gap="medium" pad={{ top: 'medium' }}>
           <StoryHeading>The story</StoryHeading>
+          <Box direction="row" gap="small" align="center">
+            <Box
+              width="36px"
+              height="36px"
+              round="full"
+              background="background-contrast"
+              align="center"
+              justify="center"
+              flex={false}
+            >
+              <Text size="small" weight={500}>
+                {story.persona[0]}
+              </Text>
+            </Box>
+            <Box>
+              <Text weight={500}>
+                {story.persona}, {story.role.toLowerCase()}
+              </Text>
+              <Text size="small" color="text-weak">
+                {story.context}
+              </Text>
+            </Box>
+          </Box>
           <Lead>{story.scene}</Lead>
           <JobStatement job={story.job} />
         </Box>
-
-        <StoryBlock title="Who">
-          <Grid columns={['1/3', '2/3']} gap="large">
-            <Box gap="xxsmall">
-              <Text size="large" weight={500}>
-                {story.persona}
-              </Text>
-              <Text color="text-weak">{story.role}</Text>
-            </Box>
-            <Text>{story.context}</Text>
-          </Grid>
-        </StoryBlock>
 
         <StoryBlock title="Why it matters">
           <Grid columns={{ count: 3, size: 'auto' }} gap="large">
