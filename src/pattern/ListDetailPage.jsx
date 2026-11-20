@@ -252,6 +252,10 @@ export const ListDetailPage = ({
             // the full height of the surface beside a long detail
             // (Anatomy › Scroll & height).
             align="stretch"
+            // List and detail are sibling content sections inside the primary
+            // content area, so the gutter between them is a true gap:
+            // 48px (edgeSize.xlarge). No divider, no split padding.
+            gap={stacked ? undefined : 'xlarge'}
             height={
               fillHeight ? `calc(100vh - ${surfaceTop + 12}px)` : undefined
             }
@@ -283,10 +287,10 @@ export const ListDetailPage = ({
                         : bare
                           ? stacked
                             ? { vertical: 'medium' }
-                            : { right: 'medium' }
+                            : undefined
                           : stacked
                             ? 'medium'
-                            : { left: 'medium', right: 'medium' }
+                            : { left: 'medium' }
                     }
                     gap="xsmall"
                     style={
@@ -373,17 +377,14 @@ export const ListDetailPage = ({
             {detailVisible && (
               <Box
                 // List and detail are sibling zones inside the primary
-                // content area, so the gutter is the content-section gap:
-                // 48px (xlarge), 24px (medium) each side.
+                // content area; the 48px gutter is the Grid gap above.
                 pad={
                   bare
-                    ? stacked
-                      ? undefined
-                      : { left: 'medium' }
+                    ? undefined
                     : {
                         vertical: 'medium',
                         right: 'medium',
-                        left: 'medium',
+                        left: stacked ? 'medium' : undefined,
                       }
                 }
                 overflow={fillHeight ? 'auto' : undefined}
