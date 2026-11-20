@@ -1108,52 +1108,45 @@ const Verdict = ({ pair: [lead, text] }) => (
   </Box>
 );
 
-const DecideColumn = ({ icon, color, title, pick }) => (
-  <Box
-    background="background-back"
-    round="small"
-    border={{ color: 'border-weak' }}
-    pad="medium"
-    gap="small"
-  >
-    <Box
-      direction="row"
-      gap="xsmall"
-      align="center"
-      pad={{ bottom: 'small' }}
-      border={{ side: 'bottom', color: 'border-weak' }}
+const DecideSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['1fr', '1fr', '1fr']}
+      gap="medium"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
     >
-      {icon}
-      <Text weight={500} color={color}>
-        {title}
+      <Text size="small" weight={500} color="text-weak">
+        Ask
       </Text>
-    </Box>
-    {DECIDE.map((row) => (
-      <Box key={row.q} gap="2px" pad={{ vertical: 'xsmall' }}>
-        <Text size="xsmall" color="text-weak" weight={500}>
-          {row.q.toUpperCase()}
+      <Box direction="row" gap="xsmall" align="center">
+        <Checkmark size="small" color="status-ok" />
+        <Text size="small" weight={500} color="text-weak">
+          Use list–detail when
         </Text>
-        <Verdict pair={pick(row)} />
       </Box>
+      <Box direction="row" gap="xsmall" align="center">
+        <Close size="small" color="status-critical" />
+        <Text size="small" weight={500} color="text-weak">
+          Give it a page when
+        </Text>
+      </Box>
+    </Grid>
+    {rows.map(({ q, use, page }) => (
+      <Grid
+        key={q}
+        columns={['1fr', '1fr', '1fr']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Text weight={500}>{q}</Text>
+        <Verdict pair={use} />
+        <Verdict pair={page} />
+      </Grid>
     ))}
   </Box>
-);
-
-const DecideSheet = () => (
-  <Grid columns={{ count: 2, size: 'auto' }} gap="medium">
-    <DecideColumn
-      icon={<Checkmark size="small" color="status-ok" />}
-      color="status-ok"
-      title="Use list–detail"
-      pick={(r) => r.use}
-    />
-    <DecideColumn
-      icon={<Close size="small" color="status-critical" />}
-      color="status-critical"
-      title="Give it a page"
-      pick={(r) => r.page}
-    />
-  </Grid>
 );
 
 const SCENARIOS = [
@@ -1162,87 +1155,76 @@ const SCENARIOS = [
     name: 'Gather',
     fit: 'Strong',
     text: 'Work a queue 1 record at a time. The count is the progress bar.',
-    rows: [1, 0, 0, 0],
   },
   {
     id: 'compare',
     name: 'Compare',
     fit: 'Strong',
     text: 'Flip between 2 or 3 similar records, same fields in the same place.',
-    rows: [1, 1, 0, 0],
   },
   {
     id: 'triage',
     name: 'Triage',
     fit: 'Strong',
     text: 'Filter a large set to the few that matter, then act on each.',
-    rows: [0, 1, 0, 1],
   },
   {
     id: 'quick-edit',
     name: 'Quick edit',
     fit: 'Good',
     text: 'The same small change across many records, without a mode switch.',
-    rows: [1, 1, 1, 1],
   },
 ];
 
-// Tiny 2-zone glyph: a list with the marked rows highlighted and a detail pane.
-const ScenarioGlyph = ({ rows }) => (
+const FitChip = ({ fit }) => (
   <Box
-    direction="row"
-    gap="xsmall"
-    pad="xsmall"
-    height="56px"
-    background="background-front"
-    round="xsmall"
-    border={{ color: 'border-weak' }}
+    alignSelf="start"
+    style={{ justifySelf: 'start' }}
+    pad={{ horizontal: 'small', vertical: '2px' }}
+    round="large"
+    background={fit === 'Strong' ? 'status-ok' : 'background-contrast'}
+    flex={false}
   >
-    <Box width="36px" gap="3px" flex={false}>
-      {rows.map((on, i) => (
-        <Box
-          key={i}
-          height="8px"
-          round="2px"
-          background={on ? 'brand' : 'background-contrast'}
-        />
-      ))}
-    </Box>
-    <Box flex background="background-contrast" round="2px" />
+    <Text size="xsmall" weight={500}>
+      {fit}
+    </Text>
   </Box>
 );
 
-const ScenarioCard = ({ id, name, fit, text, rows }) => {
+const ScenarioSheet = ({ rows }) => {
   const go = useContext(AnatomyNav);
   return (
-    <Box
-      background="background-back"
-      round="small"
-      border={{ color: 'border-weak' }}
-      pad="medium"
-      gap="small"
-    >
-      <ScenarioGlyph rows={rows} />
-      <Box direction="row" justify="between" align="center">
-        <Text weight={500}>{name}</Text>
-        <Box
-          pad={{ horizontal: 'small', vertical: '2px' }}
-          round="large"
-          background={fit === 'Strong' ? 'status-ok' : 'background-contrast'}
-        >
-          <Text size="xsmall" weight={500}>
-            {fit} fit
+    <Box>
+      <Grid
+        columns={['small', 'xsmall', 'flex']}
+        gap="medium"
+        pad={{ bottom: 'xsmall' }}
+        border={{ side: 'bottom', color: 'border' }}
+      >
+        {['Scenario', 'Fit', 'What it looks like'].map((h) => (
+          <Text key={h} size="small" weight={500} color="text-weak">
+            {h}
           </Text>
-        </Box>
-      </Box>
-      <Text size="small">{text}</Text>
-      <Anchor
-        label="Read the story"
-        icon={<LinkNext size="small" />}
-        reverse
-        size="small"
-        onClick={() => go(`pattern/when/${id}`)}
-      />
+        ))}
+      </Grid>
+      {rows.map(({ id, name, fit, text }) => (
+        <Grid
+          key={id}
+          columns={['small', 'xsmall', 'flex']}
+          gap="medium"
+          pad={{ vertical: 'small' }}
+          border={{ side: 'bottom', color: 'border-weak' }}
+          align="start"
+        >
+          <Anchor
+            label={name}
+            weight={500}
+            onClick={() => go(`pattern/when/${id}`)}
+          />
+          <FitChip fit={fit} />
+          <Text>{text}</Text>
+        </Grid>
+      ))}
     </Box>
   );
 };
@@ -1259,11 +1241,11 @@ export const PatternUseLevel = () => (
       <Box gap="2px">
         <SectionHeading>Decide in 5 questions</SectionHeading>
         <Text color="text-weak">
-          Read down 1 column. If answers split, browse here and hand the deep
-          work off to a page.
+          Most answers fall in 1 column. If they split, browse here and hand the
+          deep work off to a page.
         </Text>
       </Box>
-      <DecideSheet />
+      <DecideSheet rows={DECIDE} />
     </Box>
 
     <Box gap="medium">
@@ -1271,11 +1253,7 @@ export const PatternUseLevel = () => (
         <SectionHeading>The scenarios it serves</SectionHeading>
         <Text color="text-weak">4 scenarios, each with a user story.</Text>
       </Box>
-      <Grid columns={{ count: 4, size: 'auto' }} gap="small">
-        {SCENARIOS.map((sc) => (
-          <ScenarioCard key={sc.id} {...sc} />
-        ))}
-      </Grid>
+      <ScenarioSheet rows={SCENARIOS} />
     </Box>
   </Box>
 );
