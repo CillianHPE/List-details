@@ -1,4 +1,11 @@
-import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Box,
   Button,
@@ -47,15 +54,18 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     divider,
     contained,
     contextPane,
+    keepTab,
     setDivider,
     setContained,
     setContextPane,
+    setKeepTab,
   } = usePrototype();
   const [open, setOpen] = useState(false);
   const switches = [
     ['Divider', divider, setDivider],
     ['Contained list', contained, setContained],
     ['Context pane', contextPane, setContextPane],
+    ['Keep tab across records', keepTab, setKeepTab],
   ];
   if (onChromeChange) switches.push(['App chrome', chrome, onChromeChange]);
   return (
@@ -603,16 +613,26 @@ export const V3Shell = ({
   const [divider, setDivider] = useState(false);
   const [contained, setContained] = useState(false);
   const [contextPane, setContextPane] = useState(false);
+  const [keepTab, setKeepTab] = useState(true);
+  const [detailTabs, setDetailTabs] = useState({});
+  const setDetailTab = useCallback(
+    (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),
+    [],
+  );
   const prototype = useMemo(
     () => ({
       divider,
       contained,
       contextPane,
+      keepTab,
+      detailTabs,
       setDivider,
       setContained,
       setContextPane,
+      setKeepTab,
+      setDetailTab,
     }),
-    [divider, contained, contextPane],
+    [divider, contained, contextPane, keepTab, detailTabs, setDetailTab],
   );
   const switches = (
     <PrototypeSwitches chrome={chrome} onChromeChange={onChromeChange} />

@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useDetailTab } from '../../shell/ShellContext';
 import {
   Anchor,
   Box,
@@ -614,7 +615,7 @@ const Support = ({ server }) => {
 
 // E · Detail body — same 6 facets as the COM server page
 export const ServerDetail = ({ server }) => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useDetailTab();
   const connected = server.state === 'Connected';
   return (
     <Box>

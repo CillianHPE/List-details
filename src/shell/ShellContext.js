@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 // Which app-shell variant the page is rendered in. Pages can use it to adapt
 // containment (e.g. a bordered pane on a white V3 canvas vs. a filled pane on
@@ -13,11 +13,27 @@ export const useShell = () => useContext(ShellContext);
 export const PrototypeContext = createContext({
   divider: false,
   contained: false,
+  keepTab: true,
+  detailTabs: {},
   setDivider: () => {},
   setContained: () => {},
+  setKeepTab: () => {},
+  setDetailTab: () => {},
 });
 
 export const usePrototype = () => useContext(PrototypeContext);
+
+// Which detail tab is showing. With "Keep tab" on (crit 19 Nov: a reviewer
+// comparing records expects the same facet across them) the index lives in
+// the shell, keyed by page, so switching records keeps the tab. Off, each
+// record mounts fresh on Overview.
+export const useDetailTab = () => {
+  const { keepTab, detailTabs, setDetailTab } = useContext(PrototypeContext);
+  const page = window.location.hash;
+  const [local, setLocal] = useState(0);
+  if (!keepTab) return [local, setLocal];
+  return [detailTabs[page] ?? 0, (i) => setDetailTab(page, i)];
+};
 
 // Global header is position: sticky at the top of the viewport in every shell;
 // page content slides beneath it. Anything else that sticks (nav pane, list

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useDetailTab } from '../../shell/ShellContext';
 import { Anchor, Box, List, Menu, Tab, Tag, Text } from 'grommet';
 import { EmptyState } from '../../components/EmptyState';
 import {
@@ -176,7 +176,7 @@ const CustomAttributes = ({ resource }) => (
 
 // E · Detail body
 export const ResourceDetail = ({ resource }) => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useDetailTab();
   return (
     <Box>
       <DetailHeader resource={resource}>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDetailTab } from '../../shell/ShellContext';
 import {
   Anchor,
   Box,
@@ -352,7 +353,7 @@ const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
 // states in every other tab — a workspace with little data yet.
 export const UserDetail = ({ user, variant = 'full' }) => {
   const [name, setName] = useState(user.name);
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useDetailTab();
   return (
     <Box>
       <DetailHeader user={user} name={name} onRename={setName} />

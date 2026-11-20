@@ -123,7 +123,7 @@ const ZONES = {
     'None',
     'Fixed. Does not scale with the surface or collapse before the zones stack.',
     {
-      space: '48px (edgeSize.xlarge) · 24px (edgeSize.medium) each side',
+      space: '48px (edgeSize.xlarge) gap, no divider',
       why: [
         'List and detail are sibling zones inside the primary content area, so they take the content-section gap from the spacing scale: 48px (edgeSize.xlarge)',
         'Page regions use 64px (edgeSize.xxlarge); items within a section use 16px (edgeSize.small)',

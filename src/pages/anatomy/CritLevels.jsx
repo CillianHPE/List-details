@@ -82,11 +82,11 @@ const OPEN = [
 const PLAN = [
   [
     'Lock defaults (done)',
-    'Divider off, list uncontained, contained padding small (16px, size.small). List and detail are sibling zones inside the primary content area, so the gutter between them is the content-section gap: 48px (size.xlarge), 24px (size.medium) each side.',
+    'Divider off, list uncontained, contained padding small (16px, size.small). List and detail are sibling zones inside the primary content area, so the gutter between them is a single content-section gap of 48px (size.xlarge), set as a grid gap with no divider and no per-side padding.',
   ],
   [
-    'Fix the details',
-    'Support card button, name–value list gaps, Sales Cockpit status indicator.',
+    'Fix the details (done)',
+    'Support card button is now secondary; name–value rows tightened to 8px (size.xxsmall); the Sales Cockpit list shows icon + status name with the score as secondary text, per the status indicator guidance.',
   ],
   [
     'Elevation audit (done)',
@@ -106,8 +106,8 @@ const PLAN = [
     'Detail-pane scroll vs full-page scroll with sticky header and tabs, as a header switch for the next crit.',
   ],
   [
-    'Persist sub-tab',
-    'Keep the selected detail tab while clicking through records.',
+    'Persist sub-tab (done)',
+    'Default on: the selected detail tab is kept while clicking through records, per page. "Keep tab across records" in prototype options switches it off to compare.',
   ],
   [
     'Resize divider',

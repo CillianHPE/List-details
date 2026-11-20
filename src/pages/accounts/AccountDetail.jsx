@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useDetailTab } from '../../shell/ShellContext';
 import {
   Anchor,
   Box,
@@ -409,7 +409,7 @@ const Subscriptions = ({ account }) => {
 // E · Detail body — tabs mirror the redesigned account page's tab bar
 // (Overview · User engagement · Adoption · Configuration · Subscriptions).
 export const AccountDetail = ({ account }) => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useDetailTab();
   return (
     <Box>
       <DetailHeader account={account} />

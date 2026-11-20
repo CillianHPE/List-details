@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDetailTab } from '../../shell/ShellContext';
 import {
   Anchor,
   Box,
@@ -642,7 +643,7 @@ const Subscriptions = ({ account }) => (
 
 // E · Detail body — same five facets as the Figma detail pages.
 export const CockpitDetail = ({ account }) => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useDetailTab();
   return (
     <Box>
       <DetailHeader account={account} />
