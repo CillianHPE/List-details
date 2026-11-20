@@ -1467,13 +1467,17 @@ export const PatternStoryLevel = ({ id }) => {
   const next = USE[(index + 1) % USE.length];
   return (
     <Box gap="large">
-      <Lead>{story.scene}</Lead>
       {story.mock}
 
       <Box gap="large" width={{ max: 'xlarge' }}>
-        <Grid columns={['1/3', '2/3']} gap="large" pad={{ top: 'medium' }}>
-          <Box gap="small">
-            <StoryHeading>Who</StoryHeading>
+        <Box gap="medium" pad={{ top: 'medium' }}>
+          <StoryHeading>The story</StoryHeading>
+          <Lead>{story.scene}</Lead>
+          <JobStatement job={story.job} />
+        </Box>
+
+        <StoryBlock title="Who">
+          <Grid columns={['1/3', '2/3']} gap="large">
             <Box gap="xxsmall">
               <Text size="large" weight={500}>
                 {story.persona}
@@ -1481,12 +1485,8 @@ export const PatternStoryLevel = ({ id }) => {
               <Text color="text-weak">{story.role}</Text>
             </Box>
             <Text>{story.context}</Text>
-          </Box>
-          <Box gap="small">
-            <StoryHeading>The job to be done</StoryHeading>
-            <JobStatement job={story.job} />
-          </Box>
-        </Grid>
+          </Grid>
+        </StoryBlock>
 
         <StoryBlock title="Why it matters">
           <Grid columns={{ count: 3, size: 'auto' }} gap="large">
