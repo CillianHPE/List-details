@@ -350,7 +350,11 @@ const NavParentV3 = ({ item, selected, onSelect }) => {
     `nav.expanded.${item.key}`,
     false,
   );
-  const open = expanded || hasActiveChild || selected.key === item.key;
+  // Re-open when the route moves into this item, but let the user collapse it.
+  useEffect(() => {
+    if (hasActiveChild || selected.key === item.key) setExpanded(true);
+  }, [hasActiveChild, selected.key, item.key, setExpanded]);
+  const open = expanded;
   return (
     <Box>
       <NavItemV3
