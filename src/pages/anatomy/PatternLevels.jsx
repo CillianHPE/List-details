@@ -1173,8 +1173,7 @@ const JTBD = [
   },
 ];
 
-const JTBD_PARTS = ['When I am', 'I want to', 'So I can'];
-const JTBD_COLUMNS = ['1fr', '1.3fr', '1fr'];
+const JTBD_PARTS = ['When I am ', 'I want to ', 'so I can '];
 
 const JtbdPart = ({ children }) => (
   <Text size="large" weight={500}>
@@ -1182,48 +1181,36 @@ const JtbdPart = ({ children }) => (
   </Text>
 );
 
-// 1 category, full width: heading, then a 3-column sheet whose headers are
-// the 3 parts of a job statement, so every row reads as the same sentence.
+// 1 job as a card: the 3 parts stacked so the sentence reads top to bottom.
+const JtbdCard = ({ parts }) => (
+  <Box
+    background="background-back"
+    round="small"
+    pad="medium"
+    gap="xsmall"
+    border={{ color: 'border-weak' }}
+  >
+    {parts.map((part, i) => (
+      <Text key={JTBD_PARTS[i]}>
+        <Text weight={500}>{JTBD_PARTS[i]}</Text>
+        {part}
+        {i < 2 ? ',' : '.'}
+      </Text>
+    ))}
+  </Box>
+);
+
 const JtbdGroup = ({ group, tagline, jobs }) => (
   <Box gap="medium">
     <Box gap="2px">
       <SectionHeading>{group}</SectionHeading>
       <Text color="text-weak">{tagline}</Text>
     </Box>
-    <Box>
-      <Grid
-        columns={JTBD_COLUMNS}
-        gap="large"
-        pad={{ bottom: 'xsmall' }}
-        border={{ side: 'bottom', color: 'border' }}
-      >
-        {JTBD_PARTS.map((h) => (
-          <Text key={h} size="small" weight={500} color="text-weak">
-            {h}
-          </Text>
-        ))}
-      </Grid>
+    <Grid columns={{ count: 2, size: 'auto' }} gap="small">
       {jobs.map((parts) => (
-        <Grid
-          key={parts.join()}
-          columns={JTBD_COLUMNS}
-          gap="large"
-          pad={{ vertical: 'small' }}
-          border={{ side: 'bottom', color: 'border-weak' }}
-          align="start"
-        >
-          {parts.map((part, i) => (
-            <Text key={JTBD_PARTS[i]}>
-              <Text weight={500}>
-                {i === 0 ? 'When I am ' : i === 1 ? 'I want to ' : 'so I can '}
-              </Text>
-              {part}
-              {i < 2 ? ',' : '.'}
-            </Text>
-          ))}
-        </Grid>
+        <JtbdCard key={parts.join()} parts={parts} />
       ))}
-    </Box>
+    </Grid>
   </Box>
 );
 
