@@ -13,11 +13,15 @@ export const useShell = () => useContext(ShellContext);
 export const PrototypeContext = createContext({
   divider: false,
   contained: false,
+  // Experimental (Oliver, 20 Nov): grey wrapper around the whole list–detail
+  // surface with the detail in a white card; list sits on the grey.
+  wrapped: false,
   keepTab: true,
   pageScroll: false,
   detailTabs: {},
   setDivider: () => {},
   setContained: () => {},
+  setWrapped: () => {},
   setKeepTab: () => {},
   setPageScroll: () => {},
   setDetailTab: () => {},

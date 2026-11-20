@@ -54,11 +54,13 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   const {
     divider,
     contained,
+    wrapped,
     contextPane,
     keepTab,
     pageScroll,
     setDivider,
     setContained,
+    setWrapped,
     setContextPane,
     setKeepTab,
     setPageScroll,
@@ -67,6 +69,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   const switches = [
     ['Divider', divider, setDivider],
     ['Contained list', contained, setContained],
+    ['Grey wrapper (experimental)', wrapped, setWrapped],
     ['Context pane', contextPane, setContextPane],
     ['Keep tab across records', keepTab, setKeepTab],
     ['Full-page scroll', pageScroll, setPageScroll],
@@ -655,6 +658,7 @@ export const V3Shell = ({
 }) => {
   const [divider, setDivider] = useState(false);
   const [contained, setContained] = useState(false);
+  const [wrapped, setWrapped] = useState(false);
   const [contextPane, setContextPane] = useState(false);
   const [keepTab, setKeepTab] = useState(true);
   // Crit 19 Nov: compare detail-pane scroll with the whole page scrolling
@@ -669,12 +673,14 @@ export const V3Shell = ({
     () => ({
       divider,
       contained,
+      wrapped,
       contextPane,
       keepTab,
       pageScroll,
       detailTabs,
       setDivider,
       setContained,
+      setWrapped,
       setContextPane,
       setKeepTab,
       setPageScroll,
@@ -683,6 +689,7 @@ export const V3Shell = ({
     [
       divider,
       contained,
+      wrapped,
       contextPane,
       keepTab,
       pageScroll,

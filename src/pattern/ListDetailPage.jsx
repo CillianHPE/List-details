@@ -130,7 +130,11 @@ export const ListDetailPage = ({
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype controls (divider, contained list) live in the global header.
-  const { divider, contained, pageScroll } = usePrototype();
+  const { divider, contained, wrapped, pageScroll } = usePrototype();
+  // Grey wrapper: the whole surface is 1 background-back container, the list
+  // sits on it bare and the detail becomes a white card, so the list's own
+  // contained surface is dropped while this is on.
+  const listContained = contained && !wrapped;
   const [showDetail, setShowDetail] = useState(false);
   // Narrow entry (crit 19 Nov): when the surface drops to 1 column with a
   // record already selected, land on that record, matching the wide view;
@@ -244,9 +248,10 @@ export const ListDetailPage = ({
         {/* One contained surface holding both columns, split by a divider */}
         <ContentPane
           ref={surfaceRef}
-          pad="none"
-          overflow={bare ? undefined : 'hidden'}
-          round={bare ? false : 'xlarge'}
+          pad={wrapped && !stacked ? 'medium' : 'none'}
+          overflow={bare && !wrapped ? undefined : 'hidden'}
+          round={wrapped ? 'large' : bare ? false : 'xlarge'}
+          background={wrapped ? 'background-back' : 'background-front'}
         >
           {/* Proportional zones (Anatomy › Zones): list 40% / detail 60%,
               list floored at 256px (size.small), in whole px. */}
@@ -263,16 +268,22 @@ export const ListDetailPage = ({
             // List and detail are sibling content sections inside the primary
             // content area, so the gutter between them is a true gap:
             // 48px (edgeSize.xlarge). No divider, no split padding.
-            gap={stacked ? undefined : 'xlarge'}
+            gap={stacked ? undefined : wrapped ? 'medium' : 'xlarge'}
             height={
-              fillHeight ? `calc(100vh - ${surfaceTop + 12}px)` : undefined
+              fillHeight
+                ? `calc(100vh - ${surfaceTop + 12 + (wrapped ? 48 : 0)}px)`
+                : undefined
             }
             style={fillHeight ? { minHeight: 0 } : undefined}
           >
             {/* B + C · List pane */}
             {listVisible && (
               <Box
-                pad={stacked || bare ? undefined : { vertical: 'medium' }}
+                pad={
+                  stacked || bare || wrapped
+                    ? undefined
+                    : { vertical: 'medium' }
+                }
                 // Grid items default to min-width:auto, which would let the
                 // toolbar's intrinsic width override the fr share.
                 style={stacked ? undefined : { minWidth: 0 }}
@@ -290,9 +301,9 @@ export const ListDetailPage = ({
                 >
                   <Box
                     pad={
-                      contained
+                      listContained
                         ? 'small'
-                        : bare
+                        : bare || wrapped
                           ? stacked
                             ? { vertical: 'medium' }
                             : undefined
@@ -312,10 +323,10 @@ export const ListDetailPage = ({
                     // Contained: the whole list zone (toolbar, filters, count,
                     // rows) sits on a background-contrast surface, same
                     // treatment as the detail cards
-                    background={contained ? 'background-back' : undefined}
-                    round={contained ? 'medium' : undefined}
+                    background={listContained ? 'background-back' : undefined}
+                    round={listContained ? 'medium' : undefined}
                     margin={
-                      contained && !stacked
+                      listContained && !stacked
                         ? bare
                           ? { right: 'medium' }
                           : { horizontal: 'medium' }
@@ -387,14 +398,20 @@ export const ListDetailPage = ({
                 // List and detail are sibling zones inside the primary
                 // content area; the 48px gutter is the Grid gap above.
                 pad={
-                  bare
-                    ? undefined
-                    : {
-                        vertical: 'medium',
-                        right: 'medium',
-                        left: stacked ? 'medium' : undefined,
-                      }
+                  wrapped
+                    ? 'medium'
+                    : bare
+                      ? undefined
+                      : {
+                          vertical: 'medium',
+                          right: 'medium',
+                          left: stacked ? 'medium' : undefined,
+                        }
                 }
+                // Grey wrapper: detail is the 1 white card on the grey
+                // surface (Oliver's sketch), so it carries its own chrome.
+                background={wrapped ? 'background-front' : undefined}
+                round={wrapped ? 'medium' : undefined}
                 overflow={fillHeight ? 'auto' : undefined}
                 style={fillHeight ? { minHeight: 0 } : undefined}
               >
