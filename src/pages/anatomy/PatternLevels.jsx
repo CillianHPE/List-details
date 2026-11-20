@@ -623,8 +623,14 @@ export const MockZones = () => (
         {ROWS.map((i) => (
           <Box
             key={i}
-            pad={{ vertical: 'xsmall' }}
-            border={i > 0 ? { side: 'top', color: 'border-weak' } : undefined}
+            pad={{ vertical: 'xsmall', horizontal: 'xsmall' }}
+            round="xsmall"
+            background={i === 1 ? 'background-back' : undefined}
+            border={
+              i === 1
+                ? { side: 'left', color: 'border', size: '2px' }
+                : { side: 'left', color: 'transparent', size: '2px' }
+            }
             gap="xxsmall"
             flex={false}
           >
