@@ -58,6 +58,18 @@ export const navItems = {
       href: '#/opsramp-resources',
     },
   ],
+  Pattern: [
+    {
+      key: 'proto-pattern-what',
+      label: 'What it is',
+      href: '#/pattern/what',
+    },
+    {
+      key: 'proto-pattern-when',
+      label: 'When to use it',
+      href: '#/pattern/when',
+    },
+  ],
   Anatomy: [
     {
       key: 'proto-anatomy',

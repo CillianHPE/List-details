@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -295,6 +295,17 @@ const NavItemV3 = ({
 // Expandable parent (NavigationMenu/NavList): a regular nav item whose
 // trailing action is the Up/Down chevron; children sit one level deeper.
 // Parents start open and re-open whenever the route moves into them.
+// Groups that start a new section of the nav, separated by a divider.
+const NAV_DIVIDER_BEFORE = ['Design crit'];
+
+const NavDivider = () => (
+  <Box
+    border={{ side: 'bottom', color: 'border-weak' }}
+    margin={{ vertical: 'xsmall', horizontal: 'xsmall' }}
+    flex={false}
+  />
+);
+
 const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
   <Box>
     <NavItemV3
@@ -407,26 +418,24 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
                   onSelect={onSelect}
                 />
               ))}
-              <Box
-                border={{ side: 'bottom', color: 'border-weak' }}
-                margin={{ vertical: 'xsmall', horizontal: 'xsmall' }}
-                flex={false}
-              />
+              <NavDivider />
             </>
           )}
           {Object.entries(items)
             .filter(([group]) => group !== 'Examples')
             .map(([group, value]) =>
               Array.isArray(value) ? (
-                <NavGroupV3
-                  key={group}
-                  group={group}
-                  items={value}
-                  open={expanded.includes(group)}
-                  onToggle={() => toggle(group)}
-                  selected={selected}
-                  onSelect={onSelect}
-                />
+                <Fragment key={group}>
+                  {NAV_DIVIDER_BEFORE.includes(group) && <NavDivider />}
+                  <NavGroupV3
+                    group={group}
+                    items={value}
+                    open={expanded.includes(group)}
+                    onToggle={() => toggle(group)}
+                    selected={selected}
+                    onSelect={onSelect}
+                  />
+                </Fragment>
               ) : (
                 <NavItemV3
                   key={value.key}

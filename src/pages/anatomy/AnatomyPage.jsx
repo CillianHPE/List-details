@@ -38,6 +38,7 @@ import {
   ReadOnlyLevel,
 } from './StatesLevels';
 import { CritNov19Level } from './CritLevels';
+import { PatternWhatLevel, PatternWhenLevel } from './PatternLevels';
 
 // Lo-fi anatomy of the list–detail page, explored at four zoom levels:
 //   Page   · where the list–detail surface sits inside the app shell
@@ -574,6 +575,18 @@ const DetailWireframe = () => (
 // Every page under Anatomy / Behaviour / Responsive / States is addressed by
 // its route and rendered through this component so cross-links work.
 export const PAGES = {
+  'pattern/what': {
+    title: 'What it is',
+    subtitle:
+      'The list–detail pattern in plain language, starting from the job it does.',
+    Content: PatternWhatLevel,
+  },
+  'pattern/when': {
+    title: 'When to use it',
+    subtitle:
+      '4 scenarios where it fits, 4 where it does not, and a quick check.',
+    Content: PatternWhenLevel,
+  },
   anatomy: {
     title: 'Structure',
     subtitle:
