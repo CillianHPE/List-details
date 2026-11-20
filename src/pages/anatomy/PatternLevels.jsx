@@ -1450,14 +1450,23 @@ const StoryHeading = ({ children }) => (
   </Heading>
 );
 
-const StoryBlock = ({ title, children }) => (
+// Section of a story page. Heading plus optional supporting line, spaced like
+// the content header (2px between them), then `large` to the body.
+const StoryBlock = ({ title, subtitle, children }) => (
   <Box
-    gap="medium"
+    gap="large"
     pad={{ top: 'large' }}
     border={{ side: 'top', color: 'border-weak' }}
   >
-    <StoryHeading>{title}</StoryHeading>
-    {children}
+    <Box gap="2px">
+      <StoryHeading>{title}</StoryHeading>
+      {subtitle && (
+        <Text color="text-weak" style={{ maxWidth: '68ch' }}>
+          {subtitle}
+        </Text>
+      )}
+    </Box>
+    <Box gap="large">{children}</Box>
   </Box>
 );
 
@@ -1527,19 +1536,19 @@ export const PatternStoryLevel = ({ id }) => {
           </Grid>
         </StoryBlock>
 
-        <StoryBlock title="Alternative approaches">
-          <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-            Other ways to give {story.persona} this job, and why each one falls
-            short of it.
-          </Text>
+        <StoryBlock
+          title="Alternative approaches"
+          subtitle={`Other ways to give ${story.persona} this job, and why each one falls short of it.`}
+        >
           <Grid columns={{ count: 3, size: 'auto' }} gap="large">
             {story.without.alternatives.map(({ name, breaks, cost }) => (
-              <Box key={name} gap="small">
-                <Text weight={500}>{name}</Text>
-                <Text size="small" color="text-weak" weight={500}>
-                  Why it falls short
-                </Text>
-                <Text>{breaks}</Text>
+              <Box key={name} gap="medium">
+                <Box gap="small">
+                  <Heading level={3} size="xsmall" margin="none">
+                    {name}
+                  </Heading>
+                  <Text>{breaks}</Text>
+                </Box>
                 <Box direction="row" gap="xsmall" align="start">
                   <Close size="small" color="status-critical" aria-hidden />
                   <Text size="small" color="text-weak">
@@ -1549,7 +1558,13 @@ export const PatternStoryLevel = ({ id }) => {
               </Box>
             ))}
           </Grid>
-          <Box direction="row" gap="xsmall" align="start">
+          <Box
+            direction="row"
+            gap="xsmall"
+            align="start"
+            pad={{ top: 'medium' }}
+            border={{ side: 'top', color: 'border-weak' }}
+          >
             <Checkmark size="small" color="status-ok" aria-hidden />
             <Text style={{ maxWidth: '68ch' }}>{story.without.summary}</Text>
           </Box>
