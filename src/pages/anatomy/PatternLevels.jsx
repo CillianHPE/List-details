@@ -1,11 +1,14 @@
+import { useContext } from 'react';
 import {
   Checkmark,
   Close,
   Filter,
   Search,
   Descending,
+  LinkNext,
 } from '@hpe-design/icons-grommet';
-import { Box, Grid, Heading, Text } from 'grommet';
+import { Anchor, Box, Grid, Heading, Text } from 'grommet';
+import { AnatomyNav } from './primitives';
 
 // Pattern pages: the plain-language "what" and "when" of list–detail,
 // written from the job to be done rather than from the anatomy. Each point
@@ -1028,8 +1031,13 @@ export const PatternWhatLevel = () => (
 
 const USE = [
   {
+    id: 'gather',
     title: 'Gather',
-    persona: 'Priya, workspace administrator',
+    tagline: 'Working through a queue, 1 record at a time.',
+    persona: 'Priya',
+    role: 'Workspace administrator',
+    context:
+      'Owns access for a 48-person workspace. Approves requests between other work, usually in short bursts.',
     scene:
       'It is Monday. 3 access requests landed over the weekend and 1 of them is for an Administrator role. Priya does not approve blind: she wants to see who asked, who manages them and whether SSO is already set up.',
     job: {
@@ -1037,16 +1045,41 @@ const USE = [
       want: 'to see everything about each one without leaving the queue',
       so: 'I can approve or decline them in 1 sitting and know when I am done',
     },
+    why: [
+      'Access is a security decision. A wrong Administrator approval is the kind of mistake that gets audited.',
+      'Requests arrive in batches, so she wants to clear the whole batch, not just the first one she opens.',
+      'She has 10 minutes before her next meeting. Finishing matters more than being thorough on 1.',
+    ],
+    without:
+      'A plain table with an Approve button hides the manager and SSO status behind a click. A user profile page shows them, but each visit means leaving the queue and losing count of what is left.',
     beats: [
-      'The list is the queue. The pending filter is on by default, so she sees exactly what is left.',
-      'The detail pane holds role, manager and SSO status together. No hopping to a user page and back.',
-      'Approve, and the next request is 1 click away. The list count ticks down as she goes.',
+      {
+        zone: 'List',
+        text: 'The list is the queue. The pending filter is on by default, so she sees exactly what is left and the count of 3.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Role, manager and SSO status sit together in the detail pane. The decision needs all 3 and nothing else.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Approve and Decline are the primary actions, in the detail header, because they act on the record she is looking at.',
+      },
+      {
+        zone: 'Both',
+        text: 'Approving moves selection to the next request and the list count ticks down. Done is obvious: the list is empty.',
+      },
     ],
     mock: <MockListDetail {...USERS} selected={1} />,
   },
   {
+    id: 'compare',
     title: 'Compare',
-    persona: 'Daniel, infrastructure engineer',
+    tagline: 'Flipping between similar records to find the difference.',
+    persona: 'Daniel',
+    role: 'Infrastructure engineer',
+    context:
+      'Looks after 120 servers across 2 sites. Spends most of his day in monitoring and runbooks, not in this page.',
     scene:
       '2 production servers raised the same memory alert within 10 minutes. Daniel suspects a shared cause but needs to check: same workload, same firmware, same reboot history?',
     job: {
@@ -1054,44 +1087,114 @@ const USE = [
       want: 'to flip between them with the same fields in the same place',
       so: 'I can spot what is different while it is still fresh in my mind',
     },
+    why: [
+      'If it is a shared cause, 1 fix clears both alerts. If not, he has 2 separate incidents and needs to say so.',
+      'Comparison is a memory task. Every extra click between the 2 records is a chance to forget what he just read.',
+      'He is mid-incident. He will not write anything down; the page has to hold the state for him.',
+    ],
+    without:
+      'Opening each server in its own page means 2 tabs and alt-tabbing, with fields in different scroll positions. A table shows 1 field per column, but firmware, workload and reboot history would be 3 scrolls apart.',
     beats: [
-      'Both servers stay visible in the list while 1 is open, so he never loses the other candidate.',
-      'Switching is instant and the tabs do not move. The difference jumps out instead of being recalled.',
-      'Firmware is 1 version behind on 1 of them. He has his answer in under a minute.',
+      {
+        zone: 'List',
+        text: 'Both servers stay visible in the list with their status, so he never loses the other candidate.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Tabs and fields are in the same place for every server. Switching does not move his eyes, so the difference pops.',
+      },
+      {
+        zone: 'Both',
+        text: 'Selection switches instantly with no page load. He can flip 3 or 4 times without breaking concentration.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Recent events sit under the fields. Firmware is 1 version behind on 1 server, and the reboot history confirms it.',
+      },
     ],
     mock: <MockListDetail {...SERVERS} selected={1} />,
   },
   {
+    id: 'triage',
     title: 'Triage',
-    persona: 'Mei-Ling, NOC operator',
+    tagline: 'Finding the few that matter in a large set, then acting.',
+    persona: 'Mei-Ling',
+    role: 'NOC operator',
+    context:
+      'Monitors 2,340 resources on a rotating shift. Her job is to decide fast what is noise, what to acknowledge and what to escalate.',
     scene:
-      'Shift start. 2,340 monitored resources, and the overnight run left 2 critical and 1 warning. Mei-Ling needs to find them, understand each one and either acknowledge it or escalate.',
+      'Shift start. The overnight run left 2 critical and 1 warning out of 2,340. Mei-Ling needs to find them, understand each one and either acknowledge it or escalate to the on-call engineer.',
     job: {
       when: 'a large set has a few records that need attention right now',
       want: 'to find those few, understand each and act on it',
       so: 'I can clear the urgent work first without losing my place',
     },
+    why: [
+      'Critical alerts have an SLA. Minutes between seeing it and escalating it are measured.',
+      'Most of the 2,340 are healthy. Anything that makes her scroll past them is time taken from the 3 that matter.',
+      'She will be interrupted. When she comes back, the page needs to show her where she was.',
+    ],
+    without:
+      'A dashboard shows the count of criticals but not which ones. A full alert page per resource means 3 round trips and re-finding her place in the list each time.',
     beats: [
-      'Status icons in the list separate signal from noise at a glance. Sort by severity puts critical first.',
-      'The detail shows the alert, the recent events and the owner, enough to decide escalate or acknowledge.',
-      'She acts in the pane and moves to the next one. The list is still filtered to what matters.',
+      {
+        zone: 'List',
+        text: 'Status icons and a severity sort put the 2 criticals at the top. The filter chips narrow 2,340 to the handful in 1 click.',
+      },
+      {
+        zone: 'Detail',
+        text: 'The alert, the recent events and the owner are in the detail pane, enough to decide escalate or acknowledge without a second page.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Acknowledge and Escalate are short actions, so they live in the detail header rather than on their own page.',
+      },
+      {
+        zone: 'Both',
+        text: 'The list stays filtered and sorted after she acts. The next critical is already next in line.',
+      },
     ],
     mock: <MockListDetail {...RESOURCES} selected={0} />,
   },
   {
+    id: 'quick-edit',
     title: 'Quick edit',
-    persona: 'Tomás, asset manager',
+    tagline: 'The same small change, across a lot of records.',
+    persona: 'Tomás',
+    role: 'Asset manager',
+    context:
+      'Keeps the device inventory accurate for finance. Works in long, repetitive sessions when an audit or renewal is coming.',
     scene:
-      'An audit is 2 weeks out and 41 devices have no owner or cost centre. Each fix is 2 fields, but there are 41 of them and Tomás wants the list to empty as he works.',
+      'An audit is 2 weeks out and 41 devices have no owner or cost centre. Each fix is 2 fields, but there are 41 of them and Tomás wants to watch the list empty as he works.',
     job: {
       when: 'I need to make the same small change across many records',
       want: 'to select, edit and save without opening a full form each time',
       so: 'I can keep a rhythm and see my progress as the list shrinks',
     },
+    why: [
+      'Unassigned devices are a finding in the audit. Zero is the only acceptable number.',
+      '41 small edits is a rhythm task. Any friction per record is multiplied by 41.',
+      'He needs to see progress to stay motivated and to know when he can stop.',
+    ],
+    without:
+      'A full edit page per device means 41 page loads and 41 trips back to the list. A spreadsheet-style table works but loses the device context he needs to pick the right owner.',
     beats: [
-      'The unassigned filter turns the list into a to-do list. 41 becomes 40, 39, 38.',
-      'Owner and cost centre are editable in the pane. The edit is small enough that a full page would be in the way.',
-      'Save and the next device is already next in the list. No navigation, no reload, no lost scroll position.',
+      {
+        zone: 'List',
+        text: 'The unassigned filter turns the list into a to-do list. 41 becomes 40, 39, 38 as he saves.',
+      },
+      {
+        zone: 'Detail',
+        text: 'Owner and cost centre are editable in place. The edit is small enough that a full form would be in the way.',
+      },
+      {
+        zone: 'Detail',
+        text: 'The rest of the record (model, site, last seen) stays visible, so he picks the right owner without looking anything up.',
+      },
+      {
+        zone: 'Both',
+        text: 'Save, and the next device is already next in the list. No navigation, no reload, no lost scroll position.',
+      },
     ],
     mock: <MockListDetail {...OWNERS} selected={1} />,
   },
@@ -1191,52 +1294,61 @@ const Scenario = ({
   </Box>
 );
 
-// 1 story per row: full-width mock, then persona + scene, the job statement, and how the page helps.
-const Story = ({ title, persona, scene, job, beats, mock }) => (
+// Job statement in "When / I want / so" form.
+const JobStatement = ({ job, size = 'large' }) => (
+  <Box
+    border={{ side: 'left', color: 'border', size: 'small' }}
+    pad={{ left: 'medium' }}
+    gap="xxsmall"
+  >
+    {[
+      ['When', `${job.when},`],
+      ['I want', `${job.want},`],
+      ['so', `${job.so}.`],
+    ].map(([lead, text]) => (
+      <Text key={lead} size={size}>
+        <Text size={size} color="text-weak">
+          {lead}{' '}
+        </Text>
+        {text}
+      </Text>
+    ))}
+  </Box>
+);
+
+const StoryLink = ({ id }) => {
+  const go = useContext(AnatomyNav);
+  return (
+    <Anchor
+      label="Read the full story"
+      icon={<LinkNext size="small" />}
+      reverse
+      size="small"
+      onClick={() => go(`pattern/when/${id}`)}
+    />
+  );
+};
+
+// Index card: mock, title, persona and the job in 1 line, link to the full story.
+const StoryCard = ({ id, title, tagline, persona, role, job, mock }) => (
   <Box gap="medium">
     {mock}
-    <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="large">
-      <Box gap="small">
-        <Box gap="xxsmall">
-          <Box direction="row" gap="xsmall" align="center">
-            <Checkmark size="small" color="status-ok" />
-            <Heading level={3} size="xsmall" margin="none">
-              {title}
-            </Heading>
-          </Box>
-          <Label>{persona}</Label>
+    <Grid columns={['medium', 'flex']} gap="large">
+      <Box gap="xxsmall">
+        <Box direction="row" gap="xsmall" align="center">
+          <Checkmark size="small" color="status-ok" />
+          <Heading level={3} size="xsmall" margin="none">
+            {title}
+          </Heading>
         </Box>
-        <Text>{scene}</Text>
+        <Text>{tagline}</Text>
+        <Label>
+          {persona}, {role.toLowerCase()}
+        </Label>
       </Box>
-      <Box gap="small">
-        <Box
-          border={{ side: 'left', color: 'border', size: 'small' }}
-          pad={{ left: 'medium' }}
-          gap="xxsmall"
-        >
-          <Text size="large">
-            <Text size="large" color="text-weak">
-              When{' '}
-            </Text>
-            {job.when},
-          </Text>
-          <Text size="large">
-            <Text size="large" color="text-weak">
-              I want{' '}
-            </Text>
-            {job.want},
-          </Text>
-          <Text size="large">
-            <Text size="large" color="text-weak">
-              so{' '}
-            </Text>
-            {job.so}.
-          </Text>
-        </Box>
-        <Box gap="xxsmall">
-          <Label>How the page helps</Label>
-          <Bullets items={beats} />
-        </Box>
+      <Box gap="small" align="start">
+        <JobStatement job={job} size="medium" />
+        <StoryLink id={id} />
       </Box>
     </Grid>
   </Box>
@@ -1253,7 +1365,7 @@ export const PatternWhenLevel = () => (
   <Box gap="large">
     <Lead>
       Use list–detail when the work is across many records. 4 short stories show
-      what that looks like in practice.
+      what that looks like in practice. Each has its own page.
     </Lead>
 
     <Box gap="medium">
@@ -1261,11 +1373,11 @@ export const PatternWhenLevel = () => (
       <Box>
         {USE.map((story, i) => (
           <Box
-            key={story.title}
+            key={story.id}
             pad={{ vertical: 'xlarge' }}
             border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
           >
-            <Story {...story} />
+            <StoryCard {...story} />
           </Box>
         ))}
       </Box>
@@ -1289,6 +1401,93 @@ export const PatternWhenLevel = () => (
     </Box>
   </Box>
 );
+
+// Full story page: who, the moment, the job, why it matters, how the page helps.
+const StorySection = ({ label, children }) => (
+  <Grid columns={['small', 'flex']} gap="large">
+    <Text size="small" weight={500} color="text-weak">
+      {label}
+    </Text>
+    <Box gap="small">{children}</Box>
+  </Grid>
+);
+
+export const PatternStoryLevel = ({ id }) => {
+  const story = USE.find((u) => u.id === id) ?? USE[0];
+  const go = useContext(AnatomyNav);
+  const index = USE.indexOf(story);
+  const next = USE[(index + 1) % USE.length];
+  return (
+    <Box gap="large">
+      <Lead>{story.scene}</Lead>
+      {story.mock}
+
+      <Box gap="large" pad={{ top: 'medium' }}>
+        <StorySection label="Who">
+          <Box gap="xxsmall">
+            <Text size="large" weight={500}>
+              {story.persona}, {story.role.toLowerCase()}
+            </Text>
+            <Text>{story.context}</Text>
+          </Box>
+        </StorySection>
+
+        <StorySection label="The job to be done">
+          <JobStatement job={story.job} />
+        </StorySection>
+
+        <StorySection label="Why it matters">
+          <Bullets items={story.why} />
+        </StorySection>
+
+        <StorySection label="How the page helps">
+          <Box>
+            {story.beats.map(({ zone, text }, i) => (
+              <Box
+                key={i}
+                direction="row"
+                gap="medium"
+                align="start"
+                pad={{ vertical: 'small' }}
+                border={i > 0 ? { side: 'top', color: 'border-weak' } : false}
+              >
+                <Box width="64px" flex={false}>
+                  <ZoneChip zone={zone} />
+                </Box>
+                <Text>{text}</Text>
+              </Box>
+            ))}
+          </Box>
+        </StorySection>
+
+        <StorySection label="Without it">
+          <Text>{story.without}</Text>
+        </StorySection>
+      </Box>
+
+      <Box
+        direction="row"
+        justify="between"
+        align="center"
+        pad={{ top: 'medium' }}
+        border={{ side: 'top', color: 'border-weak' }}
+      >
+        <Anchor
+          label="All 4 stories"
+          size="small"
+          onClick={() => go('pattern/when')}
+        />
+        <Anchor
+          label={`Next story: ${next.title}`}
+          icon={<LinkNext size="small" />}
+          reverse
+          size="small"
+          onClick={() => go(`pattern/when/${next.id}`)}
+        />
+      </Box>
+    </Box>
+  );
+};
 
 const SIGNALS = [
   'The user arrives to do 1 thing to 1 record and then leaves.',

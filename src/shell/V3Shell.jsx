@@ -323,7 +323,7 @@ const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
           <NavItemV3
             key={item.key}
             item={item}
-            level={1}
+            level={item.level ?? 1}
             selected={selected.key === item.key}
             onSelect={onSelect}
           />

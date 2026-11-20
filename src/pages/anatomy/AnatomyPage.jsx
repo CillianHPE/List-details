@@ -41,6 +41,7 @@ import { CritNov19Level } from './CritLevels';
 import {
   PatternWhatLevel,
   PatternWhenLevel,
+  PatternStoryLevel,
   PatternWhenNotLevel,
 } from './PatternLevels';
 
@@ -587,8 +588,28 @@ export const PAGES = {
   },
   'pattern/when': {
     title: 'When to use it',
-    subtitle: '4 scenarios where it fits, and a quick check.',
+    subtitle: '4 stories where it fits, and a quick check.',
     Content: PatternWhenLevel,
+  },
+  'pattern/when/gather': {
+    title: 'Gather',
+    subtitle: 'Working through a queue, 1 record at a time.',
+    Content: () => <PatternStoryLevel id="gather" />,
+  },
+  'pattern/when/compare': {
+    title: 'Compare',
+    subtitle: 'Flipping between similar records to find the difference.',
+    Content: () => <PatternStoryLevel id="compare" />,
+  },
+  'pattern/when/triage': {
+    title: 'Triage',
+    subtitle: 'Finding the few that matter in a large set, then acting.',
+    Content: () => <PatternStoryLevel id="triage" />,
+  },
+  'pattern/when/quick-edit': {
+    title: 'Quick edit',
+    subtitle: 'The same small change, across a lot of records.',
+    Content: () => <PatternStoryLevel id="quick-edit" />,
   },
   'pattern/when-not': {
     title: 'When not to use it',

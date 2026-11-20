@@ -70,6 +70,30 @@ export const navItems = {
       href: '#/pattern/when',
     },
     {
+      key: 'proto-pattern-when-gather',
+      label: 'Gather',
+      href: '#/pattern/when/gather',
+      level: 2,
+    },
+    {
+      key: 'proto-pattern-when-compare',
+      label: 'Compare',
+      href: '#/pattern/when/compare',
+      level: 2,
+    },
+    {
+      key: 'proto-pattern-when-triage',
+      label: 'Triage',
+      href: '#/pattern/when/triage',
+      level: 2,
+    },
+    {
+      key: 'proto-pattern-when-quick-edit',
+      label: 'Quick edit',
+      href: '#/pattern/when/quick-edit',
+      level: 2,
+    },
+    {
       key: 'proto-pattern-when-not',
       label: 'When not to use it',
       href: '#/pattern/when-not',
