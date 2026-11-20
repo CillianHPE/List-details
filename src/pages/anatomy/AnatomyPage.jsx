@@ -616,7 +616,7 @@ export const PAGES = {
   'pattern/use': {
     title: 'When to use',
     subtitle:
-      'List–detail or a dedicated page: 5 questions, the scenarios it serves, and how examples are chosen.',
+      'List–detail or a dedicated page: 5 questions and the scenarios it serves.',
     Content: PatternUseLevel,
   },
   'pattern/jtbd': {

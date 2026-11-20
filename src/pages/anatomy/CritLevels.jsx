@@ -102,7 +102,7 @@ const PLAN = [
   ],
   [
     'Usage guidance (done)',
-    'Pattern → When to use: 5 decision questions (list–detail vs a dedicated page), the 4 scenarios with Execute named as the boundary, and the 4 example-selection criteria.',
+    'Pattern → When to use: 5 decision questions (list–detail vs a dedicated page), the 4 scenarios with Execute named as the boundary.',
   ],
   [
     'Scroll toggle (done)',

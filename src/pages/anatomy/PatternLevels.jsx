@@ -1226,43 +1226,6 @@ const ScenarioSheet = ({ rows }) => {
   );
 };
 
-const EXAMPLES = [
-  {
-    name: 'Realism',
-    text: 'Records read like production data: real-looking names, states, dates and counts. No lorem ipsum, no "Item 1".',
-  },
-  {
-    name: 'Diversity',
-    text: 'Across the set of examples, cover different domains (people, hardware, accounts, resources), record sizes and list densities, so no 1 example sets the expectation.',
-  },
-  {
-    name: 'Safety',
-    text: 'Fictional people, organisations and identifiers. Nothing that could be mistaken for a customer, a colleague or a live system.',
-  },
-  {
-    name: 'Structural coverage',
-    text: 'Together the examples exercise every zone and state: toolbar variants, sparse and dense lists, tabbed and single-pane details, empty, loading and error.',
-  },
-];
-
-const ExampleSheet = ({ rows }) => (
-  <Box>
-    {rows.map(({ name, text }) => (
-      <Grid
-        key={name}
-        columns={['small', 'flex']}
-        gap="medium"
-        pad={{ vertical: 'small' }}
-        border={{ side: 'bottom', color: 'border-weak' }}
-        align="start"
-      >
-        <Text weight={500}>{name}</Text>
-        <Text>{text}</Text>
-      </Grid>
-    ))}
-  </Box>
-);
-
 export const PatternUseLevel = () => (
   <Box gap="xlarge">
     <Lead>
@@ -1287,15 +1250,6 @@ export const PatternUseLevel = () => (
         the pattern gets you to the record, not through the work.
       </Text>
       <ScenarioSheet rows={SCENARIOS} />
-    </Box>
-
-    <Box gap="medium">
-      <SectionHeading>Choosing example content</SectionHeading>
-      <Text color="text-weak" style={{ maxWidth: '68ch' }}>
-        The examples in this library are chosen against 4 criteria, in this
-        order of priority.
-      </Text>
-      <ExampleSheet rows={EXAMPLES} />
     </Box>
   </Box>
 );
