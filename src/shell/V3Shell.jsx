@@ -5,7 +5,7 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 import {
   Box,
   Button,
@@ -19,7 +19,7 @@ import {
   ResponsiveContext,
   Text,
   TextInput,
-} from 'grommet';
+} from "grommet";
 import {
   AIGenFill,
   Catalog,
@@ -33,20 +33,20 @@ import {
   Search,
   Sidebar as SidebarIcon,
   User,
-} from '@hpe-design/icons-grommet';
+} from "@hpe-design/icons-grommet";
 import {
   activeNavItem,
   navItems,
   selectNavItem,
   usePersistedState,
-} from '../components/NavSidebar';
+} from "../components/NavSidebar";
 import {
   APP_HEADER_HEIGHT,
   PrototypeContext,
   ShellContext,
   stickyBelowHeader,
   usePrototype,
-} from './ShellContext';
+} from "./ShellContext";
 
 // Prototype switches for the list–detail surface. Tucked behind 1 icon button
 // in the global header so they stay out of the way but are 1 click to reach.
@@ -74,27 +74,27 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   // behaves while in use, and the shell around the page.
   const groups = [
     [
-      'Containment',
+      "Containment",
       [
-        ['Divider', divider, setDivider],
-        ['Contained list', contained, setContained],
-        ['Contained detail', containedDetail, setContainedDetail],
-        ['Contained content', containedContent, setContainedContent],
-        ['Grey wrapper (experimental)', wrapped, setWrapped],
+        ["Divider", divider, setDivider],
+        ["Contained list", contained, setContained],
+        ["Contained detail", containedDetail, setContainedDetail],
+        ["Contained content", containedContent, setContainedContent],
+        ["Grey wrapper (experimental)", wrapped, setWrapped],
       ],
     ],
     [
-      'Behaviour',
+      "Behaviour",
       [
-        ['Keep tab across records', keepTab, setKeepTab],
-        ['Full-page scroll', pageScroll, setPageScroll],
+        ["Keep tab across records", keepTab, setKeepTab],
+        ["Full-page scroll", pageScroll, setPageScroll],
       ],
     ],
     [
-      'Shell',
+      "Shell",
       [
-        ['Context pane', contextPane, setContextPane],
-        ...(onChromeChange ? [['App chrome', chrome, onChromeChange]] : []),
+        ["Context pane", contextPane, setContextPane],
+        ...(onChromeChange ? [["App chrome", chrome, onChromeChange]] : []),
       ],
     ],
   ];
@@ -107,8 +107,8 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      dropAlign={{ top: 'bottom', right: 'right' }}
-      dropProps={{ round: 'small', margin: { top: 'xsmall' } }}
+      dropAlign={{ top: "bottom", right: "right" }}
+      dropProps={{ round: "small", margin: { top: "xsmall" } }}
       dropContent={
         <Box pad="medium" gap="medium" width="small">
           <Text size="small" weight={500} color="text-weak">
@@ -142,7 +142,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
 
 const GlobalHeaderV3 = ({ switches }) => {
   const size = useContext(ResponsiveContext);
-  const compact = ['xsmall', 'small'].includes(size);
+  const compact = ["xsmall", "small"].includes(size);
   return (
     <Box
       as="header"
@@ -152,9 +152,9 @@ const GlobalHeaderV3 = ({ switches }) => {
       height="60px"
       flex={false}
       background="background-front"
-      border={{ side: 'bottom', color: 'border-weak' }}
-      style={{ position: 'sticky', top: 0, zIndex: 2 }}
-      pad={{ horizontal: compact ? 'medium' : 'xlarge' }}
+      border={{ side: "bottom", color: "border-weak" }}
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+      pad={{ horizontal: compact ? "medium" : "xlarge" }}
     >
       <Box direction="row" align="center" gap="medium" flex>
         <Button
@@ -177,9 +177,9 @@ const GlobalHeaderV3 = ({ switches }) => {
               icon={<Down />}
               reverse
               items={[
-                { label: 'Acme Production' },
-                { label: 'Acme Staging' },
-                { label: 'Switch workspace…' },
+                { label: "Acme Production" },
+                { label: "Acme Staging" },
+                { label: "Switch workspace…" },
               ]}
             />
             <Box width="288px">
@@ -211,7 +211,7 @@ const GlobalHeaderV3 = ({ switches }) => {
           icon={<User />}
           size="small"
           a11yTitle="Account"
-          dropAlign={{ top: 'bottom', right: 'right' }}
+          dropAlign={{ top: "bottom", right: "right" }}
           dropContent={
             <Box pad="medium" width="small">
               <Text weight={500}>Alex Morgan</Text>
@@ -231,7 +231,7 @@ const GlobalHeaderV3 = ({ switches }) => {
 // leading, a single account button trailing. No search, workspace or tools.
 const GlobalHeaderApp = ({ appName, switches }) => {
   const size = useContext(ResponsiveContext);
-  const compact = ['xsmall', 'small'].includes(size);
+  const compact = ["xsmall", "small"].includes(size);
   return (
     <Box
       as="header"
@@ -241,9 +241,9 @@ const GlobalHeaderApp = ({ appName, switches }) => {
       height="60px"
       flex={false}
       background="background-front"
-      border={{ side: 'bottom', color: 'border-weak' }}
-      style={{ position: 'sticky', top: 0, zIndex: 2 }}
-      pad={{ horizontal: compact ? 'medium' : 'xlarge', vertical: 'xsmall' }}
+      border={{ side: "bottom", color: "border-weak" }}
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+      pad={{ horizontal: compact ? "medium" : "xlarge", vertical: "xsmall" }}
     >
       <Box direction="row" align="center" gap="medium" flex={false}>
         <Box height="24px" width="48px" flex={false}>
@@ -263,7 +263,7 @@ const GlobalHeaderApp = ({ appName, switches }) => {
           icon={<User />}
           size="small"
           a11yTitle="Account"
-          dropAlign={{ top: 'bottom', right: 'right' }}
+          dropAlign={{ top: "bottom", right: "right" }}
           dropContent={
             <Box pad="medium" width="small">
               <Text weight={500}>Alex Morgan</Text>
@@ -281,7 +281,7 @@ const GlobalHeaderApp = ({ appName, switches }) => {
 // Nav item (NavigationMenu/NavItem): 36px min height, radius small, 4×24
 // brand bar when selected. `level` indents children of an expandable parent
 // by widening the gap after the marker, as ItemContainer does.
-const levelGap = ['xxsmall', 'small', 'medium', 'large'];
+const levelGap = ["xxsmall", "small", "medium", "large"];
 const NavItemV3 = ({
   item,
   selected,
@@ -293,7 +293,7 @@ const NavItemV3 = ({
   <Button
     plain
     onClick={() => onSelect(item)}
-    aria-current={selected ? 'page' : undefined}
+    aria-current={selected ? "page" : undefined}
     hoverIndicator="background-contrast"
     style={{ borderRadius: 8 }}
     {...rest}
@@ -302,19 +302,19 @@ const NavItemV3 = ({
       direction="row"
       align="center"
       gap={levelGap[Math.min(level, levelGap.length - 1)]}
-      height={{ min: '36px' }}
+      height={{ min: "36px" }}
       pad={{
-        left: '3xsmall',
-        right: 'xxsmall',
-        vertical: item.description ? 'xxsmall' : '3xsmall',
+        left: "3xsmall",
+        right: "xxsmall",
+        vertical: item.description ? "xxsmall" : "3xsmall",
       }}
       round="small"
-      background={selected ? 'background-contrast' : undefined}
+      background={selected ? "background-contrast" : undefined}
     >
       <Box
         width="4px"
         round="medium"
-        background={selected ? 'brand' : undefined}
+        background={selected ? "brand" : undefined}
         flex={false}
         alignSelf="stretch"
       />
@@ -335,14 +335,14 @@ const NavItemV3 = ({
 // trailing action is the Up/Down chevron; children sit one level deeper.
 // Parents start open and re-open whenever the route moves into them.
 // Groups that start a new section of the nav, separated by a divider.
-const NAV_DIVIDER_BEFORE = ['Anatomy', 'Examples', 'Design crit'];
+const NAV_DIVIDER_BEFORE = ["Anatomy", "Examples", "Design crit"];
 // Groups rendered as a static header with top-level links, not a collapsible.
-const NAV_HEADER_GROUPS = ['Pattern', 'Examples'];
+const NAV_HEADER_GROUPS = ["Pattern", "Examples"];
 
 const NavGroupHeader = ({ label }) => (
   <Box
-    pad={{ left: 'xsmall', right: 'xxsmall', top: 'xxsmall' }}
-    height={{ min: '36px' }}
+    pad={{ left: "xsmall", right: "xxsmall", top: "xxsmall" }}
+    height={{ min: "36px" }}
     justify="center"
   >
     <Text size="small" weight={500} color="text-weak">
@@ -353,8 +353,8 @@ const NavGroupHeader = ({ label }) => (
 
 const NavDivider = () => (
   <Box
-    border={{ side: 'bottom', color: 'border-weak' }}
-    margin={{ vertical: 'xsmall', horizontal: 'xsmall' }}
+    border={{ side: "bottom", color: "border-weak" }}
+    margin={{ vertical: "xsmall", horizontal: "xsmall" }}
     flex={false}
   />
 );
@@ -366,7 +366,7 @@ const NavGroupV3 = ({ group, items, open, onToggle, selected, onSelect }) => (
       onSelect={onToggle}
       aria-expanded={open}
       onKeyDown={(e) => {
-        if (e.key === 'Escape' && open) onToggle();
+        if (e.key === "Escape" && open) onToggle();
       }}
       actions={open ? <Up aria-hidden="true" /> : <Down aria-hidden="true" />}
     />
@@ -424,7 +424,7 @@ const NavParentV3 = ({ item, level = 1, selected, onSelect }) => {
           // Not a Button: NavItemV3 is already a button and they cannot nest.
           <Box
             role="button"
-            aria-label={`${open ? 'Collapse' : 'Expand'} ${item.label}`}
+            aria-label={`${open ? "Collapse" : "Expand"} ${item.label}`}
             onClick={(e) => {
               e.stopPropagation();
               setExpanded(!open);
@@ -469,14 +469,14 @@ const groupOf = (items, selected) =>
 // and the context pane keep their width; below `small` (768px) opening it
 // overlays the shell instead of pushing content. The wide-screen preference
 // is kept separately so returning to a wide window restores it.
-const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
+const NavPaneV3 = ({ title = "Menu title", items = navItems }) => {
   const size = useContext(ResponsiveContext);
   const { contextPane } = usePrototype();
   const autoCollapse =
-    ['xsmall', 'small', 'medium'].includes(size) ||
-    (contextPane && size !== 'xlarge');
-  const overlay = ['xsmall', 'small'].includes(size);
-  const [wideOpen, setWideOpen] = usePersistedState('nav.open', true);
+    ["xsmall", "small", "medium"].includes(size) ||
+    (contextPane && size !== "xlarge");
+  const overlay = ["xsmall", "small"].includes(size);
+  const [wideOpen, setWideOpen] = usePersistedState("nav.open", true);
   const [narrowOpen, setNarrowOpen] = useState(false);
   const open = autoCollapse ? narrowOpen : wideOpen;
   const setOpen = autoCollapse ? setNarrowOpen : setWideOpen;
@@ -484,12 +484,12 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
     activeNavItem(navItems.Anatomy[0]),
   );
   // Groups start collapsed; the active item's group is opened below.
-  const [expanded, setExpanded] = usePersistedState('nav.expanded', []);
+  const [expanded, setExpanded] = usePersistedState("nav.expanded", []);
   // Keep selection in step with in-page links that change the route.
   useEffect(() => {
     const onHash = () => setSelected((s) => activeNavItem(s));
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
   }, []);
   useEffect(() => {
     const g = groupOf(items, selected);
@@ -505,12 +505,12 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
     <Box
       as="nav"
       aria-label="Primary"
-      width={open ? '256px' : undefined}
+      width={open ? "256px" : undefined}
       flex={false}
       background="background-back"
       round="large"
-      pad={{ horizontal: '3xsmall' }}
-      style={stickyBelowHeader(12, { alignSelf: 'flex-start' })}
+      pad={{ horizontal: "3xsmall" }}
+      style={stickyBelowHeader(12, { alignSelf: "flex-start" })}
       height="calc(100vh - 84px)"
     >
       <Box
@@ -519,11 +519,11 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
         justify="between"
         gap="xxsmall"
         pad={{
-          top: 'xsmall',
-          bottom: 'xxsmall',
-          horizontal: open ? 'small' : 'none',
+          top: "xsmall",
+          bottom: "xxsmall",
+          horizontal: open ? "small" : "none",
         }}
-        height={{ min: '36px' }}
+        height={{ min: "36px" }}
         flex={false}
       >
         {open && (
@@ -534,12 +534,12 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
         <Button
           icon={<SidebarIcon />}
           secondary
-          a11yTitle={open ? 'Collapse navigation' : 'Expand navigation'}
+          a11yTitle={open ? "Collapse navigation" : "Expand navigation"}
           onClick={() => setOpen(!open)}
         />
       </Box>
       {open && (
-        <Nav gap="4xsmall" pad={{ bottom: 'small' }} overflow="auto">
+        <Nav gap="4xsmall" pad={{ bottom: "small" }} overflow="auto">
           {Object.entries(items).map(([group, value]) =>
             NAV_HEADER_GROUPS.includes(group) ? (
               <Fragment key={group}>
@@ -599,7 +599,7 @@ const NavPaneV3 = ({ title = 'Menu title', items = navItems }) => {
           position="top-left"
           modal
           animation="slide"
-          margin={{ top: `${APP_HEADER_HEIGHT + 12}px`, left: 'xsmall' }}
+          margin={{ top: `${APP_HEADER_HEIGHT + 12}px`, left: "xsmall" }}
           onEsc={() => setNarrowOpen(false)}
           onClickOutside={() => setNarrowOpen(false)}
           background="none"
@@ -626,19 +626,19 @@ const ContextPaneBody = ({ onClose, fill }) => (
     fill={fill}
     flex={false}
     background="background-back"
-    round={fill ? undefined : 'large'}
+    round={fill ? undefined : "large"}
     style={
-      fill ? undefined : stickyBelowHeader(12, { alignSelf: 'flex-start' })
+      fill ? undefined : stickyBelowHeader(12, { alignSelf: "flex-start" })
     }
-    height={fill ? undefined : 'calc(100vh - 84px)'}
+    height={fill ? undefined : "calc(100vh - 84px)"}
   >
     <Box
       direction="row"
       align="center"
       justify="between"
       gap="xxsmall"
-      pad={{ top: 'xsmall', bottom: 'xxsmall', horizontal: 'small' }}
-      height={{ min: '36px' }}
+      pad={{ top: "xsmall", bottom: "xxsmall", horizontal: "small" }}
+      height={{ min: "36px" }}
       flex={false}
     >
       <Text size="large" weight={500} color="text-heading">
@@ -652,7 +652,7 @@ const ContextPaneBody = ({ onClose, fill }) => (
       />
     </Box>
     <Box
-      pad={{ horizontal: 'small', bottom: 'small' }}
+      pad={{ horizontal: "small", bottom: "small" }}
       gap="small"
       overflow="auto"
     >
@@ -669,7 +669,7 @@ const ContextPaneV3 = () => {
   const { contextPane, setContextPane } = usePrototype();
   if (!contextPane) return null;
   const close = () => setContextPane(false);
-  if (['xsmall', 'small'].includes(size)) {
+  if (["xsmall", "small"].includes(size)) {
     return (
       <Layer full animation="fadeIn" onEsc={close}>
         <ContextPaneBody fill onClose={close} />
@@ -680,22 +680,50 @@ const ContextPaneV3 = () => {
 };
 
 // `appName` swaps the GreenLake platform header for the application variant.
+const STORAGE_PREFIX = "ld-proto:";
+const useStoredToggle = (key, initial) => {
+  const [value, setValue] = useState(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_PREFIX + key);
+      return raw === null ? initial : raw === "true";
+    } catch {
+      return initial;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_PREFIX + key, String(value));
+    } catch {
+      // storage unavailable: keep in-memory value only
+    }
+  }, [key, value]);
+  return [value, setValue];
+};
+
 export const V3Shell = ({
   appName,
   chrome = true,
   onChromeChange,
   children,
 }) => {
-  const [divider, setDivider] = useState(false);
-  const [contained, setContained] = useState(false);
-  const [containedDetail, setContainedDetail] = useState(false);
-  const [containedContent, setContainedContent] = useState(false);
-  const [wrapped, setWrapped] = useState(false);
-  const [contextPane, setContextPane] = useState(false);
-  const [keepTab, setKeepTab] = useState(true);
+  // Prototype toggles persist in localStorage so they stay consistent when
+  // flicking between examples (each route mounts its own shell).
+  const [divider, setDivider] = useStoredToggle("divider", false);
+  const [contained, setContained] = useStoredToggle("contained", false);
+  const [containedDetail, setContainedDetail] = useStoredToggle(
+    "containedDetail",
+    false,
+  );
+  const [containedContent, setContainedContent] = useStoredToggle(
+    "containedContent",
+    false,
+  );
+  const [wrapped, setWrapped] = useStoredToggle("wrapped", false);
+  const [contextPane, setContextPane] = useStoredToggle("contextPane", false);
+  const [keepTab, setKeepTab] = useStoredToggle("keepTab", true);
   // Crit 19 Nov: compare detail-pane scroll with the whole page scrolling
   // while the global header, list toolbar and detail tabs stay pinned.
-  const [pageScroll, setPageScroll] = useState(false);
+  const [pageScroll, setPageScroll] = useStoredToggle("pageScroll", false);
   const [detailTabs, setDetailTabs] = useState({});
   const setDetailTab = useCallback(
     (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),
@@ -744,7 +772,7 @@ export const V3Shell = ({
     return (
       <ShellContext.Provider value="v3">
         <PrototypeContext.Provider value={prototype}>
-          <Box style={{ position: 'fixed', top: 12, right: 12, zIndex: 10 }}>
+          <Box style={{ position: "fixed", top: 12, right: 12, zIndex: 10 }}>
             {switches}
           </Box>
           {children}
