@@ -44,6 +44,7 @@ import {
   PatternWhatLevel,
   PatternJtbdLevel,
   PatternUseLevel,
+  PatternWhenNotLevel,
   PatternStoryLevel,
 } from './PatternLevels';
 
@@ -618,6 +619,11 @@ export const PAGES = {
     subtitle:
       'List–detail or a dedicated page: 5 questions and the scenarios it serves.',
     Content: PatternUseLevel,
+  },
+  'pattern/when-not': {
+    title: 'When not to use',
+    subtitle: '4 scenarios where another surface does the job better.',
+    Content: PatternWhenNotLevel,
   },
   'pattern/jtbd': {
     title: 'Jobs to be done',

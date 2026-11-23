@@ -43,6 +43,11 @@ export const navItems = {
       href: '#/pattern/use',
     },
     {
+      key: 'proto-pattern-when-not',
+      label: 'When not to use',
+      href: '#/pattern/when-not',
+    },
+    {
       key: 'proto-pattern-jtbd',
       label: 'JTBD',
       href: '#/pattern/jtbd',

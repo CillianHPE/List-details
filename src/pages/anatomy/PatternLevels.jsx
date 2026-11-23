@@ -1259,6 +1259,156 @@ export const PatternUseLevel = () => (
 );
 
 // ---------------------------------------------------------------------------
+// Page 1a: When not to use it. Same shape as When to use: lead, then sheets.
+
+const AVOID = [
+  {
+    name: 'Deep work on 1 record',
+    when: 'A multi-step create or configure flow.',
+    instead: ['Page or wizard', 'Own steps, return to the list when done.'],
+    why: 'The user came to make 1 thing, not to browse a set. A list beside it steals a third of the width for nothing.',
+  },
+  {
+    name: 'Dense records',
+    when: 'Each record is a document, long report or complex visualisation.',
+    instead: ['Full page', 'Opened from a list or table, breadcrumb back.'],
+    why: 'Charts, tables and long text need the full width. The user stays in 1 record for minutes, so switching is rare.',
+  },
+  {
+    name: 'Column comparison',
+    when: 'The question is answered by scanning 1 field across many rows.',
+    instead: ['Data table', 'Sort, filter and column visibility do the work.'],
+    why: 'The answer is in the column, not in any single record. Opening a detail hides the rows being compared.',
+  },
+  {
+    name: 'Only a few records',
+    when: 'There is 1 object, or a fixed handful that never grows.',
+    instead: ['Settings or form page', 'Grouped into tabs or sections.'],
+    why: 'There is no set to move through. Tabs are clearer than a list of 3 items edited rarely, 1 at a time.',
+  },
+];
+
+const SIGNALS = [
+  {
+    sign: 'The user arrives to do 1 thing to 1 record and then leaves.',
+    read: 'No set to move through, so the list has nothing to do.',
+  },
+  {
+    sign: 'The record needs the full width to be read or edited well.',
+    read: 'The detail zone is capped at 480px (size.large) of content.',
+  },
+  {
+    sign: 'The set is tiny, fixed, or there is no set at all.',
+    read: 'Count, filters and next item have no job.',
+  },
+  {
+    sign: 'The question is about a field, not a record.',
+    read: 'That is a column comparison, which is a table.',
+  },
+];
+
+const AvoidSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['small', 'flex', 'flex']}
+      gap="medium"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
+    >
+      <Text size="small" weight={500} color="text-weak">
+        Scenario
+      </Text>
+      <Box direction="row" gap="xsmall" align="center">
+        <Checkmark size="small" color="status-ok" />
+        <Text size="small" weight={500} color="text-weak">
+          Use instead
+        </Text>
+      </Box>
+      <Box direction="row" gap="xsmall" align="center">
+        <Close size="small" color="status-critical" />
+        <Text size="small" weight={500} color="text-weak">
+          Why list–detail fails
+        </Text>
+      </Box>
+    </Grid>
+    {rows.map(({ name, when, instead, why }) => (
+      <Grid
+        key={name}
+        columns={['small', 'flex', 'flex']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Verdict pair={[name, when]} />
+        <Verdict pair={instead} />
+        <Text>{why}</Text>
+      </Grid>
+    ))}
+  </Box>
+);
+
+const SignalSheet = ({ rows }) => (
+  <Box>
+    <Grid
+      columns={['1fr', '1fr']}
+      gap="medium"
+      pad={{ bottom: 'xsmall' }}
+      border={{ side: 'bottom', color: 'border' }}
+    >
+      {['Warning sign', 'What it tells you'].map((h) => (
+        <Text key={h} size="small" weight={500} color="text-weak">
+          {h}
+        </Text>
+      ))}
+    </Grid>
+    {rows.map(({ sign, read }) => (
+      <Grid
+        key={sign}
+        columns={['1fr', '1fr']}
+        gap="medium"
+        pad={{ vertical: 'small' }}
+        border={{ side: 'bottom', color: 'border-weak' }}
+        align="start"
+      >
+        <Text weight={500}>{sign}</Text>
+        <Text>{read}</Text>
+      </Grid>
+    ))}
+  </Box>
+);
+
+export const PatternWhenNotLevel = () => (
+  <Box gap="xlarge">
+    <Lead>
+      List–detail earns its place when the work is across many records. When the
+      work is deep inside 1 record, or there is no set to move through, another
+      surface does the job better.
+    </Lead>
+
+    <Box gap="medium">
+      <Box gap="2px">
+        <SectionHeading>4 scenarios to hand off</SectionHeading>
+        <Text color="text-weak">
+          Each has a surface that does the job better than list–detail.
+        </Text>
+      </Box>
+      <AvoidSheet rows={AVOID} />
+    </Box>
+
+    <Box gap="medium">
+      <Box gap="2px">
+        <SectionHeading>Warning signs</SectionHeading>
+        <Text color="text-weak">
+          If any of these is true, reach for a different pattern.
+        </Text>
+      </Box>
+      <SignalSheet rows={SIGNALS} />
+    </Box>
+  </Box>
+);
+
+// ---------------------------------------------------------------------------
 // Page 1b: Jobs to be done
 
 const JTBD = [
