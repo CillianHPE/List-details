@@ -54,27 +54,47 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   const {
     divider,
     contained,
+    containedDetail,
     wrapped,
     contextPane,
     keepTab,
     pageScroll,
     setDivider,
     setContained,
+    setContainedDetail,
     setWrapped,
     setContextPane,
     setKeepTab,
     setPageScroll,
   } = usePrototype();
   const [open, setOpen] = useState(false);
-  const switches = [
-    ['Divider', divider, setDivider],
-    ['Contained list', contained, setContained],
-    ['Grey wrapper (experimental)', wrapped, setWrapped],
-    ['Context pane', contextPane, setContextPane],
-    ['Keep tab across records', keepTab, setKeepTab],
-    ['Full-page scroll', pageScroll, setPageScroll],
+  // Grouped by what they change: how the 2 zones are framed, how the page
+  // behaves while in use, and the shell around the page.
+  const groups = [
+    [
+      'Containment',
+      [
+        ['Divider', divider, setDivider],
+        ['Contained list', contained, setContained],
+        ['Contained detail', containedDetail, setContainedDetail],
+        ['Grey wrapper (experimental)', wrapped, setWrapped],
+      ],
+    ],
+    [
+      'Behaviour',
+      [
+        ['Keep tab across records', keepTab, setKeepTab],
+        ['Full-page scroll', pageScroll, setPageScroll],
+      ],
+    ],
+    [
+      'Shell',
+      [
+        ['Context pane', contextPane, setContextPane],
+        ...(onChromeChange ? [['App chrome', chrome, onChromeChange]] : []),
+      ],
+    ],
   ];
-  if (onChromeChange) switches.push(['App chrome', chrome, onChromeChange]);
   return (
     <DropButton
       icon={<Configure />}
@@ -87,18 +107,25 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
       dropAlign={{ top: 'bottom', right: 'right' }}
       dropProps={{ round: 'small', margin: { top: 'xsmall' } }}
       dropContent={
-        <Box pad="medium" gap="small" width="small">
+        <Box pad="medium" gap="medium" width="small">
           <Text size="small" weight={500} color="text-weak">
             Prototype options
           </Text>
-          {switches.map(([label, value, set]) => (
-            <CheckBox
-              key={label}
-              toggle
-              label={label}
-              checked={value}
-              onChange={(e) => set(e.target.checked)}
-            />
+          {groups.map(([heading, switches]) => (
+            <Box key={heading} gap="small">
+              <Text size="xsmall" weight={500} color="text-weak">
+                {heading}
+              </Text>
+              {switches.map(([label, value, set]) => (
+                <CheckBox
+                  key={label}
+                  toggle
+                  label={label}
+                  checked={value}
+                  onChange={(e) => set(e.target.checked)}
+                />
+              ))}
+            </Box>
           ))}
         </Box>
       }
@@ -658,6 +685,7 @@ export const V3Shell = ({
 }) => {
   const [divider, setDivider] = useState(false);
   const [contained, setContained] = useState(false);
+  const [containedDetail, setContainedDetail] = useState(false);
   const [wrapped, setWrapped] = useState(false);
   const [contextPane, setContextPane] = useState(false);
   const [keepTab, setKeepTab] = useState(true);
@@ -673,6 +701,7 @@ export const V3Shell = ({
     () => ({
       divider,
       contained,
+      containedDetail,
       wrapped,
       contextPane,
       keepTab,
@@ -680,6 +709,7 @@ export const V3Shell = ({
       detailTabs,
       setDivider,
       setContained,
+      setContainedDetail,
       setWrapped,
       setContextPane,
       setKeepTab,
@@ -689,6 +719,7 @@ export const V3Shell = ({
     [
       divider,
       contained,
+      containedDetail,
       wrapped,
       contextPane,
       keepTab,

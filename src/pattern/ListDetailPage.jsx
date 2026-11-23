@@ -130,11 +130,13 @@ export const ListDetailPage = ({
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype controls (divider, contained list) live in the global header.
-  const { divider, contained, wrapped, pageScroll } = usePrototype();
+  const { divider, contained, containedDetail, wrapped, pageScroll } =
+    usePrototype();
   // Grey wrapper: the whole surface is 1 background-back container, the list
   // sits on it bare and the detail becomes a white card, so the list's own
   // contained surface is dropped while this is on.
   const listContained = contained && !wrapped;
+  const detailContained = containedDetail && !wrapped;
   const [showDetail, setShowDetail] = useState(false);
   // Narrow entry (crit 19 Nov): when the surface drops to 1 column with a
   // record already selected, land on that record, matching the wide view;
@@ -400,18 +402,38 @@ export const ListDetailPage = ({
                 pad={
                   wrapped
                     ? 'medium'
-                    : bare
-                      ? undefined
-                      : {
-                          vertical: 'medium',
-                          right: 'medium',
-                          left: stacked ? 'medium' : undefined,
-                        }
+                    : detailContained
+                      ? 'small'
+                      : bare
+                        ? undefined
+                        : {
+                            vertical: 'medium',
+                            right: 'medium',
+                            left: stacked ? 'medium' : undefined,
+                          }
+                }
+                // Contained detail: the zone sits on its own background-back
+                // surface, same treatment as the contained list, so the
+                // outer offset moves from padding to margin.
+                margin={
+                  detailContained && !bare
+                    ? {
+                        vertical: 'medium',
+                        right: 'medium',
+                        left: stacked ? 'medium' : undefined,
+                      }
+                    : undefined
                 }
                 // Grey wrapper: detail is the 1 white card on the grey
                 // surface (Oliver's sketch), so it carries its own chrome.
-                background={wrapped ? 'background-front' : undefined}
-                round={wrapped ? 'medium' : undefined}
+                background={
+                  wrapped
+                    ? 'background-front'
+                    : detailContained
+                      ? 'background-back'
+                      : undefined
+                }
+                round={wrapped || detailContained ? 'medium' : undefined}
                 overflow={fillHeight ? 'auto' : undefined}
                 style={fillHeight ? { minHeight: 0 } : undefined}
               >

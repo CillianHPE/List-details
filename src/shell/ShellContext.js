@@ -13,6 +13,8 @@ export const useShell = () => useContext(ShellContext);
 export const PrototypeContext = createContext({
   divider: false,
   contained: false,
+  // Detail zone on its own background-back surface, mirror of contained list.
+  containedDetail: false,
   // Experimental (Oliver, 20 Nov): grey wrapper around the whole list–detail
   // surface with the detail in a white card; list sits on the grey.
   wrapped: false,
@@ -21,6 +23,7 @@ export const PrototypeContext = createContext({
   detailTabs: {},
   setDivider: () => {},
   setContained: () => {},
+  setContainedDetail: () => {},
   setWrapped: () => {},
   setKeepTab: () => {},
   setPageScroll: () => {},
