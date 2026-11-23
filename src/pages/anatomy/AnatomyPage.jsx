@@ -39,7 +39,7 @@ import {
   ErrorLevel,
   ReadOnlyLevel,
 } from './StatesLevels';
-import { CritNov19Level } from './CritLevels';
+import { CritNov19Level, TrackerLevel } from './CritLevels';
 import {
   PatternWhatLevel,
   PatternJtbdLevel,
@@ -729,6 +729,12 @@ export const PAGES = {
     subtitle:
       'Sentiment, verdicts and the ordered plan from the first review of the live prototype.',
     Content: CritNov19Level,
+  },
+  'crit/tracker': {
+    title: 'Tracker and changelog',
+    subtitle:
+      'Every request since Crit 01, what changed, and where it stands. Mirrors the FigJam tracker.',
+    Content: TrackerLevel,
   },
 };
 

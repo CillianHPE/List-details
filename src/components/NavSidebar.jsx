@@ -184,6 +184,11 @@ export const navItems = {
       label: '19 Nov 2026',
       href: '#/crit/2026-11-19',
     },
+    {
+      key: 'proto-crit-tracker',
+      label: 'Tracker and changelog',
+      href: '#/crit/tracker',
+    },
   ],
 };
 

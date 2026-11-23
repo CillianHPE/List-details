@@ -174,3 +174,290 @@ export const CritNov19Level = () => (
     </Box>
   </Box>
 );
+
+// Tracker: every request since Crit 01, with what changed and where it
+// stands. Mirrors the "Tracker and changelog" page on the FigJam board;
+// IDs (R01…) are stable so they can be quoted in Teams or Confluence.
+const LANES = [
+  {
+    key: 'decided',
+    label: 'Decided',
+    note: 'Agreed and built. Lives in the prototype and Confluence.',
+    status: 'ok',
+  },
+  {
+    key: 'review',
+    label: 'In review',
+    note: 'Built as an option, waiting on named people on the FigJam sign-off page.',
+    status: 'warning',
+  },
+  {
+    key: 'open',
+    label: 'Open',
+    note: 'No treatment yet. Needs a decision or more use cases.',
+    status: 'unknown',
+  },
+];
+
+const REQUESTS = [
+  {
+    id: 'R01',
+    lane: 'decided',
+    title: 'Resize divider',
+    raised: 'Oliver (Crit 01)',
+    ask: 'The divider reads as noise and implies a drag-to-resize that does not exist.',
+    change:
+      'Removed as a prop and visual style. The 48px (size.xlarge) gutter separates the zones.',
+    when: 'Decided 23 Nov, 1:1 with Oliver',
+    href: '#/v3',
+    see: 'Users list–detail',
+  },
+  {
+    id: 'R02',
+    lane: 'decided',
+    title: 'Scroll default',
+    raised: 'Matt, Seamus (Crit 01)',
+    ask: 'Compare detail-pane scroll with a full-page scroll where header and tabs stay pinned.',
+    change:
+      'Full-page scroll is the default. The list scrolls independently; toolbar and tab bar pin 24px (size.medium) below the header. "Detail-pane scroll" kept as a prototype option.',
+    when: 'Decided 23 Nov, 1:1 with Oliver',
+    href: '#/behaviour/scroll',
+    see: 'Behaviour → Scroll',
+  },
+  {
+    id: 'R03',
+    lane: 'decided',
+    title: 'Usage guidance: context first',
+    raised: 'Oliver (1:1), Crit 01 open question',
+    ask: 'When should list–detail be preferred over a dedicated page? Put "Does the list matter?" and context preservation higher.',
+    change:
+      '6 decision questions, "Does keeping their place matter?" first. Benefit made explicit: do the task without disrupting your context. Identifiers in the list, the rest in the pane.',
+    when: 'Decided 23 Nov, 1:1 with Oliver',
+    href: '#/pattern/use',
+    see: 'Pattern → When to use',
+  },
+  {
+    id: 'R04',
+    lane: 'decided',
+    title: 'Gutter between list and detail',
+    raised: 'Matt (Crit 01)',
+    ask: 'With no divider, step the spacing up so proximity does the separating.',
+    change:
+      'List and detail are 2 content sections, so the gap is the content-section gap: 48px (size.xlarge), a grid gap with no per-side padding.',
+    when: 'Done 20 Nov',
+    href: '#/anatomy/spacing',
+    see: 'Anatomy → Spacing',
+  },
+  {
+    id: 'R05',
+    lane: 'decided',
+    title: 'Responsive ladder',
+    raised: 'Daniel, Julia, Mike (Crit 01)',
+    ask: 'Nav should auto-collapse; regions fight when nav, content and pane are all open; narrow entry should land on the selected record.',
+    change:
+      'Nav rails under 1080px (medium) or when the pane is open under 1440px (xlarge); overlays under 768px (small). Narrow entry lands on the record with Back. 2 columns while the surface is at least 784px.',
+    when: 'Done 20 Nov',
+    href: '#/responsive/breakpoints',
+    see: 'Responsive → Breakpoints',
+  },
+  {
+    id: 'R06',
+    lane: 'decided',
+    title: 'Details to fix',
+    raised: 'Daniel, Matt, Julia (Crit 01)',
+    ask: '"Open a Case" button blends into its card; name–value gaps too loose; Sales Cockpit status icon + number needs checking.',
+    change:
+      'Button is now secondary; rows tightened to 8px (size.xxsmall); the list shows icon + status name with the score as secondary text.',
+    when: 'Done 20 Nov',
+    href: '#/compute-servers',
+    see: 'Compute → Servers',
+  },
+  {
+    id: 'R07',
+    lane: 'decided',
+    title: 'Keep tab across records',
+    raised: 'Cillian (compare use case)',
+    ask: 'Keep the selected detail tab active while moving between records.',
+    change: 'Default on, per page. Prototype option to switch off for comparison.',
+    when: 'Done 21 Nov',
+    href: '#/v3',
+    see: 'Users list–detail',
+  },
+  {
+    id: 'R08',
+    lane: 'review',
+    title: 'Containment: list, detail, content, wrapper',
+    raised: 'Oliver, Julia, Mike, Seamus (Crit 01)',
+    ask: 'Containing the list is heavy once nav, pane and contained content are all open, and leaves an empty canvas on mobile.',
+    change:
+      'List uncontained by default, contained padding 16px (size.small). 4 toggles in Prototype options: Contained list, Contained detail, Contained content, Grey wrapper. No treatment chosen yet.',
+    when: 'Awaiting feedback: Oliver, Julia, Mike, Seamus (by 25 Nov)',
+    href: 'https://www.figma.com/board/uFZ9z3NfdpdBzKOTibKARd/List-Details?node-id=81-275',
+    see: 'Shared card on the FigJam sign-off page',
+  },
+  {
+    id: 'R09',
+    lane: 'review',
+    title: 'Surface greys and inset (base −1)',
+    raised: 'Matt (Crit 01)',
+    ask: 'Nav, pane and detail containers use different greys. Make the token stack explicit. Is there a place for an inset surface?',
+    change:
+      'Anatomy → Surfaces lists surface to token. Containers share background-back; background-contrast kept for selection. Inset is framed as a question for the DS team.',
+    when: 'Awaiting feedback: Matt, DS team',
+    href: '#/anatomy/surfaces',
+    see: 'Anatomy → Surfaces',
+  },
+  {
+    id: 'R10',
+    lane: 'review',
+    title: 'When not to use',
+    raised: 'Crit 01 open question',
+    ask: 'Does the pattern hold for deep task execution inside a record, or only review, compare and triage?',
+    change:
+      'Pattern → When not to use: signals to give a record its own page, same format as When to use.',
+    when: 'Awaiting sign-off on wording',
+    href: '#/pattern/when-not',
+    see: 'Pattern → When not to use',
+  },
+  {
+    id: 'R11',
+    lane: 'open',
+    title: 'Section hierarchy',
+    raised: 'Oliver (1:1, 23 Nov)',
+    ask: 'Is list–detail 1 content section with sub-sections, or 2 content sections? Spacing follows from the answer.',
+    change:
+      'Nothing yet. The prototype treats list and detail as 2 content sections (48px gap).',
+    when: 'Open, revisit after use cases are set',
+  },
+  {
+    id: 'R12',
+    lane: 'open',
+    title: 'Example content for the library',
+    raised: 'Crit 01 open question',
+    ask: 'How should example content be chosen: realism, diversity, safety or structural coverage?',
+    change: 'Nothing yet. 4 examples live: Users, Sales Cockpit, Compute, OpsRamp.',
+    when: 'Open',
+  },
+  {
+    id: 'R13',
+    lane: 'open',
+    title: 'Path to publish',
+    raised: 'Cillian',
+    ask: 'What does the pattern need before it is a published HPE DS template: Figma kit, docs home, examples?',
+    change:
+      'Confluence Pattern pages drafted (Overview, When to use, JTBD, User stories).',
+    when: 'Open, needs Oliver',
+  },
+];
+
+const CHANGELOG = [
+  [
+    '23 Nov',
+    'Divider removed as prop and style. Full-page scroll made the default. When to use reordered: 6 questions, context first. Confluence Overview and When to use updated. Tracker page added here and on FigJam.',
+  ],
+  [
+    '23 Nov',
+    '1:1 with Oliver. Decided: drop divider, full-page scroll default, context test first. Open: section hierarchy, containment feedback.',
+  ],
+  [
+    '22 Nov',
+    'Prototype options persist across examples. Toggles added: Contained detail, Contained content. Menu grouped by Containment, Behaviour, Shell.',
+  ],
+  [
+    '21 Nov',
+    'When not to use page restored in the When to use format. Keep tab across records on by default. Async sign-off sections per person on FigJam, respond by 25 Nov.',
+  ],
+  [
+    '20 Nov',
+    'Crit 01 synthesis published. Gutter set to 48px (size.xlarge). Details fixed: secondary button, 8px rows, status indicator. Surfaces token table. Responsive ladder and breakpoint rules. Confluence Pattern pages created with mocks.',
+  ],
+  [
+    '19 Nov',
+    'Crit 01 with the DS team on the live prototype. Feedback in 2 topics: Page design and Containment.',
+  ],
+];
+
+const Field = ({ label, children }) => (
+  <Box gap="xxsmall">
+    <Text size="small" weight={500}>
+      {label}
+    </Text>
+    <Text size="small">{children}</Text>
+  </Box>
+);
+
+const RequestCard = ({ item }) => (
+  <Card title={`${item.id} ${item.title}`} note={item.when}>
+    <Box gap="small">
+      <Field label="Raised by">{item.raised}</Field>
+      <Field label="Ask">{item.ask}</Field>
+      <Field label="What changed">{item.change}</Field>
+      {item.href && (
+        <Anchor
+          href={item.href}
+          label={`${item.see} ↗`}
+          size="small"
+          target={item.href.startsWith('#') ? undefined : '_blank'}
+          rel="noreferrer"
+        />
+      )}
+    </Box>
+  </Card>
+);
+
+export const TrackerLevel = () => {
+  const counts = Object.fromEntries(
+    LANES.map((l) => [l.key, REQUESTS.filter((r) => r.lane === l.key).length]),
+  );
+  return (
+    <Box gap="large">
+      <Lead>
+        Every request from Crit 01 (19 Nov), the async sign-off and the 1:1
+        with Oliver (23 Nov), with what changed and where it stands.{' '}
+        {counts.decided} decided, {counts.review} in review, {counts.open} open.
+        IDs are stable: quote them in Teams or Confluence.
+      </Lead>
+
+      {LANES.map((lane) => (
+        <Box gap="small" key={lane.key}>
+          <Box direction="row" align="center" gap="small">
+            <SectionHeading>
+              {lane.label} · {counts[lane.key]}
+            </SectionHeading>
+            <Text size="small" color="text-weak">
+              {lane.note}
+            </Text>
+          </Box>
+          <Grid columns={{ count: 'fit', size: ['medium', 'flex'] }} gap="small">
+            {REQUESTS.filter((r) => r.lane === lane.key).map((item) => (
+              <RequestCard key={item.id} item={item} />
+            ))}
+          </Grid>
+        </Box>
+      ))}
+
+      <Box gap="small">
+        <SectionHeading>Changelog</SectionHeading>
+        <Box gap="xsmall">
+          {CHANGELOG.map(([date, body], i) => (
+            <Box direction="row" gap="medium" key={`${date}-${i}`}>
+              <Text weight={500} style={{ minWidth: '5em' }}>
+                {date}
+              </Text>
+              <Text>{body}</Text>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      <Box direction="row" gap="small" wrap>
+        <Anchor
+          href="https://www.figma.com/board/uFZ9z3NfdpdBzKOTibKARd/List-Details?node-id=130-238"
+          label="FigJam tracker"
+          target="_blank"
+          rel="noreferrer"
+        />
+      </Box>
+    </Box>
+  );
+};
