@@ -29,14 +29,14 @@ const ArrowlessTabs = styled(Tabs)`
     > button {
     display: none;
   }
-  ${({ $sticky, theme }) =>
+  ${({ $sticky, $surface, theme }) =>
     $sticky &&
     `
     & > div:first-child {
       position: sticky;
       top: ${APP_HEADER_HEIGHT}px;
       z-index: 1;
-      background: ${normalizeColor('background', theme)};
+      background: ${normalizeColor($surface, theme)};
       /* Pin level with the list toolbar: 24px (edgeSize.medium) below the
          header, with the strip above painted so content scrolls under it. */
       padding-top: 24px;
@@ -52,13 +52,18 @@ const ArrowlessTabs = styled(Tabs)`
 // With the full-page scroll prototype option the tab bar pins below the
 // global header while the page scrolls.
 export const DetailTabs = (props) => {
-  const { pageScroll } = usePrototype();
+  const { pageScroll, containedDetail, wrapped } = usePrototype();
+  // Pinned strip paints the surface it sits on: the detail zone's own
+  // background-back when contained, otherwise the page background.
+  const surface =
+    containedDetail && !wrapped ? 'background-back' : 'background';
   return (
     <ArrowlessTabs
       justify="start"
       flex={false}
       margin={{ top: 'large' }}
       $sticky={pageScroll}
+      $surface={surface}
       {...props}
     />
   );
