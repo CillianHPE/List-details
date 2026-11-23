@@ -49,8 +49,8 @@ const ArrowlessTabs = styled(Tabs)`
 // the tab bar opens a new content section, so it sits `large` below whatever
 // precedes it (one step down from the page-level xlarge, as the detail pane
 // is nested) while tab content keeps the Tabs template's `medium` offset.
-// With the full-page scroll prototype option the tab bar pins below the
-// global header while the page scrolls.
+// With full-page scroll (the default) the tab bar pins below the global
+// header while the page scrolls.
 export const DetailTabs = (props) => {
   const { pageScroll, containedDetail, wrapped } = usePrototype();
   // Pinned strip paints the surface it sits on: the detail zone's own

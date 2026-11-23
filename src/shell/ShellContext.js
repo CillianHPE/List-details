@@ -20,7 +20,7 @@ export const PrototypeContext = createContext({
   // surface with the detail in a white card; list sits on the grey.
   wrapped: false,
   keepTab: true,
-  pageScroll: false,
+  pageScroll: true,
   detailTabs: {},
   setContained: () => {},
   setContainedDetail: () => {},

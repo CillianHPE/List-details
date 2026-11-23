@@ -1,4 +1,4 @@
-import { Box, Text } from 'grommet';
+import { Box, Text } from "grommet";
 import {
   region,
   Badge,
@@ -10,7 +10,7 @@ import {
   PopoverDot,
   Tag,
   Frame,
-} from './primitives';
+} from "./primitives";
 
 // Behaviour levels: the questions developers ask once the regions are named.
 //   Scroll      · who owns overflow, what sticks, where height comes from
@@ -20,21 +20,21 @@ import {
 // ResponsiveLevels.jsx and StatesLevels.jsx.
 
 // A fake vertical scrollbar drawn on the right edge of a block
-const ScrollTrack = ({ thumb = '35%' }) => (
+const ScrollTrack = ({ thumb = "35%" }) => (
   <Box
     width="6px"
     background="background-contrast"
     round="small"
     alignSelf="stretch"
     flex={false}
-    style={{ position: 'relative' }}
+    style={{ position: "relative" }}
   >
     <Box
       background="brand"
       round="small"
       width="6px"
       height={thumb}
-      style={{ position: 'absolute', top: '10%' }}
+      style={{ position: "absolute", top: "10%" }}
     />
   </Box>
 );
@@ -42,71 +42,72 @@ const ScrollTrack = ({ thumb = '35%' }) => (
 // ---------------------------------------------------------------------------
 // Scroll & height
 
-// At the side-by-side tiers the surface fills the available view height and
-// ends level with the side navigation (12px, edgeSize.small, above the
-// viewport edge). The page never scrolls: the list body and the detail pane
-// are each their own scroll container. Stacked (narrow) layouts fall back to
-// the page as scroll container.
+// Default (decided 23 Nov): the page scrolls as 1. The list body keeps its
+// own scroll so browsing never moves the record beside it; the list toolbar
+// and the detail tab bar pin below the global header. The bounded
+// detail-pane scroll is kept as a prototype option for comparison.
 const SCROLL = {
   toolbar: region(
     1,
-    'List toolbar',
-    'sticky',
-    'Keeps search, filters and collection actions reachable while the items scroll beneath it.',
-    'Search · filters · collection actions · count',
-    'Pinned at the top of the list zone; never scrolls out of view.',
+    "List toolbar",
+    "sticky",
+    "Keeps search, filters and collection actions reachable while the items scroll beneath it.",
+    "Search · filters · collection actions · count",
+    "Sticky 24px (edgeSize.medium) below the global header; stays reachable while the page scrolls.",
   ),
   listBody: region(
     2,
-    'List body',
-    'overflow auto',
-    'Scrolls the items independently so browsing the list never moves the record beside it.',
-    'Wheel · ↑/↓ · PgUp/PgDn',
+    "List body",
+    "overflow auto",
+    "Scrolls the items independently so browsing the list never moves the record beside it.",
+    "Wheel · ↑/↓ · PgUp/PgDn",
     [
-      'Height is what remains of the view after the global header, page header and toolbar; the zone always fills it, even with 1 or 2 items.',
-      'The list zone, the divider and the side navigation all end 12px (edgeSize.small) above the viewport edge, so they read as 1 aligned set.',
-      'The page does not scroll at this tier; the surface is sized to the viewport instead.',
-      'Keyboard navigation scrolls the selected item into view.',
-      'Uses the native scrollbar so people can see that the list scrolls.',
-      'Jumps back to the top when the filter changes — a new filter is a new list.',
+      "Height is what remains of the view after the global header, page header and toolbar; the zone always fills it, even with 1 or 2 items.",
+      "The list zone and the side navigation both end 12px (edgeSize.small) above the viewport edge, so they read as 1 aligned set.",
+      "Stays pinned while the page scrolls, so the list is still in view when the detail is long.",
+      "Keyboard navigation scrolls the selected item into view.",
+      "Uses the native scrollbar so people can see that the list scrolls.",
+      "Jumps back to the top when the filter changes — a new filter is a new list.",
     ],
     {
       why: [
-        'Scrolling the list never loses the place in the record',
-        'Scrolling the record never loses the place in the list',
-        'Switching records is 1 gesture',
+        "Scrolling the list never loses the place in the record",
+        "Scrolling the record never loses the place in the list",
+        "Switching records is 1 gesture",
       ],
     },
   ),
   detailHeader: region(
     3,
-    'Detail header',
-    'scrolls with detail',
-    'Names the open record and holds its actions; scrolls away with the detail.',
-    '—',
-    'Scrolls with the detail pane like normal content.',
+    "Detail header",
+    "scrolls with page",
+    "Names the open record and holds its actions; scrolls away with the page.",
+    "—",
+    "Scrolls with the page like normal content; the tab bar below it pins once it reaches the global header.",
   ),
   detailContent: region(
     4,
-    'Detail content',
-    'overflow auto',
-    'Holds the record’s tabs and content; long content scrolls inside the detail pane.',
-    'Wheel · PgUp/PgDn',
+    "Detail content",
+    "grows the page",
+    "Holds the record’s tabs and content; long content grows the page, which scrolls as 1 with the tab bar pinned.",
+    "Wheel · PgUp/PgDn",
     [
-      'The detail pane is its own scroll container, bounded by the same view height as the list zone.',
-      'Changing selection scrolls the pane back to the top, so every record starts with its header and first facet visible.',
-      'If a tab is open, the same tab stays selected for the new record.',
+      "Default: the page is the scroll container, so there is only 1 scrollbar on the right of the window plus the list’s own.",
+      "The tab bar sticks 24px (edgeSize.medium) below the global header so the facets stay switchable while reading.",
+      "Changing selection scrolls back to the top, so every record starts with its header and first facet visible.",
+      "If a tab is open, the same tab stays selected for the new record.",
+      'Alternative (prototype option "Detail-pane scroll"): the pane is bounded to the view height and scrolls on its own.',
     ],
   ),
 };
 
-// Page header is drawn as context only; the surface is bounded to the view
-// height and the list body and detail pane each own a scrollbar.
+// Page header is drawn as context only; the list body owns its scrollbar
+// and the detail grows the page (page scrollbar drawn on the frame edge).
 const ScrollWireframe = () => {
   const R = SCROLL;
   return (
     <Box
-      border={{ color: 'border-weak' }}
+      border={{ color: "border-weak" }}
       round="small"
       pad="small"
       height="440px"
@@ -141,20 +142,19 @@ const ScrollWireframe = () => {
             <Box flex gap="xsmall">
               <Focus
                 region={R.detailHeader}
-                label="scrolls"
+                label="page"
                 pad="xsmall"
                 gap="xsmall"
               >
                 <Ghost width="140px" height="20px" />
               </Focus>
-              <Focus region={R.detailContent} label="scrolls" pad="xsmall" flex>
+              <Focus region={R.detailContent} label="grows" pad="xsmall" flex>
                 <Box direction="row" gap="xsmall" flex overflow="hidden">
                   <Box flex gap="xsmall" overflow="hidden">
                     {Array.from({ length: 9 }, (_, i) => (
                       <Ghost key={i} width={`${60 + ((i * 17) % 35)}%`} />
                     ))}
                   </Box>
-                  <ScrollTrack thumb="55%" />
                 </Box>
               </Focus>
             </Box>
@@ -167,7 +167,7 @@ const ScrollWireframe = () => {
 
 export const ScrollLevel = () => (
   <Level
-    intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. The surface fills the view height and ends level with the side navigation; the list and the detail each keep their own scroll."
+    intro="Which part of the surface owns each scrollbar, what is pinned, and how heights are derived. Default: the page scrolls as 1 and the list keeps its own scroll, with the list toolbar and detail tab bar pinned below the global header."
     wireframe={<ScrollWireframe />}
     regions={SCROLL}
   />
@@ -179,48 +179,48 @@ export const ScrollLevel = () => (
 const DATA = {
   list: region(
     1,
-    'List fetch',
-    'GET /items?page=…',
-    'The collection, on page load.',
-    'Page size · sort',
-    'Paged (e.g. 50) and virtualised when long. First page renders before the detail request starts.',
+    "List fetch",
+    "GET /items?page=…",
+    "The collection, on page load.",
+    "Page size · sort",
+    "Paged (e.g. 50) and virtualised when long. First page renders before the detail request starts.",
     {
       questions:
-        'Pagination, infinite scroll or virtualised list? Expected max collection size?',
+        "Pagination, infinite scroll or virtualised list? Expected max collection size?",
     },
   ),
   search: region(
     2,
-    'Search & filter',
-    'GET /items?q=…&filter=…',
-    'Narrowing the collection.',
-    'Debounce ≈300ms · cancel in-flight',
-    'Server-side when the collection is paged; client-side only for small, fully loaded sets. Count comes from the response.',
+    "Search & filter",
+    "GET /items?q=…&filter=…",
+    "Narrowing the collection.",
+    "Debounce ≈300ms · cancel in-flight",
+    "Server-side when the collection is paged; client-side only for small, fully loaded sets. Count comes from the response.",
   ),
   detail: region(
     3,
-    'Detail fetch',
-    'GET /items/:id',
-    'Full record for the selected item.',
-    '—',
-    'Fired on selection; cached per id so revisiting is instant. Header renders from list data immediately, body waits for the fetch.',
+    "Detail fetch",
+    "GET /items/:id",
+    "Full record for the selected item.",
+    "—",
+    "Fired on selection; cached per id so revisiting is instant. Header renders from list data immediately, body waits for the fetch.",
   ),
   tabs: region(
     4,
-    'Tab lazy-load',
-    'GET /items/:id/<facet>',
-    'Secondary facets of the record.',
-    '—',
-    'Loaded on first visit to the tab, not with the record. Loading skeleton inside the tab panel only.',
-    { questions: 'Prefetch the second tab on hover/focus?' },
+    "Tab lazy-load",
+    "GET /items/:id/<facet>",
+    "Secondary facets of the record.",
+    "—",
+    "Loaded on first visit to the tab, not with the record. Loading skeleton inside the tab panel only.",
+    { questions: "Prefetch the second tab on hover/focus?" },
   ),
   mutate: region(
     5,
-    'Mutations',
-    'POST · PATCH · DELETE',
-    'Any action in the page, detail or section.',
-    'Optimistic update · rollback on error',
-    'Update the list row and detail together; invalidate the affected tab and the collection count.',
+    "Mutations",
+    "POST · PATCH · DELETE",
+    "Any action in the page, detail or section.",
+    "Optimistic update · rollback on error",
+    "Update the list row and detail together; invalidate the affected tab and the collection count.",
   ),
 };
 
@@ -233,7 +233,7 @@ const DataWireframe = () => (
         justify="between"
         align="center"
         pad="xsmall"
-        border={{ color: 'border-weak', style: 'dashed' }}
+        border={{ color: "border-weak", style: "dashed" }}
         round="xsmall"
       >
         <Ghost width="120px" height="14px" />
@@ -287,9 +287,9 @@ const DataWireframe = () => (
               <Ghost width="100px" height="16px" />
               <Ghost width="120px" height="16px" />
             </Box>
-            <Box flex height={{ min: '96px' }} style={{ position: 'relative' }}>
+            <Box flex height={{ min: "96px" }} style={{ position: "relative" }}>
               <Dim label="facet content" flex />
-              <Box style={{ position: 'absolute', right: 8, bottom: 8 }}>
+              <Box style={{ position: "absolute", right: 8, bottom: 8 }}>
                 <Tag>5 mutate</Tag>
               </Box>
             </Box>
@@ -312,76 +312,76 @@ export const DataLevel = () => (
 // Actions & ownership
 
 const SCOPES = {
-  collection: { color: '#01a982', label: 'Collection' },
-  record: { color: '#7630EA', label: 'Record' },
-  section: { color: '#FF8300', label: 'Section' },
-  row: { color: '#00739D', label: 'Row' },
+  collection: { color: "#01a982", label: "Collection" },
+  record: { color: "#7630EA", label: "Record" },
+  section: { color: "#FF8300", label: "Section" },
+  row: { color: "#00739D", label: "Row" },
 };
 
 const ACTIONS = {
   collection: region(
     1,
-    'Collection actions',
-    'list toolbar · trailing, beside search',
-    'Creates or changes items in the collection the toolbar controls: add, import, bulk select.',
-    '1 secondary button · overflow for the rest · icon-only below Comfortable',
-    'Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.',
+    "Collection actions",
+    "list toolbar · trailing, beside search",
+    "Creates or changes items in the collection the toolbar controls: add, import, bulk select.",
+    "1 secondary button · overflow for the rest · icon-only below Comfortable",
+    "Sits with search, filter and sort because they all shape the same collection. Always visible regardless of selection; never acts on the selected record. Distinct from page-level controls in the page header (Back, page settings, help, export of the whole view), which act on the surface rather than its data.",
     {
       why: [
-        'Controls sit beside what they affect',
-        'Add/import scope is obvious next to search and filters',
-        'Page header stays free of data actions',
+        "Controls sit beside what they affect",
+        "Add/import scope is obvious next to search and filters",
+        "Page header stays free of data actions",
       ],
     },
   ),
   record: region(
     2,
-    'Record actions',
-    'detail header · trailing',
-    'Acts on the selected record as a whole: edit, reset password, suspend, delete.',
-    'Primary + overflow menu · destructive last and separated',
-    'Change with the selection and permissions. Destructive actions always confirm. Delete returns focus to the list and selects the next row.',
+    "Record actions",
+    "detail header · trailing",
+    "Acts on the selected record as a whole: edit, reset password, suspend, delete.",
+    "Primary + overflow menu · destructive last and separated",
+    "Change with the selection and permissions. Destructive actions always confirm. Delete returns focus to the list and selects the next row.",
     {
       questions:
-        'Should the most common action be a visible button or everything in the menu?',
+        "Should the most common action be a visible button or everything in the menu?",
     },
     {
       why: [
-        'Target is unambiguous: actions sit beside the record’s name',
-        'Fewer mis-applied actions',
+        "Target is unambiguous: actions sit beside the record’s name",
+        "Fewer mis-applied actions",
       ],
     },
   ),
   section: region(
     3,
-    'Section actions',
-    'content area · top trailing',
-    'Adds to the facet being viewed, e.g. assign or add to a related set.',
-    '1 secondary button per section',
-    'Scoped to the visible tab. Opens a layer; on success the list in the section updates in place.',
+    "Section actions",
+    "content area · top trailing",
+    "Adds to the facet being viewed, e.g. assign or add to a related set.",
+    "1 secondary button per section",
+    "Scoped to the visible tab. Opens a layer; on success the list in the section updates in place.",
     {
       why: [
-        'Clear what is being added to (a role, a group)',
-        'Keeps the record-level menu uncluttered',
+        "Clear what is being added to (a role, a group)",
+        "Keeps the record-level menu uncluttered",
       ],
     },
   ),
   row: region(
     4,
-    'Row actions',
-    'inline · list rows in the content area',
-    'Acts on one membership row: remove it, or follow a link to its source.',
-    'Trailing icon button · anchor',
-    'Only in detail-zone lists, never in the main list — the main list is for selection only. Removal confirms when the effect is not easily reversible.',
+    "Row actions",
+    "inline · list rows in the content area",
+    "Acts on one membership row: remove it, or follow a link to its source.",
+    "Trailing icon button · anchor",
+    "Only in detail-zone lists, never in the main list — the main list is for selection only. Removal confirms when the effect is not easily reversible.",
     {
       questions:
-        'Do we ever need bulk selection in the main list? If so this model changes.',
+        "Do we ever need bulk selection in the main list? If so this model changes.",
     },
     {
       why: [
-        'Decision is about that row alone',
-        'Inline placement makes the target self-evident',
-        'Main list stays reserved for selection',
+        "Decision is about that row alone",
+        "Inline placement makes the target self-evident",
+        "Main list stays reserved for selection",
       ],
     },
   ),
@@ -401,7 +401,7 @@ const Dot = ({ scope, id }) => (
     <Text
       size="xsmall"
       weight="bold"
-      style={{ color: '#ffffff', lineHeight: 1 }}
+      style={{ color: "#ffffff", lineHeight: 1 }}
     >
       {id}
     </Text>
@@ -410,7 +410,7 @@ const Dot = ({ scope, id }) => (
 
 const Slot = ({ scope, children, ...rest }) => (
   <Box
-    border={{ color: SCOPES[scope].color, size: 'small' }}
+    border={{ color: SCOPES[scope].color, size: "small" }}
     round="xsmall"
     pad="xsmall"
     gap="xsmall"
@@ -444,7 +444,7 @@ const ActionsWireframe = () => (
           justify="between"
           align="center"
           pad="xsmall"
-          border={{ color: 'border-weak', style: 'dashed' }}
+          border={{ color: "border-weak", style: "dashed" }}
           round="xsmall"
         >
           <Ghost width="120px" height="14px" />
@@ -461,7 +461,7 @@ const ActionsWireframe = () => (
           <Box
             width="34%"
             flex={false}
-            border={{ color: 'border-weak', style: 'dashed' }}
+            border={{ color: "border-weak", style: "dashed" }}
             round="xsmall"
             pad="xsmall"
             gap="xsmall"
@@ -501,7 +501,7 @@ const ActionsWireframe = () => (
               justify="between"
               align="center"
               pad="xsmall"
-              border={{ color: 'border-weak', style: 'dashed' }}
+              border={{ color: "border-weak", style: "dashed" }}
               round="xsmall"
             >
               <Ghost width="140px" height="20px" />
@@ -513,12 +513,12 @@ const ActionsWireframe = () => (
                 <Ghost width="24px" height="24px" round="full" />
               </Slot>
             </Box>
-            <Box direction="row" gap="small" pad={{ horizontal: 'xsmall' }}>
+            <Box direction="row" gap="small" pad={{ horizontal: "xsmall" }}>
               <Ghost width="60px" height="16px" background="brand" />
               <Ghost width="100px" height="16px" />
             </Box>
             <Box
-              border={{ color: 'border-weak', style: 'dashed' }}
+              border={{ color: "border-weak", style: "dashed" }}
               round="xsmall"
               pad="xsmall"
               gap="xsmall"
@@ -543,8 +543,8 @@ const ActionsWireframe = () => (
                   direction="row"
                   justify="between"
                   align="center"
-                  border={{ side: 'bottom', color: 'border-weak' }}
-                  pad={{ vertical: 'xsmall' }}
+                  border={{ side: "bottom", color: "border-weak" }}
+                  pad={{ vertical: "xsmall" }}
                 >
                   <Box gap="4xsmall" flex>
                     <Ghost width="50%" background="brand" />

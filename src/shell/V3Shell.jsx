@@ -84,7 +84,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
       "Behaviour",
       [
         ["Keep tab across records", keepTab, setKeepTab],
-        ["Full-page scroll", pageScroll, setPageScroll],
+        ["Detail-pane scroll", !pageScroll, (v) => setPageScroll(!v)],
       ],
     ],
     [
@@ -717,9 +717,10 @@ export const V3Shell = ({
   const [wrapped, setWrapped] = useStoredToggle("wrapped", false);
   const [contextPane, setContextPane] = useStoredToggle("contextPane", false);
   const [keepTab, setKeepTab] = useStoredToggle("keepTab", true);
-  // Crit 19 Nov: compare detail-pane scroll with the whole page scrolling
-  // while the global header, list toolbar and detail tabs stay pinned.
-  const [pageScroll, setPageScroll] = useStoredToggle("pageScroll", false);
+  // Default since the 23 Nov 1:1: the page scrolls as 1 while the list
+  // toolbar and detail tabs stay pinned; "Detail-pane scroll" in prototype
+  // options restores the bounded pane for comparison.
+  const [pageScroll, setPageScroll] = useStoredToggle("pageScroll", true);
   const [detailTabs, setDetailTabs] = useState({});
   const setDetailTab = useCallback(
     (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),

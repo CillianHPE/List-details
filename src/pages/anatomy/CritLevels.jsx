@@ -105,8 +105,8 @@ const PLAN = [
     'Pattern → When to use: 5 decision questions (list–detail vs a dedicated page), the 4 scenarios.',
   ],
   [
-    'Scroll toggle (done)',
-    '"Full-page scroll" in prototype options: the page scrolls as 1, with the list toolbar and the detail tab bar pinned 24px (size.medium) below the global header. Off (default) the detail pane scrolls on its own.',
+    'Scroll default (decided 23 Nov)',
+    'Full-page scroll is the default: the page scrolls as 1, the list keeps its own scroll, and the list toolbar and detail tab bar pin 24px (size.medium) below the global header. "Detail-pane scroll" in prototype options restores the bounded pane for comparison.',
   ],
   [
     'Persist sub-tab (done)',

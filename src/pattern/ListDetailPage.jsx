@@ -158,7 +158,7 @@ export const ListDetailPage = ({
     return () => window.removeEventListener("resize", measure);
   }, [surfaceRef, stacked, showDetail]);
   // Stacked (narrow) layouts fall back to the page as scroll container, as
-  // does the "Full-page scroll" prototype option: the list toolbar and the
+  // does the default full-page scroll: the list toolbar and the
   // detail tab bar then pin below the global header instead.
   const fillHeight = !stacked && !pageScroll;
 
