@@ -113,8 +113,8 @@ const PLAN = [
     'Default on: the selected detail tab is kept while clicking through records, per page. "Keep tab across records" in prototype options switches it off to compare.',
   ],
   [
-    'Resize divider (dropped)',
-    'Not pursued. Resizable panes are not an interaction the pattern will support; widths follow the responsive ladder.',
+    'Divider (dropped, 23 Nov)',
+    'Removed as a prop and visual style after the 1:1 with Oliver. It read as noise beside the scrollbar and implied a drag-to-resize that does not exist; the 48px (edgeSize.xlarge) gutter separates the zones.',
   ],
   [
     'Review process',

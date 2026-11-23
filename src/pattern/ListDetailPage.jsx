@@ -5,7 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
-} from 'react';
+} from "react";
 import {
   Anchor,
   Box,
@@ -18,15 +18,15 @@ import {
   Text,
   TextInput,
   ToggleGroup,
-} from 'grommet';
-import { Add, LinkPrev, Search } from '@hpe-design/icons-grommet';
-import { listWidthFor, useSurfaceTier } from './listDetail';
+} from "grommet";
+import { Add, LinkPrev, Search } from "@hpe-design/icons-grommet";
+import { listWidthFor, useSurfaceTier } from "./listDetail";
 import {
   APP_HEADER_HEIGHT,
   stickyBelowHeader,
   usePrototype,
   useShell,
-} from '../shell/ShellContext';
+} from "../shell/ShellContext";
 
 // Contained surface, as hpe-design-system/sandbox/grommet-app ContentPane
 const ContentPane = forwardRef((props, ref) => (
@@ -69,14 +69,14 @@ const QuickFilters = ({ options, value, onChange }) => {
         <Select
           options={options}
           labelKey="label"
-          valueKey={{ key: 'value', reduce: true }}
+          valueKey={{ key: "value", reduce: true }}
           value={value}
           onChange={({ value: next }) => onChange(next)}
           icon
           a11yTitle="Quick filter"
         />
       ) : (
-        <Box ref={groupRef} alignSelf="start" style={{ whiteSpace: 'nowrap' }}>
+        <Box ref={groupRef} alignSelf="start" style={{ whiteSpace: "nowrap" }}>
           <ToggleGroup
             options={options}
             value={value}
@@ -111,27 +111,26 @@ export const ListDetailPage = ({
   items,
   matches,
   quickFilters,
-  searchPlaceholder = 'Search',
+  searchPlaceholder = "Search",
   collectionAction,
   pageAction,
   renderList,
   renderDetail,
-  noResultsText = 'Nothing matches your search.',
-  noSelectionText = 'Select an item to see details',
+  noResultsText = "Nothing matches your search.",
+  noSelectionText = "Select an item to see details",
   before,
   after,
 }) => {
   const { ref: surfaceRef, width: surfaceWidth, tier } = useSurfaceTier();
-  const stacked = tier === 'drillIn';
+  const stacked = tier === "drillIn";
   // V3.1 shell: content sits directly on the white canvas, so the list–detail
   // surface drops its own container chrome (border, outer padding).
-  const bare = useShell() === 'v3';
-  const [query, setQuery] = useState('');
+  const bare = useShell() === "v3";
+  const [query, setQuery] = useState("");
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
-  // Prototype controls (divider, contained list) live in the global header.
-  const { divider, contained, containedDetail, wrapped, pageScroll } =
-    usePrototype();
+  // Prototype controls (contained list, scroll) live in the global header.
+  const { contained, containedDetail, wrapped, pageScroll } = usePrototype();
   // Grey wrapper: the whole surface is 1 background-back container, the list
   // sits on it bare and the detail becomes a white card, so the list's own
   // contained surface is dropped while this is on.
@@ -155,8 +154,8 @@ export const ListDetailPage = ({
       setSurfaceTop(Math.ceil(r.top + window.scrollY));
     };
     measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, [surfaceRef, stacked, showDetail]);
   // Stacked (narrow) layouts fall back to the page as scroll container, as
   // does the "Full-page scroll" prototype option: the list toolbar and the
@@ -186,7 +185,7 @@ export const ListDetailPage = ({
     setShowDetail(true);
   };
   const clearFilters = () => {
-    setQuery('');
+    setQuery("");
     setQuickFilter(quickFilters[0].value);
   };
 
@@ -194,7 +193,7 @@ export const ListDetailPage = ({
   // surface, not the data). Collection actions live in the list toolbar.
   const pageActionButton =
     pageAction &&
-    (tier === 'comfortable' ? (
+    (tier === "comfortable" ? (
       <Button label={pageAction.label} icon={pageAction.icon} />
     ) : (
       <Button
@@ -204,7 +203,7 @@ export const ListDetailPage = ({
       />
     ));
   const headerActions = pageActionButton ? (
-    <Box flex={false} style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}>
+    <Box flex={false} style={{ whiteSpace: "nowrap", minWidth: "max-content" }}>
       {pageActionButton}
     </Box>
   ) : undefined;
@@ -214,7 +213,7 @@ export const ListDetailPage = ({
   // icon-only when the list column is narrow.
   const collectionButton =
     collectionAction &&
-    (tier === 'comfortable' ? (
+    (tier === "comfortable" ? (
       <Button label={collectionAction.label} secondary />
     ) : (
       <Button
@@ -225,7 +224,7 @@ export const ListDetailPage = ({
     ));
 
   return (
-    <Page pad={fillHeight ? undefined : { bottom: 'xlarge' }}>
+    <Page pad={fillHeight ? undefined : { bottom: "xlarge" }}>
       <PageContent>
         {/* A · Page header — Grommet PageHeader (title / parent / actions slots) */}
         <PageHeader
@@ -247,21 +246,21 @@ export const ListDetailPage = ({
             single record is drilled into on the narrow tier. */}
         {!(stacked && showDetail) && before}
 
-        {/* One contained surface holding both columns, split by a divider */}
+        {/* One surface holding both columns, separated by the gutter */}
         <ContentPane
           ref={surfaceRef}
-          pad={wrapped && !stacked ? 'medium' : 'none'}
-          overflow={bare && !wrapped ? undefined : 'hidden'}
-          round={wrapped ? 'large' : bare ? false : 'xlarge'}
-          background={wrapped ? 'background-back' : 'background-front'}
+          pad={wrapped && !stacked ? "medium" : "none"}
+          overflow={bare && !wrapped ? undefined : "hidden"}
+          round={wrapped ? "large" : bare ? false : "xlarge"}
+          background={wrapped ? "background-back" : "background-front"}
         >
           {/* Proportional zones (Anatomy › Zones): list 40% / detail 60%,
               list floored at 256px (size.small), in whole px. */}
           <Grid
             columns={
               stacked
-                ? ['auto']
-                : [`${listWidthFor(surfaceWidth ?? 1440)}px`, 'flex']
+                ? ["auto"]
+                : [`${listWidthFor(surfaceWidth ?? 1440)}px`, "flex"]
             }
             // Columns stretch to the row height, so a short list still owns
             // the full height of the surface beside a long detail
@@ -270,7 +269,7 @@ export const ListDetailPage = ({
             // List and detail are sibling content sections inside the primary
             // content area, so the gutter between them is a true gap:
             // 48px (edgeSize.xlarge). No divider, no split padding.
-            gap={stacked ? undefined : wrapped ? 'medium' : 'xlarge'}
+            gap={stacked ? undefined : wrapped ? "medium" : "xlarge"}
             height={
               fillHeight
                 ? `calc(100vh - ${surfaceTop + 12 + (wrapped ? 48 : 0)}px)`
@@ -284,34 +283,26 @@ export const ListDetailPage = ({
                 pad={
                   stacked || bare || wrapped
                     ? undefined
-                    : { vertical: 'medium' }
+                    : { vertical: "medium" }
                 }
                 // Grid items default to min-width:auto, which would let the
                 // toolbar's intrinsic width override the fr share.
                 style={stacked ? undefined : { minWidth: 0 }}
               >
-                {/* Rail: fills the column so the divider runs the full height
-                    of the surface (inset by the pane padding); the sticky
-                    toolbar + rows box pins inside it. */}
-                <Box
-                  flex
-                  border={
-                    stacked || !divider
-                      ? undefined
-                      : { side: 'right', color: 'border-weak' }
-                  }
-                >
+                {/* Rail: fills the column; the sticky toolbar + rows box
+                    pins inside it. */}
+                <Box flex>
                   <Box
                     pad={
                       listContained
-                        ? 'small'
+                        ? "small"
                         : bare || wrapped
                           ? stacked
-                            ? { vertical: 'medium' }
+                            ? { vertical: "medium" }
                             : undefined
                           : stacked
-                            ? 'medium'
-                            : { left: 'medium' }
+                            ? "medium"
+                            : { left: "medium" }
                     }
                     gap="xsmall"
                     style={
@@ -325,13 +316,13 @@ export const ListDetailPage = ({
                     // Contained: the whole list zone (toolbar, filters, count,
                     // rows) sits on a background-contrast surface, same
                     // treatment as the detail cards
-                    background={listContained ? 'background-back' : undefined}
-                    round={listContained ? 'medium' : undefined}
+                    background={listContained ? "background-back" : undefined}
+                    round={listContained ? "medium" : undefined}
                     margin={
                       listContained && !stacked
                         ? bare
-                          ? { right: 'medium' }
-                          : { horizontal: 'medium' }
+                          ? { right: "medium" }
+                          : { horizontal: "medium" }
                         : undefined
                     }
                     // Pinned 24px below the sticky global header; max height leaves
@@ -369,7 +360,7 @@ export const ListDetailPage = ({
                     <Box
                       overflow="auto"
                       flex
-                      style={{ scrollbarColor: 'auto' }}
+                      style={{ scrollbarColor: "auto" }}
                     >
                       {visible.length ? (
                         renderList({ items: visible, selectedId, onSelect })
@@ -377,7 +368,7 @@ export const ListDetailPage = ({
                         // No results: message replaces the rows, toolbar stays,
                         // detail keeps the last selection.
                         <Box
-                          pad={{ vertical: 'medium' }}
+                          pad={{ vertical: "medium" }}
                           gap="small"
                           align="start"
                         >
@@ -401,15 +392,15 @@ export const ListDetailPage = ({
                 // content area; the 48px gutter is the Grid gap above.
                 pad={
                   wrapped
-                    ? 'medium'
+                    ? "medium"
                     : detailContained
-                      ? 'small'
+                      ? "small"
                       : bare
                         ? undefined
                         : {
-                            vertical: 'medium',
-                            right: 'medium',
-                            left: stacked ? 'medium' : undefined,
+                            vertical: "medium",
+                            right: "medium",
+                            left: stacked ? "medium" : undefined,
                           }
                 }
                 // Contained detail: the zone sits on its own background-back
@@ -418,9 +409,9 @@ export const ListDetailPage = ({
                 margin={
                   detailContained && !bare
                     ? {
-                        vertical: 'medium',
-                        right: 'medium',
-                        left: stacked ? 'medium' : undefined,
+                        vertical: "medium",
+                        right: "medium",
+                        left: stacked ? "medium" : undefined,
                       }
                     : undefined
                 }
@@ -428,13 +419,13 @@ export const ListDetailPage = ({
                 // surface (Oliver's sketch), so it carries its own chrome.
                 background={
                   wrapped
-                    ? 'background-front'
+                    ? "background-front"
                     : detailContained
-                      ? 'background-back'
+                      ? "background-back"
                       : undefined
                 }
-                round={wrapped || detailContained ? 'medium' : undefined}
-                overflow={fillHeight ? 'auto' : undefined}
+                round={wrapped || detailContained ? "medium" : undefined}
+                overflow={fillHeight ? "auto" : undefined}
                 style={fillHeight ? { minHeight: 0 } : undefined}
               >
                 {selected ? (

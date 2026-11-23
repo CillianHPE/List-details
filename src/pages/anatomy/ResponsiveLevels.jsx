@@ -100,7 +100,7 @@ const RESPONSIVE = {
     'Page header actions',
     'buttons → overflow',
     'Page-level controls only (act on the surface, not the data). Collection actions live in the list toolbar.',
-    'Divider toggle (prototype control)',
+    'Prototype options (prototype control)',
     'Everything folds into one overflow menu as soon as the surface leaves Comfortable; Back takes the parent slot when drilled in.',
     {
       at: {

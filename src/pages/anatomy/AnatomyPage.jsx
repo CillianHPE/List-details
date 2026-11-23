@@ -65,7 +65,7 @@ const PAGE = {
     'List–detail surface',
     'Grid · 2 columns',
     'Lets the user pick one record from a collection and read or act on it, side by side, without leaving the page.',
-    'Divider between zones (optional)',
+    'None (prototype options only)',
     'Fills the remaining width of the page content and the full view height below the page header, ending level with the side navigation (12px, edgeSize.small, above the viewport edge).',
     {
       why: [

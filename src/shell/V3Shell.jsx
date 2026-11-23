@@ -52,7 +52,6 @@ import {
 // in the global header so they stay out of the way but are 1 click to reach.
 const PrototypeSwitches = ({ chrome, onChromeChange }) => {
   const {
-    divider,
     contained,
     containedDetail,
     containedContent,
@@ -60,7 +59,6 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     contextPane,
     keepTab,
     pageScroll,
-    setDivider,
     setContained,
     setContainedDetail,
     setContainedContent,
@@ -76,7 +74,6 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     [
       "Containment",
       [
-        ["Divider", divider, setDivider],
         ["Contained list", contained, setContained],
         ["Contained detail", containedDetail, setContainedDetail],
         ["Contained content", containedContent, setContainedContent],
@@ -708,7 +705,6 @@ export const V3Shell = ({
 }) => {
   // Prototype toggles persist in localStorage so they stay consistent when
   // flicking between examples (each route mounts its own shell).
-  const [divider, setDivider] = useStoredToggle("divider", false);
   const [contained, setContained] = useStoredToggle("contained", false);
   const [containedDetail, setContainedDetail] = useStoredToggle(
     "containedDetail",
@@ -731,7 +727,6 @@ export const V3Shell = ({
   );
   const prototype = useMemo(
     () => ({
-      divider,
       contained,
       containedDetail,
       containedContent,
@@ -740,7 +735,6 @@ export const V3Shell = ({
       keepTab,
       pageScroll,
       detailTabs,
-      setDivider,
       setContained,
       setContainedDetail,
       setContainedContent,
@@ -751,7 +745,6 @@ export const V3Shell = ({
       setDetailTab,
     }),
     [
-      divider,
       contained,
       containedDetail,
       containedContent,

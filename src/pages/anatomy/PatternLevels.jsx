@@ -205,8 +205,8 @@ const MockPage = ({ title, subtitle, search, action, children }) => (
   </Box>
 );
 
-// Built from the same components as the coded examples (Divider and Contained
-// list switched off): Grommet PageHeader, TextInput search + secondary
+// Built from the same components as the coded examples (Contained list
+// switched off): Grommet PageHeader, TextInput search + secondary
 // collection action, ToggleGroup quick filters, a weak count line, Avatar
 // rows with a filled selected row, then the shared detail heading, tabs and
 // name–value sections. Rendered at reduced zoom so a whole page fits the

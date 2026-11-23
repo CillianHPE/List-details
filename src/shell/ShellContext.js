@@ -1,17 +1,16 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
 // Which app-shell variant the page is rendered in. Pages can use it to adapt
 // containment (e.g. a bordered pane on a white V3 canvas vs. a filled pane on
 // the default grey canvas).
-export const ShellContext = createContext('default');
+export const ShellContext = createContext("default");
 
 export const useShell = () => useContext(ShellContext);
 
-// Prototype-only presentation switches (divider between list and detail,
+// Prototype-only presentation switches (contained list and detail,
 // contained list surface). Owned by the shell so they sit in the global
 // header rather than competing with real page actions.
 export const PrototypeContext = createContext({
-  divider: false,
   contained: false,
   // Detail zone on its own background-back surface, mirror of contained list.
   containedDetail: false,
@@ -23,7 +22,6 @@ export const PrototypeContext = createContext({
   keepTab: true,
   pageScroll: false,
   detailTabs: {},
-  setDivider: () => {},
   setContained: () => {},
   setContainedDetail: () => {},
   setContainedContent: () => {},
@@ -53,7 +51,7 @@ export const useDetailTab = () => {
 export const APP_HEADER_HEIGHT = 60;
 export const appHeight = `calc(100vh - ${APP_HEADER_HEIGHT}px)`;
 export const stickyBelowHeader = (offset = 0, extra = {}) => ({
-  position: 'sticky',
+  position: "sticky",
   top: APP_HEADER_HEIGHT + offset,
   ...extra,
 });
@@ -62,7 +60,7 @@ export const stickyBelowHeader = (offset = 0, extra = {}) => ({
 // list and detail cards read as the same surface; the 4% tint is reserved for
 // selection and hover so a selected row still shows inside a pane.
 export const SURFACE = {
-  base: 'background', // canvas, global header, detail pane
-  pane: 'background-back', // nav, context pane, contained list, cards
-  selected: 'background-contrast', // selected / hovered rows only
+  base: "background", // canvas, global header, detail pane
+  pane: "background-back", // nav, context pane, contained list, cards
+  selected: "background-contrast", // selected / hovered rows only
 };
