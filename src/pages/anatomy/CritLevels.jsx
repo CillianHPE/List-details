@@ -102,7 +102,7 @@ const PLAN = [
   ],
   [
     'Usage guidance (done)',
-    'Pattern → When to use: 5 decision questions (list–detail vs a dedicated page), the 4 scenarios.',
+    'Pattern → When to use: 6 decision questions (list–detail vs a dedicated page), context-preservation first since the 23 Nov 1:1, the 4 scenarios.',
   ],
   [
     'Scroll default (decided 23 Nov)',
