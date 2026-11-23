@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { normalizeColor } from 'grommet/utils';
-import { APP_HEADER_HEIGHT, usePrototype } from '../shell/ShellContext';
+import { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import { normalizeColor } from "grommet/utils";
+import { APP_HEADER_HEIGHT, usePrototype } from "../shell/ShellContext";
 import {
   Box,
   DataTable,
@@ -10,7 +10,7 @@ import {
   NameValuePair,
   Tabs,
   Text,
-} from 'grommet';
+} from "grommet";
 
 // Building blocks for the detail zone's content area, shared by every record
 // type (Anatomy › Detail zone › Content area).
@@ -23,8 +23,8 @@ import {
 const ArrowlessTabs = styled(Tabs)`
   &
     > div:has(
-      > button[aria-label='Previous Tab'][disabled]
-        ~ button[aria-label='Next Tab'][disabled]
+      > button[aria-label="Previous Tab"][disabled]
+        ~ button[aria-label="Next Tab"][disabled]
     )
     > button {
     display: none;
@@ -56,12 +56,12 @@ export const DetailTabs = (props) => {
   // Pinned strip paints the surface it sits on: the detail zone's own
   // background-back when contained, otherwise the page background.
   const surface =
-    containedDetail && !wrapped ? 'background-back' : 'background';
+    containedDetail && !wrapped ? "background-back" : "background";
   return (
     <ArrowlessTabs
       justify="start"
       flex={false}
-      margin={{ top: 'large' }}
+      margin={{ top: "large" }}
       $sticky={pageScroll}
       $surface={surface}
       {...props}
@@ -103,48 +103,56 @@ export const DetailHeading = ({ heading, status, description, trailing }) => (
 
 // Keeps a heading in the document outline without rendering it visibly
 const visuallyHidden = {
-  position: 'absolute',
+  position: "absolute",
   width: 1,
   height: 1,
   margin: -1,
   padding: 0,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  whiteSpace: 'nowrap',
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
   border: 0,
 };
 
-export const Section = ({ title, hideTitle, action, contained, children }) => (
-  <Box
-    gap="small"
-    flex={false}
-    margin={{ top: 'medium' }}
-    pad={contained ? 'medium' : undefined}
-    round={contained ? 'medium' : undefined}
-    background={contained ? 'background-back' : undefined}
-  >
-    {hideTitle && (
-      <Heading level={3} margin="none" style={visuallyHidden}>
-        {title}
-      </Heading>
-    )}
-    {((title && !hideTitle) || action) && (
-      <Box
-        direction="row"
-        align="center"
-        justify={hideTitle ? 'end' : 'between'}
-      >
-        {!hideTitle && (
-          <Heading level={3} size="xsmall" margin="none">
-            {title}
-          </Heading>
-        )}
-        {action}
-      </Box>
-    )}
-    {children}
-  </Box>
-);
+export const Section = ({ title, hideTitle, action, contained, children }) => {
+  const { containedContent, containedDetail, wrapped } = usePrototype();
+  const isContained = contained || containedContent;
+  // Alternate with the surface the detail zone sits on: grey section on the
+  // page or white card, white section inside a contained (grey) detail zone.
+  const surface =
+    containedDetail && !wrapped ? "background-front" : "background-back";
+  return (
+    <Box
+      gap="small"
+      flex={false}
+      margin={{ top: "medium" }}
+      pad={isContained ? "medium" : undefined}
+      round={isContained ? "medium" : undefined}
+      background={isContained ? surface : undefined}
+    >
+      {hideTitle && (
+        <Heading level={3} margin="none" style={visuallyHidden}>
+          {title}
+        </Heading>
+      )}
+      {((title && !hideTitle) || action) && (
+        <Box
+          direction="row"
+          align="center"
+          justify={hideTitle ? "end" : "between"}
+        >
+          {!hideTitle && (
+            <Heading level={3} size="xsmall" margin="none">
+              {title}
+            </Heading>
+          )}
+          {action}
+        </Box>
+      )}
+      {children}
+    </Box>
+  );
+};
 
 // Horizontal name/value pairs; stack vertically once the container is too
 // narrow to hold the name column plus a reasonable value column.
@@ -152,13 +160,13 @@ export const PAIR_ROW_MIN_WIDTH = 480;
 
 export const usePairDirection = () => {
   const ref = useRef(null);
-  const [direction, setDirection] = useState('row');
+  const [direction, setDirection] = useState("row");
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
     const observer = new ResizeObserver(([entry]) =>
       setDirection(
-        entry.contentRect.width < PAIR_ROW_MIN_WIDTH ? 'column' : 'row',
+        entry.contentRect.width < PAIR_ROW_MIN_WIDTH ? "column" : "row",
       ),
     );
     observer.observe(el);
@@ -175,9 +183,9 @@ export const ListRow = ({ index, count, children }) => (
     align="center"
     justify="between"
     gap="medium"
-    pad={{ vertical: 'small' }}
+    pad={{ vertical: "small" }}
     border={
-      index < count - 1 ? { side: 'bottom', color: 'border-weak' } : false
+      index < count - 1 ? { side: "bottom", color: "border-weak" } : false
     }
   >
     {children}
@@ -203,7 +211,7 @@ export const ListPrimary = ({ children, ...rest }) => (
 
 // Trailing cell of a list row. Fixed width and start-aligned so indicators
 // and labels line up in one column instead of ragging against the right edge.
-export const ListStatus = ({ width = 'small', children }) => (
+export const ListStatus = ({ width = "small", children }) => (
   <Box width={width} flex={false} align="start">
     {children}
   </Box>
@@ -243,10 +251,10 @@ export const Pairs = ({ pairs }) => {
   const [ref, direction] = usePairDirection();
   return (
     <Box ref={ref}>
-      <NameValueList pairProps={{ direction }} nameProps={{ width: 'small' }}>
+      <NameValueList pairProps={{ direction }} nameProps={{ width: "small" }}>
         {pairs.map(([name, value]) => (
           <NameValuePair key={name} name={name}>
-            {typeof value === 'string' ? <Text>{value}</Text> : value}
+            {typeof value === "string" ? <Text>{value}</Text> : value}
           </NameValuePair>
         ))}
       </NameValueList>

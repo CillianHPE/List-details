@@ -15,6 +15,8 @@ export const PrototypeContext = createContext({
   contained: false,
   // Detail zone on its own background-back surface, mirror of contained list.
   containedDetail: false,
+  // Each content section under the detail tabs on its own surface.
+  containedContent: false,
   // Experimental (Oliver, 20 Nov): grey wrapper around the whole list–detail
   // surface with the detail in a white card; list sits on the grey.
   wrapped: false,
@@ -24,6 +26,7 @@ export const PrototypeContext = createContext({
   setDivider: () => {},
   setContained: () => {},
   setContainedDetail: () => {},
+  setContainedContent: () => {},
   setWrapped: () => {},
   setKeepTab: () => {},
   setPageScroll: () => {},

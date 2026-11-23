@@ -55,6 +55,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     divider,
     contained,
     containedDetail,
+    containedContent,
     wrapped,
     contextPane,
     keepTab,
@@ -62,6 +63,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     setDivider,
     setContained,
     setContainedDetail,
+    setContainedContent,
     setWrapped,
     setContextPane,
     setKeepTab,
@@ -77,6 +79,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
         ['Divider', divider, setDivider],
         ['Contained list', contained, setContained],
         ['Contained detail', containedDetail, setContainedDetail],
+        ['Contained content', containedContent, setContainedContent],
         ['Grey wrapper (experimental)', wrapped, setWrapped],
       ],
     ],
@@ -686,6 +689,7 @@ export const V3Shell = ({
   const [divider, setDivider] = useState(false);
   const [contained, setContained] = useState(false);
   const [containedDetail, setContainedDetail] = useState(false);
+  const [containedContent, setContainedContent] = useState(false);
   const [wrapped, setWrapped] = useState(false);
   const [contextPane, setContextPane] = useState(false);
   const [keepTab, setKeepTab] = useState(true);
@@ -702,6 +706,7 @@ export const V3Shell = ({
       divider,
       contained,
       containedDetail,
+      containedContent,
       wrapped,
       contextPane,
       keepTab,
@@ -710,6 +715,7 @@ export const V3Shell = ({
       setDivider,
       setContained,
       setContainedDetail,
+      setContainedContent,
       setWrapped,
       setContextPane,
       setKeepTab,
@@ -720,6 +726,7 @@ export const V3Shell = ({
       divider,
       contained,
       containedDetail,
+      containedContent,
       wrapped,
       contextPane,
       keepTab,
