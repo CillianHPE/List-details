@@ -1075,10 +1075,10 @@ export const PatternWhatLevel = () => (
 
 const DECIDE = [
   {
-    q: "Does keeping their place matter?",
+    q: "Does keeping their place in the list matter?",
     use: [
       "Yes",
-      "Finish the task without losing filters, scroll position or the next item.",
+      "Filters, scroll position and the next item stay put while they work on a record.",
     ],
     page: [
       "No",
@@ -1262,8 +1262,8 @@ export const PatternUseLevel = () => (
       <Box gap="2px">
         <SectionHeading>Decide in 6 questions</SectionHeading>
         <Text color="text-weak">
-          Start with context: if keeping their place matters, the rest usually
-          follows. Most answers fall in 1 column. If they split, browse here and
+          Start with context: if keeping their place in the list (filters,
+          scroll position, next item) matters, the rest usually follows. Most answers fall in 1 column. If they split, browse here and
           hand the deep work off to a page.
         </Text>
       </Box>

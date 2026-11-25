@@ -705,7 +705,9 @@ export const V3Shell = ({
 }) => {
   // Prototype toggles persist in localStorage so they stay consistent when
   // flicking between examples (each route mounts its own shell).
-  const [contained, setContained] = useStoredToggle("contained", false);
+  // Default since the 25 Nov review: contained list, uncontained detail;
+  // containment inside the detail depends on its content.
+  const [contained, setContained] = useStoredToggle("contained", true);
   const [containedDetail, setContainedDetail] = useStoredToggle(
     "containedDetail",
     false,

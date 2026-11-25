@@ -92,7 +92,7 @@ const SCROLL = {
     "Holds the record’s tabs and content; long content grows the page, which scrolls as 1 with the tab bar pinned.",
     "Wheel · PgUp/PgDn",
     [
-      "Default: the page is the scroll container, so there is only 1 scrollbar on the right of the window plus the list’s own.",
+      "Default (confirmed with Oliver, 25 Nov): the page is the scroll container, so there is only 1 scrollbar on the right of the window plus the list’s own.",
       "The tab bar sticks 24px (edgeSize.medium) below the global header so the facets stay switchable while reading.",
       "Changing selection scrolls back to the top, so every record starts with its header and first facet visible.",
       "If a tab is open, the same tab stays selected for the new record.",

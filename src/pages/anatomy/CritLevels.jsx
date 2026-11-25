@@ -231,8 +231,8 @@ const REQUESTS = [
     raised: 'Oliver (1:1), Crit 01 open question',
     ask: 'When should list–detail be preferred over a dedicated page? Put "Does the list matter?" and context preservation higher.',
     change:
-      '6 decision questions, "Does keeping their place matter?" first. Benefit made explicit: do the task without disrupting your context. Identifiers in the list, the rest in the pane.',
-    when: 'Decided 23 Nov, 1:1 with Oliver',
+      '6 decision questions, "Does keeping their place in the list matter?" first. Benefit made explicit: do the task without disrupting your context. Identifiers in the list, the rest in the pane.',
+    when: 'Decided 23 Nov, wording sharpened 25 Nov',
     href: '#/pattern/use',
     see: 'Pattern → When to use',
   },
@@ -245,7 +245,7 @@ const REQUESTS = [
     change:
       'List and detail are 2 content sections, so the gap is the content-section gap: 48px (size.xlarge), a grid gap with no per-side padding.',
     when: 'Done 20 Nov',
-    href: '#/anatomy/spacing',
+    href: '#/anatomy',
     see: 'Anatomy → Spacing',
   },
   {
@@ -285,15 +285,15 @@ const REQUESTS = [
   },
   {
     id: 'R08',
-    lane: 'review',
+    lane: 'decided',
     title: 'Containment: list, detail, content, wrapper',
     raised: 'Oliver, Julia, Mike, Seamus (Crit 01)',
     ask: 'Containing the list is heavy once nav, pane and contained content are all open, and leaves an empty canvas on mobile.',
     change:
-      'List uncontained by default, contained padding 16px (size.small). 4 toggles in Prototype options: Contained list, Contained detail, Contained content, Grey wrapper. No treatment chosen yet.',
-    when: 'Awaiting feedback: Oliver, Julia, Mike, Seamus (by 25 Nov)',
-    href: 'https://www.figma.com/board/uFZ9z3NfdpdBzKOTibKARd/List-Details?node-id=81-275',
-    see: 'Shared card on the FigJam sign-off page',
+      'Default: contained list (16px, size.small padding), uncontained detail. Containment inside the detail depends on its content (Sales Cockpit may need it, Users does not). Toggles kept in Prototype options.',
+    when: 'Decided 25 Nov, design review with Oliver',
+    href: '#/v3',
+    see: 'Users list–detail',
   },
   {
     id: 'R09',
@@ -304,7 +304,7 @@ const REQUESTS = [
     change:
       'Anatomy → Surfaces lists surface to token. Containers share background-back; background-contrast kept for selection. Inset is framed as a question for the DS team.',
     when: 'Awaiting feedback: Matt, DS team',
-    href: '#/anatomy/surfaces',
+    href: '#/anatomy',
     see: 'Anatomy → Surfaces',
   },
   {
@@ -321,13 +321,15 @@ const REQUESTS = [
   },
   {
     id: 'R11',
-    lane: 'open',
+    lane: 'review',
     title: 'Section hierarchy',
     raised: 'Oliver (1:1, 23 Nov)',
     ask: 'Is list–detail 1 content section with sub-sections, or 2 content sections? Spacing follows from the answer.',
     change:
-      'Nothing yet. The prototype treats list and detail as 2 content sections (48px gap).',
-    when: 'Open, revisit after use cases are set',
+      'Model: the page is the parent; list and detail are 2 content sections nested in it, 48px (size.xlarge) apart. Rationale added to Anatomy → Zoning (Gutter).',
+    when: 'Agreed with Oliver 25 Nov; pending Matt at show-and-tell',
+    href: '#/anatomy',
+    see: 'Anatomy → Zoning',
   },
   {
     id: 'R12',
@@ -348,9 +350,25 @@ const REQUESTS = [
       'Confluence Pattern pages drafted (Overview, When to use, JTBD, User stories).',
     when: 'Open, needs Oliver',
   },
+  {
+    id: 'R14',
+    lane: 'decided',
+    title: 'Spacing inside containers',
+    raised: 'Oliver (review, 25 Nov)',
+    ask: 'Are the container spacings specified, or should they change for the examples library?',
+    change:
+      'Keep the current direction: 16px (size.small) between containers, 12px (size.xsmall) between items inside a container. Revisit only if a change proves necessary.',
+    when: 'Decided 25 Nov, design review with Oliver',
+    href: '#/anatomy',
+    see: 'Anatomy → Spacing',
+  },
 ];
 
 const CHANGELOG = [
+  [
+    '25 Nov',
+    'Design review with Oliver. Decided: contained list by default, detail containment by content; page scroll confirmed; "keeping their place in the list" wording; container spacing kept. Section hierarchy model agreed, pending Matt.',
+  ],
   [
     '23 Nov',
     'Divider removed as prop and style. Full-page scroll made the default. When to use reordered: 6 questions, context first. Confluence Overview and When to use updated. Tracker page added here and on FigJam.',
@@ -412,8 +430,9 @@ export const TrackerLevel = () => {
   return (
     <Box gap="large">
       <Lead>
-        Every request from Crit 01 (19 Nov), the async sign-off and the 1:1
-        with Oliver (23 Nov), with what changed and where it stands.{' '}
+        Every request from Crit 01 (19 Nov), the async sign-off, the 1:1 with
+        Oliver (23 Nov) and the design review (25 Nov), with what changed and
+        where it stands.{' '}
         {counts.decided} decided, {counts.review} in review, {counts.open} open.
         IDs are stable: quote them in Teams or Confluence.
       </Lead>

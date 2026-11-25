@@ -127,7 +127,8 @@ const ZONES = {
     {
       space: '48px (edgeSize.xlarge) gap, no divider',
       why: [
-        'The list zone and the detail zone are each a content section (own toolbar or header, own scroll), side by side in the primary content area. So the gap between them is the content-section gap, 48px (edgeSize.xlarge), not the 24px (edgeSize.medium) block gap used inside a section',
+        'Hierarchy: the page is the parent; the list zone and the detail zone are 2 content sections nested in it (own toolbar or header, own scroll), side by side. So the gap between them is the content-section gap, 48px (edgeSize.xlarge), not the 24px (edgeSize.medium) block gap used inside a section',
+        'Agreed with Oliver, 25 Nov; pending Matt at show-and-tell',
         'Page regions use 64px (edgeSize.xxlarge); items within a section use 16px (edgeSize.small)',
         'A divider line read as noise beside the scrollbar and implied a resize that did not exist',
       ],
