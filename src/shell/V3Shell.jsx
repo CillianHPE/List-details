@@ -59,6 +59,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     contextPane,
     keepTab,
     pageScroll,
+    smallGap,
     setContained,
     setContainedDetail,
     setContainedContent,
@@ -66,6 +67,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     setContextPane,
     setKeepTab,
     setPageScroll,
+    setSmallGap,
   } = usePrototype();
   const [open, setOpen] = useState(false);
   // Grouped by what they change: how the 2 zones are framed, how the page
@@ -78,6 +80,14 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
         ["Contained detail", containedDetail, setContainedDetail],
         ["Contained content", containedContent, setContainedContent],
         ["Grey wrapper (experimental)", wrapped, setWrapped],
+      ],
+    ],
+    [
+      "Spacing",
+      [
+        // Off: content-section gap, xlarge (48px). On: small (16px), the
+        // card-to-card gap, for comparing the 2 readings side by side.
+        ["Small gutter, 16px (default 48px)", smallGap, setSmallGap],
       ],
     ],
     [
@@ -723,6 +733,8 @@ export const V3Shell = ({
   // toolbar and detail tabs stay pinned; "Detail-pane scroll" in prototype
   // options restores the bounded pane for comparison.
   const [pageScroll, setPageScroll] = useStoredToggle("pageScroll", true);
+  // Gutter between list and detail: off = xlarge (48px), on = small (16px).
+  const [smallGap, setSmallGap] = useStoredToggle("smallGap", false);
   const [detailTabs, setDetailTabs] = useState({});
   const setDetailTab = useCallback(
     (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),
@@ -737,6 +749,7 @@ export const V3Shell = ({
       contextPane,
       keepTab,
       pageScroll,
+      smallGap,
       detailTabs,
       setContained,
       setContainedDetail,
@@ -745,6 +758,7 @@ export const V3Shell = ({
       setContextPane,
       setKeepTab,
       setPageScroll,
+      setSmallGap,
       setDetailTab,
     }),
     [
@@ -755,6 +769,7 @@ export const V3Shell = ({
       contextPane,
       keepTab,
       pageScroll,
+      smallGap,
       detailTabs,
       setDetailTab,
     ],

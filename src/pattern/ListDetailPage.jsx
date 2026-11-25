@@ -130,7 +130,8 @@ export const ListDetailPage = ({
   const [quickFilter, setQuickFilter] = useState(quickFilters[0].value);
   const [selectedId, setSelectedId] = useState(items[0]?.id ?? null);
   // Prototype controls (contained list, scroll) live in the global header.
-  const { contained, containedDetail, wrapped, pageScroll } = usePrototype();
+  const { contained, containedDetail, wrapped, pageScroll, smallGap } =
+    usePrototype();
   // Grey wrapper: the whole surface is 1 background-back container, the list
   // sits on it bare and the detail becomes a white card, so the list's own
   // contained surface is dropped while this is on.
@@ -268,8 +269,17 @@ export const ListDetailPage = ({
             align="stretch"
             // List and detail are sibling content sections inside the primary
             // content area, so the gutter between them is a true gap:
-            // 48px (edgeSize.xlarge). No divider, no split padding.
-            gap={stacked ? undefined : wrapped ? "medium" : "xlarge"}
+            // 48px (edgeSize.xlarge). No divider, no split padding. The
+            // "Small gutter" prototype option swaps in small (16px) to compare.
+            gap={
+              stacked
+                ? undefined
+                : wrapped
+                  ? "medium"
+                  : smallGap
+                    ? "small"
+                    : "xlarge"
+            }
             height={
               fillHeight
                 ? `calc(100vh - ${surfaceTop + 12 + (wrapped ? 48 : 0)}px)`
