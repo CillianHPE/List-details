@@ -60,6 +60,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     keepTab,
     pageScroll,
     smallGap,
+    mediumGap,
     setContained,
     setContainedDetail,
     setContainedContent,
@@ -68,6 +69,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     setKeepTab,
     setPageScroll,
     setSmallGap,
+    setMediumGap,
   } = usePrototype();
   const [open, setOpen] = useState(false);
   // Grouped by what they change: how the 2 zones are framed, how the page
@@ -85,9 +87,10 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     [
       "Spacing",
       [
-        // Off: content-section gap, xlarge (48px). On: small (16px), the
-        // card-to-card gap, for comparing the 2 readings side by side.
+        // Both off: content-section gap, xlarge (48px). Mutually exclusive
+        // alternatives for comparing readings side by side.
         ["Small gutter, 16px (default 48px)", smallGap, setSmallGap],
+        ["Medium gutter, 24px (default 48px)", mediumGap, setMediumGap],
       ],
     ],
     [
@@ -733,8 +736,26 @@ export const V3Shell = ({
   // toolbar and detail tabs stay pinned; "Detail-pane scroll" in prototype
   // options restores the bounded pane for comparison.
   const [pageScroll, setPageScroll] = useStoredToggle("pageScroll", true);
-  // Gutter between list and detail: off = xlarge (48px), on = small (16px).
-  const [smallGap, setSmallGap] = useStoredToggle("smallGap", false);
+  // Gutter between list and detail. Both off = xlarge (48px). The 2 toggles
+  // are mutually exclusive: small (16px) or medium (24px).
+  const [smallGapRaw, setSmallGapRaw] = useStoredToggle("smallGap", false);
+  const [mediumGapRaw, setMediumGapRaw] = useStoredToggle("mediumGap", false);
+  const smallGap = smallGapRaw && !mediumGapRaw;
+  const mediumGap = mediumGapRaw;
+  const setSmallGap = useCallback(
+    (v) => {
+      setSmallGapRaw(v);
+      if (v) setMediumGapRaw(false);
+    },
+    [setSmallGapRaw, setMediumGapRaw],
+  );
+  const setMediumGap = useCallback(
+    (v) => {
+      setMediumGapRaw(v);
+      if (v) setSmallGapRaw(false);
+    },
+    [setSmallGapRaw, setMediumGapRaw],
+  );
   const [detailTabs, setDetailTabs] = useState({});
   const setDetailTab = useCallback(
     (page, i) => setDetailTabs((t) => ({ ...t, [page]: i })),
@@ -750,6 +771,7 @@ export const V3Shell = ({
       keepTab,
       pageScroll,
       smallGap,
+      mediumGap,
       detailTabs,
       setContained,
       setContainedDetail,
@@ -759,6 +781,7 @@ export const V3Shell = ({
       setKeepTab,
       setPageScroll,
       setSmallGap,
+      setMediumGap,
       setDetailTab,
     }),
     [
@@ -770,6 +793,9 @@ export const V3Shell = ({
       keepTab,
       pageScroll,
       smallGap,
+      mediumGap,
+      setSmallGap,
+      setMediumGap,
       detailTabs,
       setDetailTab,
     ],
