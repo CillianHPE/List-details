@@ -78,7 +78,7 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     [
       "Containment",
       [
-        ["Contained list", contained, setContained],
+        ["Contained list (default)", contained, setContained],
         ["Contained detail", containedDetail, setContainedDetail],
         ["Contained content", containedContent, setContainedContent],
         ["Grey wrapper (experimental)", wrapped, setWrapped],
@@ -96,8 +96,12 @@ const PrototypeSwitches = ({ chrome, onChromeChange }) => {
     [
       "Behaviour",
       [
-        ["Keep tab across records", keepTab, setKeepTab],
-        ["Detail-pane scroll", !pageScroll, (v) => setPageScroll(!v)],
+        ["Keep tab across records (default)", keepTab, setKeepTab],
+        [
+          "Detail-pane scroll (default: page scroll)",
+          !pageScroll,
+          (v) => setPageScroll(!v),
+        ],
       ],
     ],
     [
