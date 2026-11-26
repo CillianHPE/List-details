@@ -351,7 +351,7 @@ const NavItemV3 = ({
 // Groups that start a new section of the nav, separated by a divider.
 const NAV_DIVIDER_BEFORE = ["Anatomy", "Examples", "Design crit"];
 // Groups rendered as a static header with top-level links, not a collapsible.
-const NAV_HEADER_GROUPS = ["Pattern", "Examples"];
+const NAV_HEADER_GROUPS = ["Usage guidelines", "Examples"];
 
 const NavGroupHeader = ({ label }) => (
   <Box

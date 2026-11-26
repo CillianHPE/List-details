@@ -102,7 +102,7 @@ const PLAN = [
   ],
   [
     'Usage guidance (done)',
-    'Pattern → When to use: 6 decision questions (list–detail vs a dedicated page), context-preservation first since the 23 Nov 1:1, the 4 scenarios.',
+    'Usage guidelines → When to use: 6 decision questions (list–detail vs a dedicated page), context-preservation first since the 23 Nov 1:1, the 4 scenarios.',
   ],
   [
     'Scroll default (decided 23 Nov)',
@@ -234,7 +234,7 @@ const REQUESTS = [
       '6 decision questions, "Does keeping their place in the list matter?" first. Benefit made explicit: do the task without disrupting your context. Identifiers in the list, the rest in the pane.',
     when: 'Decided 23 Nov, wording sharpened 25 Nov',
     href: '#/pattern/use',
-    see: 'Pattern → When to use',
+    see: 'Usage guidelines → When to use',
   },
   {
     id: 'R04',
@@ -314,10 +314,10 @@ const REQUESTS = [
     raised: 'Crit 01 open question',
     ask: 'Does the pattern hold for deep task execution inside a record, or only review, compare and triage?',
     change:
-      'Pattern → When not to use: signals to give a record its own page, same format as When to use.',
+      'Usage guidelines → When not to use: signals to give a record its own page, same format as When to use.',
     when: 'Shown at Show & Tell 25 Nov, no pushback',
     href: '#/pattern/when-not',
-    see: 'Pattern → When not to use',
+    see: 'Usage guidelines → When not to use',
   },
   {
     id: 'R11',
@@ -347,7 +347,7 @@ const REQUESTS = [
     raised: 'Cillian',
     ask: 'What does the pattern need before it is a published HPE DS template: Figma kit, docs home, examples?',
     change:
-      'Confluence Pattern pages drafted (Overview, When to use, JTBD, User stories).',
+      'Confluence Usage guidelines pages drafted (Overview, When to use, JTBD, User stories).',
     when: 'Open, needs Oliver',
   },
   {
@@ -372,7 +372,7 @@ const REQUESTS = [
       'Short defined as under about a minute, decided from the pane; long as minutes or revisited. "Several" became "several to many" against "1 or 2". A Why line added under each of the 6 questions.',
     when: 'Done 25 Nov',
     href: '#/pattern/use',
-    see: 'Pattern → When to use',
+    see: 'Usage guidelines → When to use',
   },
   {
     id: 'R16',
@@ -384,7 +384,7 @@ const REQUESTS = [
       'Logged as a future exploration. Not building yet; the current answer is to give long work its own page.',
     when: 'Open, explore later',
     href: '#/pattern/when-not',
-    see: 'Pattern → When not to use',
+    see: 'Usage guidelines → When not to use',
   },
   {
     id: 'R17',
@@ -395,7 +395,7 @@ const REQUESTS = [
     change: 'Nothing yet. Waiting on Matt to send the example.',
     when: 'Open, awaiting Matt',
     href: '#/pattern/use',
-    see: 'Pattern → When to use',
+    see: 'Usage guidelines → When to use',
   },
   {
     id: 'R18',
@@ -438,7 +438,7 @@ const CHANGELOG = [
   ],
   [
     '20 Nov',
-    'Crit 01 synthesis published. Gutter set to 48px (size.xlarge). Details fixed: secondary button, 8px rows, status indicator. Surfaces token table. Responsive ladder and breakpoint rules. Confluence Pattern pages created with mocks.',
+    'Crit 01 synthesis published. Gutter set to 48px (size.xlarge). Details fixed: secondary button, 8px rows, status indicator. Surfaces token table. Responsive ladder and breakpoint rules. Confluence Usage guidelines pages created with mocks.',
   ],
   [
     '19 Nov',

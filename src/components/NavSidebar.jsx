@@ -31,7 +31,7 @@ import {
 // Mirrors hpe-design-system/sandbox/grommet-app NavSidebar + CollapsibleMenu:
 // title header with collapse toggle, divider, then plain or expandable text items.
 export const navItems = {
-  Pattern: [
+  "Usage guidelines": [
     {
       key: 'proto-pattern-what',
       label: 'Overview',
