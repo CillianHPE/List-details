@@ -1084,6 +1084,7 @@ const DECIDE = [
       "No",
       "Arrived at from a link, alert or search; nothing to return to.",
     ],
+    why: "Leaving the list to open a record resets filter and scroll on the way back. If that reset costs the person their progress, the list has to stay on screen.",
   },
   {
     q: "Does the list still matter once a record is open?",
@@ -1092,16 +1093,25 @@ const DECIDE = [
       "Count, filters and next item are part of the task.",
     ],
     page: ["Noise", "Once open, the rest of the set is irrelevant."],
+    why: "The list earns its 1/3 of the width only if it is read while the record is open: what is left, what is next, when the job is done.",
   },
   {
     q: "How many records in 1 sitting?",
-    use: ["Several", "Moving between records, 1 after another."],
-    page: ["1", "A single record is the whole job."],
+    use: ["Several to many", "A queue or batch, worked 1 after another."],
+    page: ["1 or 2", "A single record is the whole job."],
+    why: "The pattern pays off per record: each move costs 1 click instead of open, back, re-find. With 1 or 2 records there is nothing to save.",
   },
   {
     q: "How long is the work on each?",
-    use: ["Short", "Read, check, approve, assign, flag."],
-    page: ["Long", "Configure, author, multi-step, Save and draft."],
+    use: [
+      "Short: under about a minute",
+      "Read, check, approve, assign, flag. Decided from what the pane shows.",
+    ],
+    page: [
+      "Long: minutes, or revisited",
+      "Configure, author, multi-step, Save and draft. Reviewing a contract counts as long.",
+    ],
+    why: "Short work fits the pane and keeps the rhythm of moving through the set. Long work needs room, its own URL and a safe place to stop and come back.",
   },
   {
     q: "How much does the detail show?",
@@ -1110,11 +1120,16 @@ const DECIDE = [
       "Fits in 480px (size.large) with tabs. More than a table row can hold without getting unwieldy.",
     ],
     page: ["Wide", "Tables, charts, editors, nested lists."],
+    why: "A table row can carry 5 or 6 fields before it gets unwieldy. The pane carries the rest; if even the pane cannot, the record wants a page.",
   },
   {
     q: "What is being compared?",
-    use: ["Whole records", "Flipped between, same fields in the same place."],
+    use: [
+      "Whole records",
+      "Flipped between, same fields in the same place. The decision needs several fields together.",
+    ],
     page: ["1 or 2 values", "Across many rows. That is a table."],
+    why: "Flipping keeps the same fields in the same place, so the eye spots the difference. Scanning 1 column down many rows is what a table does best.",
   },
 ];
 
@@ -1152,19 +1167,27 @@ const DecideSheet = ({ rows }) => (
         </Text>
       </Box>
     </Grid>
-    {rows.map(({ q, use, page }) => (
-      <Grid
+    {rows.map(({ q, use, page, why }) => (
+      <Box
         key={q}
-        columns={["1fr", "1fr", "1fr"]}
-        gap="medium"
         pad={{ vertical: "small" }}
+        gap="xsmall"
         border={{ side: "bottom", color: "border-weak" }}
-        align="start"
       >
-        <Text weight={500}>{q}</Text>
-        <Verdict pair={use} />
-        <Verdict pair={page} />
-      </Grid>
+        <Grid columns={["1fr", "1fr", "1fr"]} gap="medium" align="start">
+          <Text weight={500}>{q}</Text>
+          <Verdict pair={use} />
+          <Verdict pair={page} />
+        </Grid>
+        {why && (
+          <Text size="small" color="text-weak">
+            <Text size="small" weight={500} color="text-weak">
+              Why:{" "}
+            </Text>
+            {why}
+          </Text>
+        )}
+      </Box>
     ))}
   </Box>
 );
@@ -1264,7 +1287,8 @@ export const PatternUseLevel = () => (
         <Text color="text-weak">
           Start with context: if keeping their place in the list (filters,
           scroll position, next item) matters, the rest usually follows. Most answers fall in 1 column. If they split, browse here and
-          hand the deep work off to a page.
+          hand the deep work off to a page. Each question carries the reason
+          behind it, so the call can be defended, not just made.
         </Text>
       </Box>
       <DecideSheet rows={DECIDE} />

@@ -303,31 +303,31 @@ const REQUESTS = [
     ask: 'Nav, pane and detail containers use different greys. Make the token stack explicit. Is there a place for an inset surface?',
     change:
       'Anatomy → Surfaces lists surface to token. Containers share background-back; background-contrast kept for selection. Inset is framed as a question for the DS team.',
-    when: 'Awaiting feedback: Matt, DS team',
+    when: 'Containment, scrolling and spacing confirmed solid by Matt 25 Nov; inset question still open with the DS team',
     href: '#/anatomy',
     see: 'Anatomy → Surfaces',
   },
   {
     id: 'R10',
-    lane: 'review',
+    lane: 'decided',
     title: 'When not to use',
     raised: 'Crit 01 open question',
     ask: 'Does the pattern hold for deep task execution inside a record, or only review, compare and triage?',
     change:
       'Pattern → When not to use: signals to give a record its own page, same format as When to use.',
-    when: 'Awaiting sign-off on wording',
+    when: 'Shown at Show & Tell 25 Nov, no pushback',
     href: '#/pattern/when-not',
     see: 'Pattern → When not to use',
   },
   {
     id: 'R11',
-    lane: 'review',
+    lane: 'decided',
     title: 'Section hierarchy',
     raised: 'Oliver (1:1, 23 Nov)',
     ask: 'Is list–detail 1 content section with sub-sections, or 2 content sections? Spacing follows from the answer.',
     change:
       'Model: the page is the parent; list and detail are 2 content sections nested in it, 48px (size.xlarge) apart. Rationale added to Anatomy → Zoning (Gutter).',
-    when: 'Agreed with Oliver 25 Nov; pending Matt at show-and-tell',
+    when: 'Agreed with Oliver 25 Nov; confirmed by Matt and Julia at Show & Tell 25 Nov ("spot on", "best of the 3 options")',
     href: '#/anatomy',
     see: 'Anatomy → Zoning',
   },
@@ -362,9 +362,60 @@ const REQUESTS = [
     href: '#/anatomy',
     see: 'Anatomy → Spacing',
   },
+  {
+    id: 'R15',
+    lane: 'decided',
+    title: 'Sharper definitions and rationale per question',
+    raised: 'Matt, Julia (Show & Tell, 25 Nov)',
+    ask: 'Tighten the adjectives in When to use ("short", "snappy", "many") and add the reasoning behind each question so the call can be defended.',
+    change:
+      'Short defined as under about a minute, decided from the pane; long as minutes or revisited. "Several" became "several to many" against "1 or 2". A Why line added under each of the 6 questions.',
+    when: 'Done 25 Nov',
+    href: '#/pattern/use',
+    see: 'Pattern → When to use',
+  },
+  {
+    id: 'R16',
+    lane: 'open',
+    title: 'Collapsible list (focus mode)',
+    raised: 'Matt, Scott (Show & Tell, 25 Nov)',
+    ask: 'Let the list collapse to a rail or hide so the detail takes the width when the work on a record runs longer than expected.',
+    change:
+      'Logged as a future exploration. Not building yet; the current answer is to give long work its own page.',
+    when: 'Open, explore later',
+    href: '#/pattern/when-not',
+    see: 'Pattern → When not to use',
+  },
+  {
+    id: 'R17',
+    lane: 'open',
+    title: 'GreenLake Data Science test case',
+    raised: 'Matt (Show & Tell, 25 Nov)',
+    ask: 'Run an editing-heavy list–detail from GreenLake Data Science through the 6 questions. Does it fit, or does it need a variant?',
+    change: 'Nothing yet. Waiting on Matt to send the example.',
+    when: 'Open, awaiting Matt',
+    href: '#/pattern/use',
+    see: 'Pattern → When to use',
+  },
+  {
+    id: 'R18',
+    lane: 'review',
+    title: 'View controls left, actions right',
+    raised: 'Matt (Show & Tell, 25 Nov)',
+    ask: 'Make it a rule: find and view controls (search, filter, sort) sit top-left of the list; actions on the set sit top-right.',
+    change:
+      'Already how the toolbar is built in every example. Needs writing up as a rule in Anatomy → Toolbar.',
+    when: 'Awaiting write-up',
+    href: '#/anatomy',
+    see: 'Anatomy → Toolbar',
+  },
 ];
 
 const CHANGELOG = [
+  [
+    '25 Nov',
+    'Show & Tell with the DS team. Framework called "very solid"; 48px (size.xlarge) gutter, containment and page scroll confirmed. Section hierarchy and When not to use moved to Decided. When to use sharpened with definitions and a Why per question. New: collapsible list (future), GreenLake Data Science test case, controls-left actions-right rule.',
+  ],
   [
     '25 Nov',
     'Design review with Oliver. Decided: contained list by default, detail containment by content; page scroll confirmed; "keeping their place in the list" wording; container spacing kept. Section hierarchy model agreed, pending Matt.',
