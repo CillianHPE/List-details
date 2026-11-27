@@ -1,9 +1,9 @@
-import { Box, Text } from 'grommet';
+import { Box, Text } from "grommet";
 import {
   StatusCritical,
   StatusGood,
   StatusWarning,
-} from '@hpe-design/icons-grommet';
+} from "@hpe-design/icons-grommet";
 
 // HPE DS status indicator template: semantic icon + visible label that names
 // the status. Colour and icon alone are not enough, and neither is a bare
@@ -11,20 +11,25 @@ import {
 // score in as secondary text.
 // Health tiers from the portfolio pages: Healthy 61–100 · Neutral 41–60 ·
 // At risk 0–40.
-const TIERS = {
-  Healthy: { Icon: StatusGood, color: 'status-ok' },
-  Neutral: { Icon: StatusWarning, color: 'status-warning' },
-  'At risk': { Icon: StatusCritical, color: 'status-critical' },
+export const TIERS = {
+  Healthy: { Icon: StatusGood, color: "status-ok" },
+  Neutral: { Icon: StatusWarning, color: "status-warning" },
+  "At risk": { Icon: StatusCritical, color: "status-critical" },
 };
 
-export const HealthIndicator = ({ health, compact }) => {
+export const HealthIndicator = ({ health, compact, iconOnly }) => {
   const { Icon, color } = TIERS[health.tier];
   return (
     <Box direction="row" align="center" gap="3xsmall" flex={false}>
-      <Icon color={color} size="xsmall" aria-hidden />
-      {compact ? (
+      <Icon
+        color={color}
+        size="xsmall"
+        aria-label={iconOnly ? `Health: ${health.tier}` : undefined}
+        aria-hidden={!iconOnly}
+      />
+      {iconOnly ? null : compact ? (
         <Text size="small">
-          {health.tier}{' '}
+          {health.tier}{" "}
           <Text size="small" color="text-weak">
             {health.score}
           </Text>

@@ -1,15 +1,20 @@
-import { Avatar, Box, List, Text } from 'grommet';
-import { HealthIndicator } from './HealthIndicator';
+import { Avatar, Box, List, Text } from "grommet";
+import { HealthIndicator } from "./HealthIndicator";
 
-// C · List body — one account per row: identity on the left, health score on
-// the right. Just enough to choose; everything else lives in the detail zone.
-const AccountRow = ({ account }) => (
+// C · List body — one account per row. Default: avatar leading, health tier +
+// score trailing. `statusLeading` swaps the avatar for the health status icon
+// (as Servers / Monitored resources do) and drops the trailing label.
+const AccountRow = ({ account, statusLeading }) => (
   <Box direction="row" align="center" gap="small" fill="horizontal">
-    <Avatar size="medium" background="background-contrast">
-      <Text size="small" weight={500}>
-        {account.initials}
-      </Text>
-    </Avatar>
+    {statusLeading ? (
+      <HealthIndicator health={account.health} iconOnly />
+    ) : (
+      <Avatar size="medium" background="background-contrast">
+        <Text size="small" weight={500}>
+          {account.initials}
+        </Text>
+      </Avatar>
+    )}
     <Box flex>
       <Text weight={500} truncate>
         {account.name}
@@ -18,11 +23,16 @@ const AccountRow = ({ account }) => (
         {account.industry} · {account.userCount} users
       </Text>
     </Box>
-    <HealthIndicator health={account.health} compact />
+    {!statusLeading && <HealthIndicator health={account.health} compact />}
   </Box>
 );
 
-export const AccountList = ({ accounts, selectedId, onSelect }) => (
+export const AccountList = ({
+  accounts,
+  selectedId,
+  onSelect,
+  statusLeading,
+}) => (
   <List
     data={accounts}
     pad="none"
@@ -35,12 +45,12 @@ export const AccountList = ({ accounts, selectedId, onSelect }) => (
       const last = index === accounts.length - 1;
       return (
         <Box
-          pad={{ horizontal: 'small', vertical: 'small' }}
-          border={last ? undefined : { side: 'bottom', color: 'border-weak' }}
-          background={selected ? 'background-contrast' : undefined}
+          pad={{ horizontal: "small", vertical: "small" }}
+          border={last ? undefined : { side: "bottom", color: "border-weak" }}
+          background={selected ? "background-contrast" : undefined}
           aria-selected={selected}
         >
-          <AccountRow account={account} />
+          <AccountRow account={account} statusLeading={statusLeading} />
         </Box>
       );
     }}
