@@ -1,67 +1,54 @@
-// Servers dataset — HPE GreenLake Compute Ops Management (FigJam
-// FoohSpgNF5QhNv5d0se2ot · 1359:30073). Today COM shows a Servers table and
-// drills into a separate page with Summary · Health · Firmware · Hardware ·
-// Storage · Support tabs; this dataset carries everything those tabs need so
-// the same content can be read side by side.
+// Servers dataset: a fictional fleet for the Servers example. Each record
+// carries everything the detail's Overview · Health · Firmware · Hardware ·
+// Storage · Support tabs need so richer content types (status lists, tables,
+// inventories) can be read side by side with the list. Names, models and
+// sites are invented; the structure is what matters.
 
 export const HEALTH = ['OK', 'Warning', 'Critical', 'Unknown'];
 
 const MODELS = {
-  dl325v2: 'ProLiant DL325 Gen10 Plus v2',
-  dl325: 'ProLiant DL325 Gen10 Plus',
-  dl380: 'ProLiant DL380 Gen11',
-  dl360: 'ProLiant DL360 Gen11',
+  r120: 'Atlas R120 rack server',
+  r240: 'Atlas R240 rack server',
+  r360: 'Atlas R360 rack server',
+  e40: 'Atlas E40 edge server',
 };
 
 const FIRMWARE_BASE = [
-  ['Power Supply Firmware', 'Bay 2', '1.00'],
-  ['Embedded Video Controller', 'Embedded Device', '2.5'],
-  ['HPE Smart Storage Energy Pack 1 Firmware', 'Embedded Device', '0.70'],
-  ['10Gb 2-port SFP+ BCM57412 OCP3 Adapter', 'OCP 3.0 Slot 10', '214.0.194.0'],
-  ['HPE Eth 10/25Gb 2p 640SFP28 Adptr', 'PCI-E Slot 1', '14.32.1010'],
-  ['800GB 12G SAS SSD', 'Slot=12:Port=1I:Box=1:Bay=1', 'HPD3'],
-  ['800GB 12G SAS SSD', 'Slot=12:Port=1I:Box=1:Bay=2', 'HPD3'],
-  ['HPE Smart Array P408i-a SR Gen10', 'Storage Slot 12', '6.52'],
-  ['iLO 5', 'System Board', '3.06 Jul 10 2024'],
-  ['Intelligent Platform Abstraction Data', 'System Board', '12.2.0 Build 37'],
-  ['Intelligent Provisioning', 'System Board', '3.40.192'],
-  ['Power Management Controller Firmware', 'System Board', '1.1.4'],
-  ['Redundant System ROM', 'System Board', 'A43 v2.68 (02/06/2023)'],
-  ['System Programmable Logic Device', 'System Board', '0x0D'],
-  ['System ROM', 'System Board', 'A43 v3.10 (05/16/2024)'],
+  ['System firmware', 'System board', '4.12.0 (Jan 2026)'],
+  ['Management controller', 'System board', '2.81'],
+  ['Power management controller', 'System board', '1.3.2'],
+  ['Programmable logic device', 'System board', '0x0F'],
+  ['Power supply', 'Bay 1', '1.04'],
+  ['Power supply', 'Bay 2', '1.04'],
+  ['Storage controller', 'Storage slot 1', '7.10'],
+  ['Energy pack', 'Embedded device', '0.82'],
+  ['25Gb 2-port network adapter', 'PCIe slot 1', '16.40.1000'],
+  ['10Gb 2-port network adapter', 'OCP slot 10', '220.0.12.0'],
+  ['1.6TB NVMe SSD', 'Bay 1', 'NV21'],
+  ['1.6TB NVMe SSD', 'Bay 2', 'NV21'],
 ].map(([name, location, version]) => ({ name, location, version }));
 
 const DRIVERS_BASE = [
-  ['IMA plugin for elxiscsi driver', '12.0.1200.0-4vmw.703.0.20.19193900'],
-  ['Emulex FCoE Driver', '12.0.1500.2-3vmw.703.0.20.19193900'],
-  ['lpfc: Broadcom Emulex FC adapter driver', '14.2.567.0-1OEM.700.1.0.15843807'],
-  ['Broadcom NetXtreme-E VMKAPI network and RoCE driver', '228.0.216.0-1OEM.700.1.0.15843807'],
-  ['iscsi driver for VMware ESX', '12.0.1200.0-9vmw.703.0.20.19193900'],
-  ['net driver for VMware ESX', '12.0.1250.0-5vmw.703.0.20.19193900'],
+  ['Hypervisor network driver', '2.14.0-1 build 48120'],
+  ['Hypervisor storage driver', '7.2.1-3 build 48120'],
+  ['Management agent', '5.4.0'],
+  ['Fibre Channel adapter driver', '14.6.0-2 build 47310'],
+  ['NVMe driver', '1.9.3'],
 ].map(([name, version]) => ({ name, version }));
 
 const COMPONENTS = [
-  'Fan',
+  'Fans',
   'Fan redundancy',
   'Temperature',
-  'Power supply',
+  'Power supplies',
   'Power supply redundancy',
-  'Processor',
+  'Processors',
   'Memory',
   'Storage',
-  'Smart storage battery',
-  'Network link status',
-  'BIOS/Hardware health',
+  'Energy pack',
+  'Network links',
+  'System firmware',
 ];
-
-const componentHealth = (overrides = {}) =>
-  COMPONENTS.map((name) => ({
-    name,
-    status:
-      overrides[name] ??
-      (name.endsWith('redundancy') ? 'Redundant' : 'OK'),
-    severity: overrides[name] ? severityOf(overrides[name]) : 'ok',
-  }));
 
 const severityOf = (status) =>
   ({
@@ -75,24 +62,29 @@ const severityOf = (status) =>
     Unknown: 'unknown',
   })[status] ?? 'unknown';
 
-const memory = (slots, filled, size = '32 GiB', part = 'HMA84GR7JJR4N-WM') =>
+const componentHealth = (overrides = {}) =>
+  COMPONENTS.map((name) => ({
+    name,
+    status:
+      overrides[name] ?? (name.endsWith('redundancy') ? 'Redundant' : 'OK'),
+    severity: overrides[name] ? severityOf(overrides[name]) : 'ok',
+  }));
+
+const memory = (slots, filled, size = '32 GiB', part = 'AM-32R4-29') =>
   Array.from({ length: filled }, (_, i) => ({
-    location: `PROC 1 DIMM ${[1, 3, 5, 7, 10, 12, 14, 16, 2, 4, 6, 8, 9, 11, 13, 15][i]}`,
-    type: 'DDR4',
+    location: `CPU ${i < slots / 2 ? 1 : 2} slot ${(i % (slots / 2)) + 1}`,
+    type: 'DDR5',
     size,
-    speed: '2933 MHz',
+    speed: '4800 MT/s',
     technology: 'RDIMM',
-    serial: (0x12c6d90d + i * 7919).toString(16).toUpperCase().slice(0, 8),
+    serial: (0x4a1c33f0 + i * 6151).toString(16).toUpperCase().slice(0, 8),
     part,
   }));
 
-const HOUSTON = {
-  name: 'Houston',
-  address: '1701 E Mossy Oaks Rd, Spring, Texas, United States, 77389',
-};
-const GENEVA = {
-  name: 'Geneva',
-  address: 'Route du Nant-d’Avril 150, Meyrin, Switzerland, 1217',
+const SITES = {
+  north: { name: 'North data centre', address: 'Building 4, Harbour Park, Dublin' },
+  south: { name: 'South data centre', address: 'Unit 12, Riverside Campus, Lisbon' },
+  edge: { name: 'Retail edge', address: 'Store 118, High Street, Leeds' },
 };
 
 const server = ({
@@ -100,57 +92,55 @@ const server = ({
   name,
   serial,
   health,
-  iloSecurity = 'At risk',
+  mgmtSecurity = 'OK',
   state = 'Connected',
-  baseline = '2026.01.00.00',
+  baseline = '2026.01',
   baselineProgress,
   group,
   power = 'On',
   model,
-  iloIp,
-  location = HOUSTON,
-  os = 'VMware ESXi 7.0.3 Build-23794027 Update 3 Patch 125',
-  subscription = 'Enhanced · Expires on December 8, 2027',
-  support = { status: 'Active', expires: 'June 30, 2028', cases: 0 },
+  mgmtIp,
+  location = SITES.north,
+  os = 'Hypervisor 8.1, build 31042',
+  subscription = 'Advanced, renews 8 Dec 2027',
+  support = { status: 'Active', expires: '30 Jun 2028', cases: 0 },
   alerts = 0,
   components = {},
   memorySlots = [16, 8],
   processors = [
-    { name: 'AMD EPYC 7402P 24-Core Processor', max: '4100 MHz', rated: '2800 MHz', cores: 24, threads: 48 },
+    { name: 'Atlas 7400 series, 24 cores', max: '4.1 GHz', rated: '2.8 GHz', cores: 24, threads: 48 },
   ],
   volumes = [
-    { controller: 'HPE Smart Array P408i-a SR Gen10', name: '0002005CPWXLK0CRHF', state: 'Enabled', capacity: '745.18 GiB', raid: 'RAID1', drives: 2, spares: 0 },
+    { controller: 'Storage controller, slot 1', name: 'boot-vol-01', state: 'OK', capacity: '745 GiB', raid: 'RAID 1', drives: 2, spares: 0 },
   ],
   disconnectedSince,
-  lastCollection = '10/24/2024 9:37 PM',
+  lastCollection = '18 Feb 2026, 19:48',
 }) => ({
   id,
   name,
   serial,
   health,
-  iloSecurity,
+  mgmtSecurity,
   state,
   baseline:
-    state === 'Connected'
-      ? `${baselineProgress ?? 25}% of ${baseline}`
-      : '--',
+    state === 'Connected' ? `${baselineProgress ?? 100}% of ${baseline}` : '--',
   baselineName: baseline,
   group,
   power,
   model: MODELS[model],
   connectionType: 'Direct',
-  manufacturer: 'HPE',
-  uuid: `3638${serial.slice(0, 4).toUpperCase()}-3630-4D32-3230-${serial
+  manufacturer: 'Atlas Systems',
+  uuid: `4f2a${serial.slice(0, 4).toLowerCase()}-71c3-4e02-9b1d-${serial
     .slice(-6)
-    .toUpperCase()}383351`,
-  iloIp,
-  iloHostname: `${name.toUpperCase()}-ILO.tmehol.hou`,
-  productId: 'P18606-B21',
+    .toLowerCase()}a0e4c1`,
+  mgmtIp,
+  mgmtHostname: `${name}-mgmt.corp.example`,
+  productId: `AS-${model.toUpperCase()}-2U`,
   uidIndicator: 'Off',
   os,
   subscription,
-  platform: 'ProLiant',
-  autoIloUpdate: state === 'Connected' ? 'Enabled' : 'Disabled',
+  platform: 'Atlas rack',
+  autoFirmwareUpdate: state === 'Connected' ? 'Enabled' : 'Disabled',
   location,
   notifications: {
     issues: true,
@@ -165,27 +155,27 @@ const server = ({
   lastFirmwareOperation:
     state === 'Connected'
       ? `Baseline ${baseline} applied ${lastCollection}`
-      : 'Firmware baseline update has not been attempted.',
+      : 'No firmware update has been attempted.',
   hardware: {
     lastCollection,
-    formFactor: '1U',
-    chassisType: 'RackMount',
+    formFactor: model === 'e40' ? '1U' : '2U',
+    chassisType: 'Rack mount',
     processors,
     memory: memory(memorySlots[0], memorySlots[1]),
     memorySlots,
     networkAdapters: [
       {
-        name: 'PCI-E Slot 1 - HPE Eth 10/25Gb 2p 640SFP28 Adptr',
+        name: 'PCIe slot 1, 25Gb 2-port adapter',
         ports: [
-          { port: 1, address: 'B8:83:03:A2:D8:B8' },
-          { port: 2, address: 'B8:83:03:A2:D8:B9' },
+          { port: 1, address: '02:1A:4C:00:3B:10' },
+          { port: 2, address: '02:1A:4C:00:3B:11' },
         ],
       },
       {
-        name: 'OCP 3.0 Slot 10 - 10Gb 2-port SFP+ BCM57412 OCP3 Adapter',
+        name: 'OCP slot 10, 10Gb 2-port adapter',
         ports: [
-          { port: 1, address: 'bc:97:e1:ab:84:54' },
-          { port: 2, address: 'bc:97:e1:ab:84:55' },
+          { port: 1, address: '02:1A:4C:00:5E:20' },
+          { port: 2, address: '02:1A:4C:00:5E:21' },
         ],
       },
     ],
@@ -195,131 +185,145 @@ const server = ({
   disconnectedSince,
 });
 
+const TWO_SOCKET = [
+  { name: 'Atlas 8400 series, 32 cores', max: '3.4 GHz', rated: '2.1 GHz', cores: 32, threads: 64 },
+  { name: 'Atlas 8400 series, 32 cores', max: '3.4 GHz', rated: '2.1 GHz', cores: 32, threads: 64 },
+];
+
 export const servers = [
   server({
     id: 'srv-1',
-    name: 'si1-mp-pcbe-esx02',
-    serial: '2M2025083Q',
+    name: 'north-db-02',
+    serial: 'AT24K1120Q',
     health: 'Unknown',
     state: 'Not connected',
-    group: 'Si1 MP PCBE Cluster',
+    group: 'North database cluster',
     power: 'Off',
-    model: 'dl325',
-    iloIp: '10.26.4.22',
-    disconnectedSince: '11/5/2024, 2:36:49 PM',
-    support: { status: 'Expired', expires: 'December 20, 2025', cases: 0 },
+    model: 'r240',
+    mgmtIp: '10.26.4.22',
+    disconnectedSince: '5 Nov 2025, 14:36',
+    support: { status: 'Expired', expires: '20 Dec 2025', cases: 0 },
     components: Object.fromEntries(COMPONENTS.map((c) => [c, 'Unknown'])),
   }),
   server({
     id: 'srv-2',
-    name: 'si1-mp-pcbe-esx01',
-    serial: '2M2025083R',
+    name: 'north-db-01',
+    serial: 'AT24K1120R',
     health: 'Unknown',
     state: 'Not connected',
-    group: 'Si1 MP PCBE Cluster',
+    group: 'North database cluster',
     power: 'Off',
-    model: 'dl325',
-    iloIp: '10.26.4.21',
-    disconnectedSince: '11/5/2024, 2:31:12 PM',
-    support: { status: 'Expired', expires: 'December 20, 2025', cases: 0 },
+    model: 'r240',
+    mgmtIp: '10.26.4.21',
+    disconnectedSince: '5 Nov 2025, 14:31',
+    support: { status: 'Expired', expires: '20 Dec 2025', cases: 0 },
     components: Object.fromEntries(COMPONENTS.map((c) => [c, 'Unknown'])),
   }),
   server({
     id: 'srv-3',
-    name: 'si1-pcbe-esx02',
-    serial: 'MXQ1460FNF',
+    name: 'north-app-02',
+    serial: 'AT25C0471F',
     health: 'OK',
-    group: 'Si1 dHCI Cluster',
-    model: 'dl325v2',
-    iloIp: '10.26.4.12',
-    lastCollection: '2/18/2026 7:48 PM',
+    group: 'North application cluster',
+    model: 'r120',
+    mgmtIp: '10.26.4.12',
   }),
   server({
     id: 'srv-4',
-    name: 'si1-pcbe-esx01',
-    serial: 'MXQ1460HTZ',
+    name: 'north-app-01',
+    serial: 'AT25C0471H',
     health: 'OK',
-    group: 'Si1 dHCI Cluster',
-    model: 'dl325v2',
-    iloIp: '10.26.4.11',
-    lastCollection: '2/18/2026 7:46 PM',
+    group: 'North application cluster',
+    model: 'r120',
+    mgmtIp: '10.26.4.11',
+    lastCollection: '18 Feb 2026, 19:46',
   }),
   server({
     id: 'srv-5',
-    name: 'gva-core-esx01',
-    serial: 'CZJ3290K7L',
+    name: 'south-core-01',
+    serial: 'AT23M2290L',
     health: 'Warning',
-    iloSecurity: 'OK',
-    group: 'GVA Core Cluster',
-    model: 'dl380',
-    iloIp: '10.42.8.31',
-    location: GENEVA,
+    group: 'South core cluster',
+    model: 'r360',
+    mgmtIp: '10.42.8.31',
+    location: SITES.south,
     alerts: 1,
-    baselineProgress: 100,
     memorySlots: [32, 16],
     components: { 'Fan redundancy': 'Not redundant' },
-    processors: [
-      { name: 'Intel Xeon Gold 6430 32-Core Processor', max: '3400 MHz', rated: '2100 MHz', cores: 32, threads: 64 },
-      { name: 'Intel Xeon Gold 6430 32-Core Processor', max: '3400 MHz', rated: '2100 MHz', cores: 32, threads: 64 },
+    processors: TWO_SOCKET,
+    lastCollection: '17 Feb 2026, 23:02',
+    volumes: [
+      { controller: 'Storage controller, slot 1', name: 'boot-vol-01', state: 'OK', capacity: '745 GiB', raid: 'RAID 1', drives: 2, spares: 0 },
+      { controller: 'Storage controller, slot 1', name: 'data-vol-01', state: 'OK', capacity: '5.8 TiB', raid: 'RAID 10', drives: 8, spares: 1 },
     ],
-    os: 'VMware ESXi 8.0.2 Build-22380479',
-    lastCollection: '2/17/2026 11:02 PM',
   }),
   server({
     id: 'srv-6',
-    name: 'gva-core-esx02',
-    serial: 'CZJ3290K7M',
+    name: 'south-core-02',
+    serial: 'AT23M2290M',
     health: 'Critical',
-    iloSecurity: 'OK',
-    group: 'GVA Core Cluster',
-    model: 'dl380',
-    iloIp: '10.42.8.32',
-    location: GENEVA,
+    group: 'South core cluster',
+    model: 'r360',
+    mgmtIp: '10.42.8.32',
+    location: SITES.south,
     alerts: 3,
-    baselineProgress: 100,
     memorySlots: [32, 16],
     components: {
-      'Power supply': 'Failed',
+      'Power supplies': 'Failed',
       'Power supply redundancy': 'Not redundant',
     },
-    processors: [
-      { name: 'Intel Xeon Gold 6430 32-Core Processor', max: '3400 MHz', rated: '2100 MHz', cores: 32, threads: 64 },
-      { name: 'Intel Xeon Gold 6430 32-Core Processor', max: '3400 MHz', rated: '2100 MHz', cores: 32, threads: 64 },
+    processors: TWO_SOCKET,
+    support: { status: 'Active', expires: '14 Mar 2027', cases: 1 },
+    lastCollection: '17 Feb 2026, 23:04',
+    volumes: [
+      { controller: 'Storage controller, slot 1', name: 'boot-vol-01', state: 'OK', capacity: '745 GiB', raid: 'RAID 1', drives: 2, spares: 0 },
+      { controller: 'Storage controller, slot 1', name: 'data-vol-01', state: 'Degraded', capacity: '5.8 TiB', raid: 'RAID 10', drives: 8, spares: 0 },
     ],
-    os: 'VMware ESXi 8.0.2 Build-22380479',
-    support: { status: 'Active', expires: 'March 14, 2027', cases: 1 },
-    lastCollection: '2/17/2026 11:04 PM',
   }),
   server({
     id: 'srv-7',
-    name: 'gva-edge-esx01',
-    serial: 'CZJ3310P2A',
+    name: 'leeds-edge-01',
+    serial: 'AT25E0318A',
     health: 'OK',
-    iloSecurity: 'OK',
-    group: 'GVA Edge',
-    model: 'dl360',
-    iloIp: '10.42.9.11',
-    location: GENEVA,
-    baselineProgress: 100,
+    group: 'Retail edge',
+    model: 'e40',
+    mgmtIp: '10.42.9.11',
+    location: SITES.edge,
+    memorySlots: [8, 4],
     processors: [
-      { name: 'Intel Xeon Silver 4410Y 12-Core Processor', max: '3900 MHz', rated: '2000 MHz', cores: 12, threads: 24 },
+      { name: 'Atlas 5200 series, 12 cores', max: '3.9 GHz', rated: '2.0 GHz', cores: 12, threads: 24 },
     ],
-    os: 'VMware ESXi 8.0.2 Build-22380479',
-    lastCollection: '2/18/2026 1:15 AM',
+    lastCollection: '18 Feb 2026, 01:15',
+    volumes: [],
   }),
   server({
     id: 'srv-8',
-    name: 'hou-lab-esx03',
-    serial: 'MXQ2271A9C',
+    name: 'north-lab-03',
+    serial: 'AT24L0902C',
     health: 'OK',
-    iloSecurity: 'Ignore risk',
-    group: 'HOU Lab',
-    model: 'dl325v2',
-    iloIp: '10.26.7.13',
+    mgmtSecurity: 'Ignore risk',
+    group: 'North lab',
+    model: 'r120',
+    mgmtIp: '10.26.7.13',
     power: 'Off',
     baselineProgress: 60,
-    subscription: 'Standard · Expires on March 1, 2026',
-    lastCollection: '2/12/2026 6:42 AM',
+    subscription: 'Standard, renews 1 Mar 2026',
+    lastCollection: '12 Feb 2026, 06:42',
+  }),
+  server({
+    id: 'srv-9',
+    name: 'north-lab-02',
+    serial: 'AT24L0902B',
+    health: 'Warning',
+    mgmtSecurity: 'At risk',
+    group: 'North lab',
+    model: 'r120',
+    mgmtIp: '10.26.7.12',
+    baselineProgress: 40,
+    alerts: 1,
+    components: { Temperature: 'Warning' },
+    subscription: 'Standard, renews 1 Mar 2026',
+    lastCollection: '16 Feb 2026, 08:10',
   }),
 ];
 

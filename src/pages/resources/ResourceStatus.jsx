@@ -7,12 +7,12 @@ import {
   StatusWarning,
 } from '@hpe-design/icons-grommet';
 
-// OpsRamp availability → HPE DS status indicator (icon + label).
+// Availability → HPE DS status indicator (icon + label).
 export const AVAILABILITY_STATUS = {
   Down: { Icon: StatusCritical, color: 'status-critical' },
-  Up: { Icon: StatusGood, color: 'status-ok' },
+  Healthy: { Icon: StatusGood, color: 'status-ok' },
   Unknown: { Icon: StatusUnknown, color: 'status-unknown' },
-  Undefined: { Icon: StatusUnknown, color: 'text-weak' },
+  'Not monitored': { Icon: StatusUnknown, color: 'text-weak' },
 };
 
 // Alert severities shown in the detail's Resource alerts strip

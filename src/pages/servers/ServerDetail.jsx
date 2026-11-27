@@ -28,8 +28,8 @@ import {
 } from '../../pattern/detail';
 import { ServerHealth, StatusText } from './ServerHealth';
 
-// Servers · Compute Ops Management. The COM detail page's facets, read side
-// by side with the list instead of on a separate page.
+// Servers · Fleet Manager. A server record's facets (overview, health,
+// firmware, hardware, storage, support) read side by side with the list.
 
 // ------------------------------------------------------------- primitives
 
@@ -53,8 +53,8 @@ const Fact = ({ label, children }) => (
   </Box>
 );
 
-// D · Detail header — name and Model · Serial, record-level Actions menu
-// (as COM shows top-right of its detail page). Key facts live in Overview.
+// D · Detail header — name and Model · Serial, record-level Actions menu.
+// Key facts live in Overview.
 const DetailHeader = ({ server, children }) => {
   const connected = server.state === 'Connected';
   return (
@@ -199,7 +199,7 @@ const NOTIFICATIONS = [
   [
     'disconnect',
     'Disconnect or not monitored',
-    'When iLO loses its connection to Compute Ops Management',
+    'When the management controller loses its connection',
   ],
   ['dailySummary', 'Daily summary', 'One digest of health and activity a day'],
 ];
@@ -247,14 +247,14 @@ const Summary = ({ server }) => (
         ]}
       />
     </Card>
-    <Card title="iLO">
+    <Card title="Management controller">
       <Pairs
         pairs={[
-          ['IP address', <Anchor label={server.iloIp} href="#" />],
+          ['IP address', <Anchor label={server.mgmtIp} href="#" />],
           [
             'Hostname',
             <Anchor
-              label={server.iloHostname}
+              label={server.mgmtHostname}
               href="#"
               wordBreak="break-all"
             />,
@@ -262,11 +262,11 @@ const Summary = ({ server }) => (
           ['Connection type', server.connectionType],
           [
             'Security status',
-            <StatusText severity={SECURITY_SEVERITY[server.iloSecurity]}>
-              {server.iloSecurity}
+            <StatusText severity={SECURITY_SEVERITY[server.mgmtSecurity]}>
+              {server.mgmtSecurity}
             </StatusText>,
           ],
-          ['Auto firmware update', server.autoIloUpdate],
+          ['Auto firmware update', server.autoFirmwareUpdate],
         ]}
       />
     </Card>
@@ -368,7 +368,7 @@ const Firmware = ({ server, connected }) => (
       </List>
     </Card>
     <Card
-      title="HPE drivers and software"
+      title="Drivers and software"
       note={`${server.drivers.length} installed`}
     >
       <List data={server.drivers} pad="none">
@@ -582,8 +582,8 @@ const Support = ({ server }) => {
           <List
             data={Array.from({ length: support.cases }, (_, i) => ({
               id: `CASE-${server.serial.slice(-4)}${i + 1}`,
-              title: 'Power supply failure reported by iLO',
-              opened: '2/17/2026',
+              title: 'Power supply failure reported by management controller',
+              opened: '17 Feb 2026',
             }))}
             pad="none"
           >
@@ -613,7 +613,7 @@ const Support = ({ server }) => {
   );
 };
 
-// E · Detail body — same 6 facets as the COM server page
+// E · Detail body — 6 facets
 export const ServerDetail = ({ server }) => {
   const [tab, setTab] = useDetailTab();
   const connected = server.state === 'Connected';
@@ -626,7 +626,7 @@ export const ServerDetail = ({ server }) => {
         <Box margin={{ top: 'medium' }} flex={false}>
           <Notification
             status="info"
-            message={`iLO disconnected since ${server.disconnectedSince}. Details and health may not be current, and some actions are unavailable.`}
+            message={`Management controller disconnected since ${server.disconnectedSince}. Details and health may not be current, and some actions are unavailable.`}
             actions={[{ label: 'Learn more', href: '#' }]}
           />
         </Box>

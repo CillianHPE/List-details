@@ -7,7 +7,7 @@ import {
 } from '@hpe-design/icons-grommet';
 
 // HPE DS status indicator template: semantic icon + visible label.
-// Mirrors the COM Servers health legend: Critical · Warning · OK · Unknown.
+// Health legend: Critical · Warning · OK · Unknown.
 export const HEALTH_STATUS = {
   OK: { Icon: StatusGood, color: 'status-ok' },
   Warning: { Icon: StatusWarning, color: 'status-warning' },

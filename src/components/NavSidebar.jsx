@@ -158,9 +158,9 @@ export const navItems = {
       href: '#/v3',
     },
     {
-      key: 'proto-v3-sparse',
-      label: 'Team members (sparse)',
-      href: '#/v3-sparse',
+      key: 'proto-team-members',
+      label: 'Team members',
+      href: '#/team-members',
     },
     {
       key: 'proto-accounts-cockpit',
@@ -169,12 +169,12 @@ export const navItems = {
     },
     {
       key: 'proto-compute-servers',
-      label: 'Servers (Compute)',
+      label: 'Servers',
       href: '#/compute-servers',
     },
     {
       key: 'proto-opsramp-resources',
-      label: 'Resources (OpsRamp)',
+      label: 'Monitored resources',
       href: '#/opsramp-resources',
     },
   ],

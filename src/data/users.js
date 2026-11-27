@@ -343,76 +343,135 @@ export const users = baseUsers.map((u, i) => {
   };
 });
 
-// Sparse variant: a freshly created team with 4 members, no permissions,
-// teams or projects assigned yet. Deliberately its own people, fields and
-// wording so it reads as a generic access page, not a copy of a product
-// screen. Used by Examples › Team members (sparse).
-const sparseBase = [
-  {
-    id: 'mbr_7f3a',
-    name: 'Riya Mehta',
-    email: 'riya.mehta@northwind.io',
-    role: 'Account owner',
-    status: 'Active',
-    mfa: 'Enabled',
-    signIn: 'Single sign-on',
-    created: 'Nov 3rd, 2025',
-    lastActive: '5 minutes ago',
-    invitedBy: 'Self (created the team)',
-  },
-  {
-    id: 'mbr_2c9e',
-    name: 'Tomás Ferreira',
-    email: 'tomas.ferreira@northwind.io',
-    role: 'Engineer',
-    status: 'Active',
-    mfa: 'Enabled',
-    signIn: 'Single sign-on',
-    created: 'Nov 4th, 2025',
-    lastActive: 'Yesterday',
-    invitedBy: 'Riya Mehta',
-  },
-  {
-    id: 'mbr_b81d',
-    name: 'Ingrid Lund',
-    email: 'ingrid.lund@northwind.io',
-    role: 'Analyst',
-    status: 'Invited',
-    mfa: 'Not set up',
-    signIn: 'Email and password',
-    created: 'Nov 5th, 2025',
-    lastActive: 'Never',
-    invitedBy: 'Riya Mehta',
-  },
-  {
-    id: 'mbr_e04b',
-    name: 'Marcus Adeyemi',
-    email: 'marcus.adeyemi@northwind.io',
-    role: 'Viewer',
-    status: 'Active',
-    mfa: 'Not set up',
-    signIn: 'Email and password',
-    created: 'Nov 6th, 2025',
-    lastActive: '2 days ago',
-    invitedBy: 'Tomás Ferreira',
-  },
+// Team members: a generic team-access page with its own people, fields and
+// wording so it reads as an example, not a copy of a product screen.
+// Used by Examples › Team members.
+const TEAM_DOMAIN = 'northwind.io';
+
+const TEAM_PEOPLE = [
+  ['Riya Mehta', 'Account owner', 'Active', 'Enabled', 'Single sign-on', 'Nov 3rd, 2025', '5 minutes ago', 'Self (created the team)'],
+  ['Tomás Ferreira', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 4th, 2025', 'Yesterday', 'Riya Mehta'],
+  ['Ingrid Lund', 'Analyst', 'Invited', 'Not set up', 'Email and password', 'Nov 5th, 2025', 'Never', 'Riya Mehta'],
+  ['Marcus Adeyemi', 'Viewer', 'Active', 'Not set up', 'Email and password', 'Nov 6th, 2025', '2 days ago', 'Tomás Ferreira'],
+  ['Hana Kobayashi', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 6th, 2025', '20 minutes ago', 'Riya Mehta'],
+  ['Luca Bianchi', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 7th, 2025', '1 hour ago', 'Tomás Ferreira'],
+  ['Amara Osei', 'Team admin', 'Active', 'Enabled', 'Single sign-on', 'Nov 7th, 2025', 'Just now', 'Riya Mehta'],
+  ['Felix Bauer', 'Analyst', 'Active', 'Enabled', 'Email and password', 'Nov 10th, 2025', '3 hours ago', 'Amara Osei'],
+  ['Zoe Lambert', 'Viewer', 'Invited', 'Not set up', 'Email and password', 'Nov 10th, 2025', 'Never', 'Amara Osei'],
+  ['Omar Haddad', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 11th, 2025', '4 hours ago', 'Tomás Ferreira'],
+  ['Sienna Park', 'Designer', 'Active', 'Enabled', 'Single sign-on', 'Nov 11th, 2025', 'Yesterday', 'Amara Osei'],
+  ['Mateo Álvarez', 'Engineer', 'Deactivated', 'Enabled', 'Single sign-on', 'Nov 12th, 2025', '3 weeks ago', 'Riya Mehta'],
+  ['Nadia Petrova', 'Analyst', 'Active', 'Enabled', 'Single sign-on', 'Nov 12th, 2025', '2 days ago', 'Felix Bauer'],
+  ['Kwame Mensah', 'Viewer', 'Active', 'Not set up', 'Email and password', 'Nov 13th, 2025', '1 week ago', 'Amara Osei'],
+  ['Elin Johansson', 'Team admin', 'Active', 'Enabled', 'Single sign-on', 'Nov 13th, 2025', '30 minutes ago', 'Riya Mehta'],
+  ['Arjun Nair', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 14th, 2025', '6 hours ago', 'Elin Johansson'],
+  ['Chloé Martin', 'Designer', 'Invited', 'Not set up', 'Single sign-on', 'Nov 17th, 2025', 'Never', 'Sienna Park'],
+  ['Daniel Novak', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 17th, 2025', 'Yesterday', 'Elin Johansson'],
+  ['Yara Saleh', 'Analyst', 'Active', 'Enabled', 'Email and password', 'Nov 18th, 2025', '5 days ago', 'Felix Bauer'],
+  ['Björn Eriksson', 'Viewer', 'Deactivated', 'Not set up', 'Email and password', 'Nov 18th, 2025', '2 weeks ago', 'Amara Osei'],
+  ['Priyanka Rao', 'Engineer', 'Active', 'Enabled', 'Single sign-on', 'Nov 19th, 2025', '45 minutes ago', 'Arjun Nair'],
+  ['Samuel Okoro', 'Analyst', 'Active', 'Enabled', 'Single sign-on', 'Nov 20th, 2025', '8 hours ago', 'Elin Johansson'],
+  ['Mia Chen', 'Designer', 'Active', 'Enabled', 'Single sign-on', 'Nov 20th, 2025', '2 hours ago', 'Sienna Park'],
+  ['Jonas Weber', 'Viewer', 'Invited', 'Not set up', 'Email and password', 'Nov 21st, 2025', 'Never', 'Kwame Mensah'],
 ];
 
-export const sparseUsers = sparseBase.map((u) => {
-  const [firstName, ...rest] = u.name.split(' ');
-  return {
-    ...u,
-    firstName,
-    lastName: rest.join(' '),
-    initials: u.name
-      .split(' ')
-      .map((p) => p[0])
-      .join(''),
-    username: u.email.split('@')[0],
-    memberSince: u.status === 'Invited' ? 'Invite pending' : u.created,
-    groups: [],
-    activity: [],
-    roleAssignments: [],
-    orgWorkspaces: [],
-  };
-});
+// Permission sets by job title; admins and owners get the broadest set.
+const PERMISSIONS = {
+  'Account owner': [
+    ['Billing and plan', 'Manage'],
+    ['Members and teams', 'Manage'],
+    ['Projects', 'Manage'],
+    ['Audit log', 'View'],
+  ],
+  'Team admin': [
+    ['Members and teams', 'Manage'],
+    ['Projects', 'Manage'],
+    ['Audit log', 'View'],
+  ],
+  Engineer: [
+    ['Projects', 'Edit'],
+    ['Deployments', 'Run'],
+    ['Secrets', 'View'],
+  ],
+  Designer: [
+    ['Projects', 'Edit'],
+    ['Design assets', 'Manage'],
+  ],
+  Analyst: [
+    ['Projects', 'View'],
+    ['Reports', 'Manage'],
+    ['Data exports', 'Run'],
+  ],
+  Viewer: [['Projects', 'View']],
+};
+
+const TEAMS = {
+  'Account owner': ['Leadership', 'Platform'],
+  'Team admin': ['Leadership', 'Platform'],
+  Engineer: ['Platform', 'Backend guild'],
+  Designer: ['Product design'],
+  Analyst: ['Insights'],
+  Viewer: [],
+};
+
+const TEAM_SIZES = {
+  Leadership: 3,
+  Platform: 11,
+  'Backend guild': 7,
+  'Product design': 4,
+  Insights: 6,
+};
+
+const PROJECTS = [
+  ['Checkout redesign', 'Active'],
+  ['Data warehouse migration', 'Active'],
+  ['Mobile app 2.0', 'Planning'],
+  ['Partner API', 'Active'],
+  ['Billing platform', 'On hold'],
+];
+
+export const teamMembers = TEAM_PEOPLE.map(
+  ([name, role, status, mfa, signIn, created, lastActive, invitedBy], i) => {
+    const [firstName, ...rest] = name.split(' ');
+    const username = name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(' ', '.');
+    const invited = status === 'Invited';
+    const projectCount = invited ? 0 : role === 'Viewer' ? 1 : 1 + (i % 3);
+    return {
+      id: `mbr_${(0x7f3a + i * 0x2b1).toString(16)}`,
+      name,
+      firstName,
+      lastName: rest.join(' '),
+      initials: name
+        .split(' ')
+        .map((p) => p[0])
+        .join(''),
+      username,
+      email: `${username}@${TEAM_DOMAIN}`,
+      role,
+      status,
+      mfa,
+      signIn,
+      created,
+      lastActive,
+      invitedBy,
+      memberSince: invited ? 'Invite pending' : created,
+      permissions: invited
+        ? []
+        : PERMISSIONS[role].map(([area, level]) => ({ area, level })),
+      teams: invited
+        ? []
+        : TEAMS[role].map((t) => ({ name: t, members: TEAM_SIZES[t] })),
+      projects: Array.from({ length: projectCount }, (_, k) => {
+        const [title, state] = PROJECTS[(i + k) % PROJECTS.length];
+        return { name: title, state, role: role === 'Viewer' ? 'Viewer' : 'Contributor' };
+      }),
+      // Fields the shared list row and search expect
+      groups: [],
+      activity: [],
+    };
+  },
+);

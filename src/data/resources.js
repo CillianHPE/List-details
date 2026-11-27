@@ -1,10 +1,10 @@
-// Kubernetes resources, adapted from the HPE theme preview's OpsRamp detail
-// layout (hpe-theme-preview.netlify.app/layouts/detail-opsramp). Availability
-// uses OpsRamp's vocabulary: Down · Up · Unknown · Undefined.
+// Monitored resources: a fictional set of cluster hosts and nodes for the
+// Monitored resources example. Each record carries alert counts, a system
+// overview, discovered traits and optional custom attributes so the detail
+// can show a mix of figures, tags, lists and pairs. Names are invented.
 
-const VM = 'VirtualMachine';
-const VVP = 'VMware Virtual Platform';
-const VMWARE = 'VMware, Inc.';
+const HOST = 'Bare-metal host';
+const NODE = 'Virtual node';
 
 const alerts = (critical, warning, ok, info, observed) => ({
   critical,
@@ -23,88 +23,85 @@ const overview = (os, ip, make, model, serial) => ({
 });
 
 const base = [
-  ['k8s-cluster-02', '10.42.0.15', VVP, 'Up'],
-  ['k8s-cluster-02-master', '172.25.22.53', VM, 'Down'],
-  ['k8s-cluster-02-worker03', '172.25.22.56', VM, 'Up'],
-  ['k8s-cluster-03', '10.42.0.15', VVP, 'Up'],
-  ['k8s-cluster-04', '10.42.0.15', VVP, 'Up'],
-  ['k8s-cluster-05', '10.42.0.15', VVP, 'Unknown'],
-  ['k8s-cluster-06', '10.42.0.15', VVP, 'Up'],
-  ['k8s-flow-master01', '172.25.22.90', VVP, 'Up'],
-  ['k8s-flow-worker01', '172.25.22.91', VVP, 'Up'],
-  ['k8s-flow-worker02', '172.25.22.92', VVP, 'Up'],
-  ['k8s-flow-worker03', '172.25.22.93', VVP, 'Undefined'],
-  ['k8s-prod-master01', '10.42.1.10', VM, 'Up'],
-  ['k8s-prod-worker01', '10.42.1.11', VM, 'Up'],
-  ['k8s-prod-worker02', '10.42.1.12', VM, 'Unknown'],
-  ['k8s-prod-worker03', '10.42.1.13', VM, 'Undefined'],
-  ['k8s-staging-master01', '10.42.2.10', VM, 'Up'],
-  ['k8s-staging-worker01', '10.42.2.11', VM, 'Undefined'],
-  ['k8s-staging-worker02', '10.42.2.12', VM, 'Unknown'],
-  ['k8s-edge-gw01', '172.25.30.5', VVP, 'Undefined'],
+  ['payments-host-01', '10.42.0.15', HOST, 'Healthy'],
+  ['payments-control-01', '172.25.22.53', NODE, 'Down'],
+  ['payments-node-03', '172.25.22.56', NODE, 'Healthy'],
+  ['payments-host-02', '10.42.0.16', HOST, 'Healthy'],
+  ['payments-host-03', '10.42.0.17', HOST, 'Healthy'],
+  ['analytics-host-01', '10.42.0.25', HOST, 'Unknown'],
+  ['analytics-host-02', '10.42.0.26', HOST, 'Healthy'],
+  ['analytics-control-01', '172.25.22.90', NODE, 'Healthy'],
+  ['analytics-node-01', '172.25.22.91', NODE, 'Healthy'],
+  ['analytics-node-02', '172.25.22.92', NODE, 'Healthy'],
+  ['analytics-node-03', '172.25.22.93', NODE, 'Not monitored'],
+  ['orders-control-01', '10.42.1.10', NODE, 'Healthy'],
+  ['orders-node-01', '10.42.1.11', NODE, 'Healthy'],
+  ['orders-node-02', '10.42.1.12', NODE, 'Unknown'],
+  ['orders-node-03', '10.42.1.13', NODE, 'Not monitored'],
+  ['staging-control-01', '10.42.2.10', NODE, 'Healthy'],
+  ['staging-node-01', '10.42.2.11', NODE, 'Not monitored'],
+  ['staging-node-02', '10.42.2.12', NODE, 'Unknown'],
+  ['edge-gateway-01', '172.25.30.5', HOST, 'Not monitored'],
 ];
 
 const serials = [
-  '5YCXKH2',
-  '7HQ2M93',
-  '3JDL8F1',
-  '9KPZ4R7',
-  '2MVX6T8',
-  '6RBN1W4',
-  '8TCQ5Y2',
-  '4WDH9K6',
-  '1XFJ3P9',
-  '5ZGM7L3',
+  'HX5YCK2',
+  'HX7HQ93',
+  'HX3JDF1',
+  'HX9KPR7',
+  'HX2MVT8',
+  'HX6RBW4',
+  'HX8TCY2',
+  'HX4WDK6',
+  'HX1XFP9',
+  'HX5ZGL3',
 ];
 
 export const resources = base.map(([name, ip, model, availability], i) => {
-  const cluster = name.replace(/-(master|worker|gw)\d*$/, '');
-  const isHost = model === VVP;
+  const cluster = name.replace(/-(control|node|host|gateway)-\d+$/, '');
+  const isHost = model === HOST;
   return {
     id: name,
     name,
     ip,
-    make: VMWARE,
+    make: isHost ? 'Atlas Systems' : 'Hypervisor',
     model,
     availability,
     cluster,
     alerts:
       availability === 'Down'
         ? alerts(3, 2, 0, 1, 1)
-        : availability === 'Up'
+        : availability === 'Healthy'
           ? alerts(i === 0 ? 4 : 0, i % 3 === 0 ? 2 : 0, i % 2, 4 - (i % 3), 2)
           : alerts(0, 1, 0, 0, i % 2),
     tickets: availability === 'Down' ? 2 : i % 4 === 0 ? 1 : 0,
     notes: i % 3 === 0 ? 2 : 0,
     overview: isHost
       ? overview(
-          'VMware ESXi 6.7.0 build-8169922',
+          'Hypervisor 8.1, build 31042',
           `172.31.47.${30 + i}`,
-          'Dell Inc.',
-          'PowerEdge R630',
+          'Atlas Systems',
+          'Atlas R240 rack server',
           serials[i % serials.length],
         )
       : overview(
-          'Ubuntu 22.04.3 LTS',
+          'Linux 6.8 (LTS)',
           ip,
-          VMWARE,
-          VM,
-          `VM-${serials[i % serials.length]}`,
+          'Hypervisor',
+          NODE,
+          `VN-${serials[i % serials.length]}`,
         ),
     traits: isHost
-      ? ['Other', 'Gateway is connected']
+      ? ['Host', 'Gateway connected']
       : [
-          'Kubernetes node',
-          availability === 'Up' ? 'Agent installed' : 'Agent offline',
+          'Cluster node',
+          availability === 'Healthy' ? 'Agent installed' : 'Agent offline',
         ],
     // Custom attributes are set by the tenant; several resources have none yet
     attributes:
       i % 3 === 0
         ? [
-            [
-              'Environment',
-              cluster.includes('prod') ? 'Production' : 'Non-production',
-            ],
+            ['Environment', cluster === 'staging' ? 'Non-production' : 'Production'],
             ['Cost centre', `CC-${4100 + (i % 7)}`],
             ['Owner', 'Platform engineering'],
           ]
@@ -118,7 +115,7 @@ export const relatedResources = (resource) =>
     (r) => r.cluster === resource.cluster && r.id !== resource.id,
   );
 
-export const AVAILABILITIES = ['Down', 'Up', 'Unknown', 'Undefined'];
+export const AVAILABILITIES = ['Down', 'Healthy', 'Unknown', 'Not monitored'];
 
 export const countBy = (items, key) =>
   items.reduce((acc, item) => {

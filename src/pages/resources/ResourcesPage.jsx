@@ -5,10 +5,10 @@ import { ResourceDetail } from './ResourceDetail';
 import { ResourceList } from './ResourceList';
 import { AVAILABILITY_STATUS } from './ResourceStatus';
 
-// Kubernetes · OpsRamp resources. The preview page's availability count
-// cards become quick filters carrying the status icon. Refresh acts on the
-// page, so it stays in the page header; adding a resource acts on the
-// collection, so it sits in the list toolbar beside search.
+// Monitored resources. Availability counts become quick filters carrying the
+// status icon. Refresh acts on the page, so it stays in the page header;
+// adding a resource acts on the collection, so it sits in the list toolbar
+// beside search.
 const statusIcon = (a) => {
   const { Icon, color } = AVAILABILITY_STATUS[a];
   return <Icon color={color} size="xsmall" aria-hidden />;
@@ -31,7 +31,7 @@ const matches = (r, q) =>
 
 export const ResourcesPage = () => (
   <ListDetailPage
-    title="Kubernetes"
+    title="Clusters"
     backLabel="Resource categories"
     items={resources}
     matches={matches}

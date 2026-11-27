@@ -4,10 +4,8 @@ import { ListDetailPage } from '../../pattern/ListDetailPage';
 import { ServerDetail } from './ServerDetail';
 import { ServerList } from './ServerList';
 
-// Servers · Compute Ops Management. Pure list–detail: the COM Servers page's
-// health / iLO security donuts, Needs attention card and Activity pane are
-// intentionally left out so the surface stands alone. COM sorts by health
-// (worst first); the list does the same.
+// Servers · Fleet Manager. Pure list–detail: no summary charts or activity
+// pane, so the surface stands alone. The list sorts by health, worst first.
 const HEALTH_ORDER = { Critical: 0, Warning: 1, Unknown: 2, OK: 3 };
 const serversByHealth = [...servers].sort(
   (a, b) =>
@@ -27,7 +25,7 @@ const QUICK_FILTERS = [
 ];
 
 const matches = (s, q) =>
-  [s.name, s.serial, s.model, s.group, s.iloIp].some((v) =>
+  [s.name, s.serial, s.model, s.group, s.mgmtIp].some((v) =>
     v.toLowerCase().includes(q),
   );
 
@@ -38,7 +36,7 @@ export const ServersPage = () => (
     items={serversByHealth}
     matches={matches}
     quickFilters={QUICK_FILTERS}
-    searchPlaceholder="Search server attributes"
+    searchPlaceholder="Search servers"
     collectionAction={{ label: 'Add server', icon: <Add /> }}
     renderList={({ items, selectedId, onSelect }) => (
       <ServerList servers={items} selectedId={selectedId} onSelect={onSelect} />

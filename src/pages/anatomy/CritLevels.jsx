@@ -35,7 +35,7 @@ const Verdict = ({ title, who, children }) => (
 const SENTIMENT = [
   'Reviewers evaluated at the pattern level rather than picking at example content, so the core interaction model read clearly.',
   'The list–detail relationship was called the most valuable part and a strong foundation.',
-  'Varied content (Users, Sales Cockpit, Compute, OpsRamp) gave confidence the pattern scales across domains. Sales Cockpit was singled out because every tab shows a different structure.',
+  'Varied content (Users, Sales Cockpit, Servers, Monitored resources) gave confidence the pattern scales across domains. Sales Cockpit was singled out because every tab shows a different structure.',
   'The live coded prototype produced richer feedback than a static one would have.',
   'The consistent ask: clearer guidance on when to use the pattern, how it behaves during navigation, and how structure and containment are defined.',
 ];
@@ -270,7 +270,7 @@ const REQUESTS = [
       'Button is now secondary; rows tightened to 8px (size.xxsmall); the list shows icon + status name with the score as secondary text.',
     when: 'Done 20 Nov',
     href: '#/compute-servers',
-    see: 'Compute → Servers',
+    see: 'Servers',
   },
   {
     id: 'R07',
@@ -337,7 +337,7 @@ const REQUESTS = [
     title: 'Example content for the library',
     raised: 'Crit 01 open question',
     ask: 'How should example content be chosen: realism, diversity, safety or structural coverage?',
-    change: 'Nothing yet. 4 examples live: Users, Sales Cockpit, Compute, OpsRamp.',
+    change: 'Nothing yet. 5 examples live: Users, Team members, Sales Cockpit, Servers, Monitored resources.',
     when: 'Open',
   },
   {

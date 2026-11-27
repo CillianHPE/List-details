@@ -16,7 +16,7 @@ const matches = (u, q) =>
 
 // Users list–detail page: the pattern surface comes from ListDetailPage;
 // this file only supplies the user-specific data, row and detail.
-// `users` lets a route render a sparse variant (e.g. three users) to study
+// `users` lets a route render another dataset (e.g. Team members) to study
 // how the list zone behaves with little data.
 export const UsersPage = ({
   users = allUsers,
@@ -47,8 +47,8 @@ export const UsersPage = ({
   />
 );
 
-// Sparse route copy: a team page with its own wording.
-export const SPARSE_COPY = {
+// Team members route copy: a team page with its own wording.
+export const TEAM_COPY = {
   title: 'Team members',
   subtitle: 'People who can sign in to this team and what they can do.',
   backLabel: 'All members',

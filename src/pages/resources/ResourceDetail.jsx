@@ -14,9 +14,8 @@ import {
 import { relatedResources } from '../../data/resources';
 import { ALERT_STATUS, ResourceStatus } from './ResourceStatus';
 
-// Kubernetes · OpsRamp resource. The preview's "Resource Details" card, read
-// beside the list: identity in the header, alert counts directly under it,
-// then the 3 facets as tabs.
+// Monitored resource. Identity in the header, alert counts directly under
+// it, then the 3 facets as tabs.
 
 // ----------------------------------------------------------------- header
 
@@ -115,7 +114,7 @@ const Overview = ({ resource }) => {
       </Card>
       <Card
         title="Traits"
-        note="Characteristics OpsRamp has discovered for this resource"
+        note="Characteristics discovered for this resource"
       >
         <Box direction="row" gap="xsmall" wrap>
           {resource.traits.map((trait) => (

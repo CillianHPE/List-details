@@ -39,6 +39,7 @@ const STATUS_MAP = {
   Active: { Icon: StatusGood, color: 'status-ok' },
   Invited: { Icon: StatusInfo, color: 'text-weak' },
   Suspended: { Icon: StatusCritical, color: 'status-critical' },
+  Deactivated: { Icon: StatusCritical, color: 'status-critical' },
 };
 
 export const StatusIndicator = ({ status, size }) => {
@@ -129,7 +130,7 @@ const DetailHeader = ({ user, name, onRename }) => {
 
 // Details are broken into titled groups, each its own NameValueList,
 // separated by a weak divider so the page doesn't read as one long list.
-// `optional` groups are dropped for the sparse variant.
+// `optional` groups are dropped for the short variant.
 const DETAIL_GROUPS = [
   {
     title: 'Identity',
@@ -169,9 +170,9 @@ const DetailValue = ({ field, user }) =>
     <Text>{user[field]}</Text>
   );
 
-// Sparse variant: a generic team-access page with its own vocabulary
+// Team variant: a generic team-access page with its own vocabulary
 // (profile, access, permissions, teams, projects).
-const SPARSE_GROUPS = [
+const TEAM_GROUPS = [
   {
     title: 'Profile',
     pairs: [
@@ -193,13 +194,14 @@ const SPARSE_GROUPS = [
   },
 ];
 
-const SPARSE_TABS = [
+const TEAM_TABS = [
   {
     title: 'Permissions',
     icon: <ShieldCheck />,
     emptyTitle: 'No permissions granted yet',
     emptyDescription:
       'What this member can see and change will be listed here once a permission set is applied.',
+    render: (user) => <Permissions user={user} />,
     cta: 'Grant permissions',
   },
   {
@@ -208,6 +210,7 @@ const SPARSE_TABS = [
     emptyTitle: 'Not on any teams',
     emptyDescription:
       'Teams share permissions and notifications. Add this member to a team to get started.',
+    render: (user) => <Teams user={user} />,
     cta: 'Add to a team',
   },
   {
@@ -216,8 +219,62 @@ const SPARSE_TABS = [
     emptyTitle: 'No projects assigned',
     emptyDescription:
       'Projects this member contributes to will be listed here.',
+    render: (user) => <Projects user={user} />,
   },
 ];
+
+const LEVEL_SEVERITY = { Manage: 'ok', Edit: 'ok', Run: 'ok', View: 'info' };
+const PROJECT_STATE = { Active: 'ok', Planning: 'info', 'On hold': 'warn' };
+
+const PlainList = ({ rows, children }) => (
+  <List data={rows} pad="none" border={false}>
+    {(row, index) => (
+      <ListRow index={index} count={rows.length}>
+        {children(row)}
+      </ListRow>
+    )}
+  </List>
+);
+
+const Permissions = ({ user }) => (
+  <PlainList rows={user.permissions}>
+    {(p) => (
+      <>
+        <Text weight={500}>{p.area}</Text>
+        <Text color="text-weak">{p.level}</Text>
+      </>
+    )}
+  </PlainList>
+);
+
+const Teams = ({ user }) => (
+  <PlainList rows={user.teams}>
+    {(t) => (
+      <>
+        <Anchor label={t.name} href="#" weight={500} />
+        <Text color="text-weak">
+          {t.members} {t.members === 1 ? 'member' : 'members'}
+        </Text>
+      </>
+    )}
+  </PlainList>
+);
+
+const Projects = ({ user }) => (
+  <PlainList rows={user.projects}>
+    {(p) => (
+      <>
+        <Box>
+          <Anchor label={p.name} href="#" weight={500} />
+          <Text size="small" color="text-weak">
+            {p.role}
+          </Text>
+        </Box>
+        <Text color="text-weak">{p.state}</Text>
+      </>
+    )}
+  </PlainList>
+);
 
 const Properties = ({ user, groups = DETAIL_GROUPS }) => {
   const [ref, direction] = usePairDirection();
@@ -398,32 +455,45 @@ const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
   </DetailTabs>
 );
 
-const SparseBody = ({ user, tab, setTab }) => (
+const TEAM_DATA = { Permissions: 'permissions', Teams: 'teams', Projects: 'projects' };
+
+const TeamBody = ({ user, tab, setTab }) => (
   <DetailTabs activeIndex={tab} onActive={setTab}>
     <Tab title="Overview">
       <Section title="Overview" hideTitle>
-        <Properties user={user} groups={SPARSE_GROUPS} />
+        <Properties user={user} groups={TEAM_GROUPS} />
       </Section>
     </Tab>
-    {SPARSE_TABS.map((t) => (
-      <Tab key={t.title} title={t.title}>
-        <Section title={t.title} hideTitle>
-          <EmptyState
-            level={4}
-            icon={t.icon}
-            title={t.emptyTitle}
-            description={t.emptyDescription}
-            actions={t.cta && <Button label={t.cta} primary />}
-          />
-        </Section>
-      </Tab>
-    ))}
+    {TEAM_TABS.map((t) => {
+      const rows = user[TEAM_DATA[t.title]] ?? [];
+      return (
+        <Tab key={t.title} title={t.title}>
+          <Section
+            title={t.title}
+            hideTitle
+            action={rows.length > 0 && t.cta && <Button label={t.cta} secondary />}
+          >
+            {rows.length ? (
+              t.render(user)
+            ) : (
+              <EmptyState
+                level={4}
+                icon={t.icon}
+                title={t.emptyTitle}
+                description={t.emptyDescription}
+                actions={t.cta && <Button label={t.cta} primary />}
+              />
+            )}
+          </Section>
+        </Tab>
+      );
+    })}
   </DetailTabs>
 );
 
 // variant="short": a record with one facet — no tabs, identity only.
-// variant="sparse": tabs kept, with its own profile/access groups and empty
-// states in every other tab — a team with little data yet.
+// variant="team": tabs kept, with its own profile/access groups; invited
+// members show empty states in the other tabs.
 export const UserDetail = ({ user, variant = 'full' }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useDetailTab();
@@ -434,8 +504,8 @@ export const UserDetail = ({ user, variant = 'full' }) => {
         <Section title="Overview" hideTitle>
           <Properties user={user} groups={DETAIL_GROUPS.slice(0, 1)} />
         </Section>
-      ) : variant === 'sparse' ? (
-        <SparseBody user={user} tab={tab} setTab={setTab} />
+      ) : variant === 'team' ? (
+        <TeamBody user={user} tab={tab} setTab={setTab} />
       ) : (
         <DetailBody user={user} tab={tab} setTab={setTab} />
       )}
