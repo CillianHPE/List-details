@@ -159,7 +159,7 @@ export const navItems = {
     },
     {
       key: 'proto-v3-sparse',
-      label: 'Users (sparse)',
+      label: 'Team members (sparse)',
       href: '#/v3-sparse',
     },
     {

@@ -343,17 +343,76 @@ export const users = baseUsers.map((u, i) => {
   };
 });
 
-// Sparse variant: a new workspace with four users, nothing assigned yet and
-// most activity fields not yet available. Used by Examples › Users (short).
-const NA = 'Not available';
-export const sparseUsers = users.slice(0, 4).map((u) => ({
-  ...u,
-  roleAssignments: [],
-  groups: [],
-  orgWorkspaces: [],
-  lifecycleSource: 'Local',
-  joinedOrganization: NA,
-  joinedWorkspace: NA,
-  lastLaunch: NA,
-  lastSignIn: NA,
-}));
+// Sparse variant: a freshly created team with 4 members, no permissions,
+// teams or projects assigned yet. Deliberately its own people, fields and
+// wording so it reads as a generic access page, not a copy of a product
+// screen. Used by Examples › Team members (sparse).
+const sparseBase = [
+  {
+    id: 'mbr_7f3a',
+    name: 'Riya Mehta',
+    email: 'riya.mehta@northwind.io',
+    role: 'Account owner',
+    status: 'Active',
+    mfa: 'Enabled',
+    signIn: 'Single sign-on',
+    created: 'Nov 3rd, 2025',
+    lastActive: '5 minutes ago',
+    invitedBy: 'Self (created the team)',
+  },
+  {
+    id: 'mbr_2c9e',
+    name: 'Tomás Ferreira',
+    email: 'tomas.ferreira@northwind.io',
+    role: 'Engineer',
+    status: 'Active',
+    mfa: 'Enabled',
+    signIn: 'Single sign-on',
+    created: 'Nov 4th, 2025',
+    lastActive: 'Yesterday',
+    invitedBy: 'Riya Mehta',
+  },
+  {
+    id: 'mbr_b81d',
+    name: 'Ingrid Lund',
+    email: 'ingrid.lund@northwind.io',
+    role: 'Analyst',
+    status: 'Invited',
+    mfa: 'Not set up',
+    signIn: 'Email and password',
+    created: 'Nov 5th, 2025',
+    lastActive: 'Never',
+    invitedBy: 'Riya Mehta',
+  },
+  {
+    id: 'mbr_e04b',
+    name: 'Marcus Adeyemi',
+    email: 'marcus.adeyemi@northwind.io',
+    role: 'Viewer',
+    status: 'Active',
+    mfa: 'Not set up',
+    signIn: 'Email and password',
+    created: 'Nov 6th, 2025',
+    lastActive: '2 days ago',
+    invitedBy: 'Tomás Ferreira',
+  },
+];
+
+export const sparseUsers = sparseBase.map((u) => {
+  const [firstName, ...rest] = u.name.split(' ');
+  return {
+    ...u,
+    firstName,
+    lastName: rest.join(' '),
+    initials: u.name
+      .split(' ')
+      .map((p) => p[0])
+      .join(''),
+    username: u.email.split('@')[0],
+    memberSince: u.status === 'Invited' ? 'Invite pending' : u.created,
+    groups: [],
+    activity: [],
+    roleAssignments: [],
+    orgWorkspaces: [],
+  };
+});

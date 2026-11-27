@@ -169,6 +169,56 @@ const DetailValue = ({ field, user }) =>
     <Text>{user[field]}</Text>
   );
 
+// Sparse variant: a generic team-access page with its own vocabulary
+// (profile, access, permissions, teams, projects).
+const SPARSE_GROUPS = [
+  {
+    title: 'Profile',
+    pairs: [
+      ['Full name', 'name'],
+      ['Username', 'username'],
+      ['Email', 'email'],
+      ['Job title', 'role'],
+      ['Member since', 'memberSince'],
+    ],
+  },
+  {
+    title: 'Access',
+    pairs: [
+      ['Status', 'status'],
+      ['Sign-in method', 'signIn'],
+      ['Two-step verification', 'mfa'],
+      ['Invited by', 'invitedBy'],
+    ],
+  },
+];
+
+const SPARSE_TABS = [
+  {
+    title: 'Permissions',
+    icon: <ShieldCheck />,
+    emptyTitle: 'No permissions granted yet',
+    emptyDescription:
+      'What this member can see and change will be listed here once a permission set is applied.',
+    cta: 'Grant permissions',
+  },
+  {
+    title: 'Teams',
+    icon: <Group />,
+    emptyTitle: 'Not on any teams',
+    emptyDescription:
+      'Teams share permissions and notifications. Add this member to a team to get started.',
+    cta: 'Add to a team',
+  },
+  {
+    title: 'Projects',
+    icon: <Organization />,
+    emptyTitle: 'No projects assigned',
+    emptyDescription:
+      'Projects this member contributes to will be listed here.',
+  },
+];
+
 const Properties = ({ user, groups = DETAIL_GROUPS }) => {
   const [ref, direction] = usePairDirection();
   return (
@@ -348,9 +398,32 @@ const DetailBody = ({ user, tab, setTab, groups = DETAIL_GROUPS }) => (
   </DetailTabs>
 );
 
+const SparseBody = ({ user, tab, setTab }) => (
+  <DetailTabs activeIndex={tab} onActive={setTab}>
+    <Tab title="Overview">
+      <Section title="Overview" hideTitle>
+        <Properties user={user} groups={SPARSE_GROUPS} />
+      </Section>
+    </Tab>
+    {SPARSE_TABS.map((t) => (
+      <Tab key={t.title} title={t.title}>
+        <Section title={t.title} hideTitle>
+          <EmptyState
+            level={4}
+            icon={t.icon}
+            title={t.emptyTitle}
+            description={t.emptyDescription}
+            actions={t.cta && <Button label={t.cta} primary />}
+          />
+        </Section>
+      </Tab>
+    ))}
+  </DetailTabs>
+);
+
 // variant="short": a record with one facet — no tabs, identity only.
-// variant="sparse": tabs kept, but only the identity/account groups and empty
-// states in every other tab — a workspace with little data yet.
+// variant="sparse": tabs kept, with its own profile/access groups and empty
+// states in every other tab — a team with little data yet.
 export const UserDetail = ({ user, variant = 'full' }) => {
   const [name, setName] = useState(user.name);
   const [tab, setTab] = useDetailTab();
@@ -361,17 +434,10 @@ export const UserDetail = ({ user, variant = 'full' }) => {
         <Section title="Overview" hideTitle>
           <Properties user={user} groups={DETAIL_GROUPS.slice(0, 1)} />
         </Section>
+      ) : variant === 'sparse' ? (
+        <SparseBody user={user} tab={tab} setTab={setTab} />
       ) : (
-        <DetailBody
-          user={user}
-          tab={tab}
-          setTab={setTab}
-          groups={
-            variant === 'sparse'
-              ? DETAIL_GROUPS.filter((g) => !g.optional)
-              : DETAIL_GROUPS
-          }
-        />
+        <DetailBody user={user} tab={tab} setTab={setTab} />
       )}
     </Box>
   );

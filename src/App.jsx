@@ -3,7 +3,7 @@ import { Grommet } from 'grommet';
 import { deepMerge } from 'grommet/utils';
 import { hpe } from 'grommet-theme-hpe';
 import { V3Shell } from './shell/V3Shell';
-import { UsersPage } from './pages/users/UsersPage';
+import { UsersPage, SPARSE_COPY } from './pages/users/UsersPage';
 import { CockpitPage } from './pages/cockpit/CockpitPage';
 import { ServersPage } from './pages/servers/ServersPage';
 import { ResourcesPage } from './pages/resources/ResourcesPage';
@@ -23,7 +23,7 @@ const theme = deepMerge(hpe, {
 //   #/anatomy  → Structure: lo-fi region/role map of the pattern
 //   #/behaviour/<key>, #/responsive/<key>, #/states/<key> → documentation pages
 //   #/v3       → Users in App Shell V3.1 (Figma 3250:15494)
-//   #/v3-sparse → four users, little data yet (empty states, unavailable values)
+//   #/v3-sparse → team of 4 members, little data yet (empty states)
 //   #/accounts-cockpit → Accounts with Sales Cockpit content (Figma mNCeAPPHJ2E8NtLaJlqSpM)
 //   #/compute-servers → Servers with Compute Ops Management content (FigJam FoohSpgNF5QhNv5d0se2ot)
 //   #/opsramp-resources → Kubernetes resources, adapted from hpe-theme-preview detail-opsramp
@@ -79,7 +79,11 @@ const App = () => {
       )}
       {version === 'v3-sparse' && (
         <V3Shell>
-          <UsersPage users={sparseUsers} detailVariant="sparse" />
+          <UsersPage
+            users={sparseUsers}
+            detailVariant="sparse"
+            copy={SPARSE_COPY}
+          />
         </V3Shell>
       )}
       {version === 'accounts-cockpit' && (
