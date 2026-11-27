@@ -12,7 +12,6 @@ export const AVAILABILITY_STATUS = {
   Down: { Icon: StatusCritical, color: 'status-critical' },
   Healthy: { Icon: StatusGood, color: 'status-ok' },
   Unknown: { Icon: StatusUnknown, color: 'status-unknown' },
-  'Not monitored': { Icon: StatusUnknown, color: 'text-weak' },
 };
 
 // Alert severities shown in the detail's Resource alerts strip

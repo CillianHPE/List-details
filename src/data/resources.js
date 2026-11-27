@@ -33,15 +33,15 @@ const base = [
   ['analytics-control-01', '172.25.22.90', NODE, 'Healthy'],
   ['analytics-node-01', '172.25.22.91', NODE, 'Healthy'],
   ['analytics-node-02', '172.25.22.92', NODE, 'Healthy'],
-  ['analytics-node-03', '172.25.22.93', NODE, 'Not monitored'],
+  ['analytics-node-03', '172.25.22.93', NODE, 'Unknown'],
   ['orders-control-01', '10.42.1.10', NODE, 'Healthy'],
   ['orders-node-01', '10.42.1.11', NODE, 'Healthy'],
   ['orders-node-02', '10.42.1.12', NODE, 'Unknown'],
-  ['orders-node-03', '10.42.1.13', NODE, 'Not monitored'],
+  ['orders-node-03', '10.42.1.13', NODE, 'Unknown'],
   ['staging-control-01', '10.42.2.10', NODE, 'Healthy'],
-  ['staging-node-01', '10.42.2.11', NODE, 'Not monitored'],
+  ['staging-node-01', '10.42.2.11', NODE, 'Unknown'],
   ['staging-node-02', '10.42.2.12', NODE, 'Unknown'],
-  ['edge-gateway-01', '172.25.30.5', HOST, 'Not monitored'],
+  ['edge-gateway-01', '172.25.30.5', HOST, 'Unknown'],
 ];
 
 const serials = [
@@ -115,7 +115,7 @@ export const relatedResources = (resource) =>
     (r) => r.cluster === resource.cluster && r.id !== resource.id,
   );
 
-export const AVAILABILITIES = ['Down', 'Healthy', 'Unknown', 'Not monitored'];
+export const AVAILABILITIES = ['Healthy', 'Down', 'Unknown'];
 
 export const countBy = (items, key) =>
   items.reduce((acc, item) => {
